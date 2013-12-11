@@ -1,7 +1,7 @@
 package hashtable
 
-import "fmt"
 import . "github.com/timtadh/data-structures/types"
+import . "github.com/timtadh/data-structures/errors"
 
 type HashTable interface {
     Get(key Hashable) (value interface{}, err error)
@@ -9,11 +9,6 @@ type HashTable interface {
     Has(key Hashable) (has bool)
     Remove(key Hashable) (value interface{}, err error)
     Size() int
-}
-
-var Errors map[string]error = map[string]error{
-    "not-found":fmt.Errorf("Key was not in hash table"),
-    "list-not-found":fmt.Errorf("Key was not in bucket when expected"),
 }
 
 const (
@@ -164,7 +159,7 @@ func (self *bst) Has(key Hashable) (has bool) {
 
 func (self *bst) Get(key Hashable) (value interface{}, err error) {
     if self == nil {
-        return nil, Errors["not-found"]
+        return nil, Errors["not-found"](key)
     }
     if self.key.Equals(key) {
         return self.value, nil
@@ -194,7 +189,7 @@ func (self *bst) Put(key Hashable, value interface{}) (_ *bst, updated bool) {
 
 func (self *bst) Remove(key Hashable) (_ *bst, value interface{}, err error) {
     if self == nil {
-        return nil, nil, Errors["not-found"]
+        return nil, nil, Errors["not-found"](key)
     }
 
     if self.key.Equals(key) {

@@ -1,6 +1,7 @@
 package hashtable
 
 import . "github.com/timtadh/data-structures/types"
+import . "github.com/timtadh/data-structures/errors"
 
 type entry struct {
     key Hashable
@@ -39,7 +40,7 @@ func (self *entry) Get(key Hashable) (has bool, value interface{}) {
 
 func (self *entry) Remove(key Hashable) *entry {
     if self == nil {
-        panic(Errors["list-not-found"])
+        panic(Errors["not-found-in-bucket"](key))
     }
     if self.key.Equals(key) {
         return self.next
@@ -94,7 +95,7 @@ func (self *hash) Get(key Hashable) (value interface{}, err error) {
     if has, value := self.table[bucket].Get(key); has {
         return value, nil
     } else {
-        return nil, Errors["not-found"]
+        return nil, Errors["not-found"](key)
     }
 }
 
@@ -107,7 +108,7 @@ func (self *hash) Remove(key Hashable) (value interface{}, err error) {
     bucket := self.bucket(key)
     has, value := self.table[bucket].Get(key)
     if !has {
-        return nil, Errors["not-found"]
+        return nil, Errors["not-found"](key)
     }
     self.table[bucket] = self.table[bucket].Remove(key)
     self.size -= 1
