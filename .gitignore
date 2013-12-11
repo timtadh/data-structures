@@ -19,4 +19,6 @@ _cgo_export.*
 
 _testmain.go
 
-*.exe
+# editor files
+*.swp
+*.swo
