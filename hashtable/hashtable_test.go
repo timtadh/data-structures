@@ -25,6 +25,7 @@ func init() {
         if _, err := urandom.Read(seed); err == nil {
             rand.Seed(int64(bs.ByteSlice(seed).Int64()))
         }
+        urandom.Close()
     }
 }
 
