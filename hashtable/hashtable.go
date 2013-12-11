@@ -1,5 +1,7 @@
 package hashtable
 
+import . "github.com/timtadh/data-structures/types"
+
 type entry struct {
     key Hashable
     value interface{}
@@ -11,33 +13,6 @@ type hash struct {
     size int
 }
 
-type String string
-
-
-func (self String) Equals(other Hashable) bool {
-    if o, ok := other.(String); ok {
-        return self == o
-    } else {
-        return false
-    }
-}
-
-func (self String) Less(other Hashable) bool {
-    if o, ok := other.(String); ok {
-        return self < o
-    } else {
-        return false
-    }
-}
-
-func (self String) Hash() int {
-    bytes := []byte(self)
-    hash := 0
-    for i, c := range bytes {
-        hash += (i+1)*int(c)
-    }
-    return hash
-}
 
 func (self *entry) Put(key Hashable, value interface{}) (e *entry, appended bool) {
     if self == nil {

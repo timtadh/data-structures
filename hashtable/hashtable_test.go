@@ -13,6 +13,7 @@ import (
     buf "file-structures/block/buffers"
     "file-structures/linhash"
     "file-structures/linhash/bucket"
+    . "github.com/timtadh/data-structures/types"
 )
 
 

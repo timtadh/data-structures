@@ -1,12 +1,7 @@
 package hashtable
 
 import "fmt"
-
-type Hashable interface {
-    Equals(b Hashable) bool
-    Less(b Hashable) bool
-    Hash() int
-}
+import . "github.com/timtadh/data-structures/types"
 
 type HashTable interface {
     Get(key Hashable) (value interface{}, err error)
