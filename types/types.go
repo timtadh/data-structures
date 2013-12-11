@@ -15,16 +15,29 @@ type Hashable interface {
 }
 
 type Iterator func()(item interface{}, next Iterator)
-type KIterator func()(key Equatable, next Iterator)
+type KIterator func()(key Equatable, next KIterator)
 type KVIterator func()(key Equatable, value interface{}, next KVIterator)
 type Coroutine func(send interface{})(recv interface{}, next Coroutine)
 
 type Iterable interface {
-    Iterate() Iterable
+    Iterate() Iterator
+}
+
+type KIterable interface {
+    Keys() KIterator
+}
+
+type VIterable interface {
+    Values() Iterator
 }
 
 type KVIterable interface {
     Iterate() KVIterator
-    Keys() KIterator
+}
+
+type MapIterable interface {
+    KIterable
+    VIterable
+    KVIterable
 }
 
