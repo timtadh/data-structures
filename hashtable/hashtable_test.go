@@ -14,6 +14,7 @@ import (
     "file-structures/linhash"
     "file-structures/linhash/bucket"
     . "github.com/timtadh/data-structures/types"
+    "github.com/timtadh/data-structures/tree"
 )
 
 
@@ -80,7 +81,7 @@ func TestPutHasGetRemove(t *testing.T) {
         }
     }
 
-    test := func(table HashTable) {
+    test := func(table MapOperable) {
         records := make([]*record, 400)
         for i := range records {
             r := ranrec()
@@ -139,6 +140,54 @@ func TestPutHasGetRemove(t *testing.T) {
 
     test(NewHashTable(64))
     test(NewLinearHash())
+}
+
+func TestIterate(t *testing.T) {
+
+    test := func(table Map) {
+        for k, v, next := table.Iterate()(); next != nil; k, v, next = next() {
+            t.Errorf("Should never reach here %v %v %v", k, v, next)
+        }
+        records := make(map[String]String)
+        for i := 0; i < 100; i++ {
+            k := randstr(8)
+            v := randstr(8)
+            records[k] = v
+            err := table.Put(k, String(""))
+            if err != nil {
+                t.Error(err)
+            }
+            err = table.Put(k, v)
+            if err != nil {
+                t.Error(err)
+            }
+            if table.Size() != (i+1) {
+                t.Error("size was wrong", table.Size(), i+1)
+            }
+        }
+        newrecs := make(map[String]String)
+        for k, v, next := table.Iterate()(); next != nil; k, v, next = next() {
+            if v2, has := records[k.(String)]; !has {
+                t.Error("bad key in table")
+            } else if !v2.Equals(v.(Equatable)) {
+                t.Error("values don't agree")
+            }
+            newrecs[k.(String)] = v.(String)
+        }
+        if len(records) != len(newrecs) {
+            t.Error("iterate missed records")
+        }
+        for k, v := range records {
+            if v2, has := newrecs[k]; !has {
+                t.Error("bad key went missing")
+            } else if !v2.Equals(v) {
+                t.Error("values don't agree")
+            }
+        }
+    }
+    test(NewHashTable(64))
+    test(NewLinearHash())
+    test(tree.NewAvlTree())
 }
 
 func BenchmarkGoMap(b *testing.B) {

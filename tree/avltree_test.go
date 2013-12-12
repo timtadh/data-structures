@@ -50,7 +50,7 @@ func TestPutHasGetRemoveBucket(t *testing.T) {
     }
 
     records := make([]*record, 400)
-    var tree *AvlTree
+    var tree *AvlNode
     var err error
     var val interface{}
     var updated bool
@@ -121,7 +121,7 @@ func TestIterators(t *testing.T) {
     var order []int = []int{
         6, 1, 8, 2, 4 , 9 , 5 , 7 , 0 , 3 ,
     }
-    var tree *AvlTree
+    var tree *AvlNode
     var updated bool
 
     for j := range order {
@@ -158,3 +158,33 @@ func TestIterators(t *testing.T) {
     }
 }
 
+
+func BenchmarkAvlTree(b *testing.B) {
+    b.StopTimer()
+
+    type record struct {
+        key types.String
+        value types.String
+    }
+
+    records := make([]*record, 100)
+
+    ranrec := func() *record {
+        return &record{ randstr(20), randstr(20) }
+    }
+
+    for i := range records {
+        records[i] = ranrec()
+    }
+
+    b.StartTimer()
+    for i := 0; i < b.N; i++ {
+        t := NewAvlTree()
+        for _, r := range records {
+            t.Put(r.key, r.value)
+        }
+        for _, r := range records {
+            t.Remove(r.key)
+        }
+    }
+}

@@ -9,7 +9,7 @@ type entry struct {
     next *entry
 }
 
-type hash struct {
+type Hash struct {
     table []*entry
     size int
 }
@@ -50,20 +50,20 @@ func (self *entry) Remove(key Hashable) *entry {
     }
 }
 
-func NewHashTable(initial_size int) HashTable {
-    return &hash{
+func NewHashTable(initial_size int) *Hash {
+    return &Hash{
         table: make([]*entry, initial_size),
         size: 0,
     }
 }
 
-func (self *hash) bucket(key Hashable) int {
+func (self *Hash) bucket(key Hashable) int {
     return key.Hash() % len(self.table)
 }
 
-func (self *hash) Size() int { return self.size }
+func (self *Hash) Size() int { return self.size }
 
-func (self *hash) Put(key Hashable, value interface{}) (err error) {
+func (self *Hash) Put(key Hashable, value interface{}) (err error) {
     bucket := self.bucket(key)
     var appended bool
     self.table[bucket], appended = self.table[bucket].Put(key, value)
@@ -76,7 +76,7 @@ func (self *hash) Put(key Hashable, value interface{}) (err error) {
     return nil
 }
 
-func (self *hash) expand() error {
+func (self *Hash) expand() error {
     table := self.table
     self.table = make([]*entry, len(table)*2)
     self.size = 0
@@ -90,7 +90,7 @@ func (self *hash) expand() error {
     return nil
 }
 
-func (self *hash) Get(key Hashable) (value interface{}, err error) {
+func (self *Hash) Get(key Hashable) (value interface{}, err error) {
     bucket := self.bucket(key)
     if has, value := self.table[bucket].Get(key); has {
         return value, nil
@@ -99,12 +99,12 @@ func (self *hash) Get(key Hashable) (value interface{}, err error) {
     }
 }
 
-func (self *hash) Has(key Hashable) (has bool) {
+func (self *Hash) Has(key Hashable) (has bool) {
     has, _ = self.table[self.bucket(key)].Get(key)
     return
 }
 
-func (self *hash) Remove(key Hashable) (value interface{}, err error) {
+func (self *Hash) Remove(key Hashable) (value interface{}, err error) {
     bucket := self.bucket(key)
     has, value := self.table[bucket].Get(key)
     if !has {
@@ -113,6 +113,35 @@ func (self *hash) Remove(key Hashable) (value interface{}, err error) {
     self.table[bucket] = self.table[bucket].Remove(key)
     self.size -= 1
     return value, nil
+}
+
+func (self *Hash) Iterate() KVIterator {
+    table := self.table
+    i := -1
+    var e *entry
+    var kv_iterator KVIterator
+    kv_iterator = func()(key Equatable, val interface{}, next KVIterator) {
+        for e == nil {
+            i++
+            if i >= len(table) {
+                return nil, nil, nil
+            }
+            e = table[i]
+        }
+        key = e.key
+        val = e.value
+        e = e.next
+        return key, val, kv_iterator
+    }
+    return kv_iterator
+}
+
+func (self *Hash) Keys() KIterator {
+    return MakeKeysIterator(self)
+}
+
+func (self *Hash) Values() Iterator {
+    return MakeValuesIterator(self)
 }
 
 

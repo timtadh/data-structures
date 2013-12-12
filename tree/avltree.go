@@ -20,18 +20,61 @@ func max(a, b int) int {
 }
 
 type AvlTree struct {
-    key types.Sortable
-    value interface{}
-    height int
-    left *AvlTree
-    right *AvlTree
+    root *AvlNode
 }
 
 func NewAvlTree() *AvlTree {
+    return &AvlTree{}
+}
+
+func (self *AvlTree) Size() int {
+    return self.root.Size()
+}
+
+func (self *AvlTree) Has(key types.Hashable) bool {
+    return self.root.Has(key)
+}
+
+func (self *AvlTree) Put(key types.Hashable, value interface{}) (err error) {
+    self.root, _ = self.root.Put(key, value)
     return nil
 }
 
-func (self *AvlTree) Has(key types.Sortable) (has bool) {
+func (self *AvlTree) Get(key types.Hashable) (value interface{}, err error) {
+    return self.root.Get(key)
+}
+
+func (self *AvlTree) Remove(key types.Hashable) (value interface{}, err error) {
+    new_root, value, err := self.root.Remove(key)
+    if err != nil {
+        return nil, err
+    }
+    self.root = new_root
+    return value, nil
+}
+
+func (self *AvlTree) Iterate() types.KVIterator {
+    return self.root.Iterate()
+}
+
+func (self *AvlTree) Values() types.Iterator {
+    return self.root.Values()
+}
+
+func (self *AvlTree) Keys() types.KIterator {
+    return self.root.Keys()
+}
+
+
+type AvlNode struct {
+    key types.Hashable
+    value interface{}
+    height int
+    left *AvlNode
+    right *AvlNode
+}
+
+func (self *AvlNode) Has(key types.Hashable) (has bool) {
     if self == nil {
         return false
     }
@@ -44,7 +87,7 @@ func (self *AvlTree) Has(key types.Sortable) (has bool) {
     }
 }
 
-func (self *AvlTree) Get(key types.Sortable) (value interface{}, err error) {
+func (self *AvlNode) Get(key types.Hashable) (value interface{}, err error) {
     if self == nil {
         return nil, errors.NotFound(key)
     }
@@ -57,7 +100,7 @@ func (self *AvlTree) Get(key types.Sortable) (value interface{}, err error) {
     }
 }
 
-func (self *AvlTree) pop_node(node *AvlTree) *AvlTree {
+func (self *AvlNode) pop_node(node *AvlNode) *AvlNode {
     if node == nil {
         panic("node can't be nil")
     } else if node.left != nil && node.right != nil {
@@ -67,7 +110,7 @@ func (self *AvlTree) pop_node(node *AvlTree) *AvlTree {
     if self == nil {
         return nil
     } else if self == node {
-        var n *AvlTree
+        var n *AvlNode
         if node.left != nil {
             n = node.left
         } else if node.right != nil {
@@ -90,7 +133,7 @@ func (self *AvlTree) pop_node(node *AvlTree) *AvlTree {
     return self
 }
 
-func (self *AvlTree) push_node(node *AvlTree) *AvlTree {
+func (self *AvlNode) push_node(node *AvlNode) *AvlNode {
     if node == nil {
         panic("node can't be nil")
     } else if node.left != nil || node.right != nil {
@@ -109,7 +152,7 @@ func (self *AvlTree) push_node(node *AvlTree) *AvlTree {
     return self
 }
 
-func (self *AvlTree) rotate_right() *AvlTree {
+func (self *AvlNode) rotate_right() *AvlNode {
     if self == nil {
         return self
     }
@@ -125,7 +168,7 @@ func (self *AvlTree) rotate_right() *AvlTree {
     return new_root.push_node(self)
 }
 
-func (self *AvlTree) rotate_left() *AvlTree {
+func (self *AvlNode) rotate_left() *AvlNode {
     if self == nil {
         return self
     }
@@ -141,7 +184,7 @@ func (self *AvlTree) rotate_left() *AvlTree {
     return new_root.push_node(self)
 }
 
-func (self *AvlTree) balance() *AvlTree {
+func (self *AvlNode) balance() *AvlNode {
     if self == nil {
         return self
     }
@@ -155,9 +198,9 @@ func (self *AvlTree) balance() *AvlTree {
     return self
 }
 
-func (self *AvlTree) Put(key types.Sortable, value interface{}) (_ *AvlTree, updated bool) {
+func (self *AvlNode) Put(key types.Hashable, value interface{}) (_ *AvlNode, updated bool) {
     if self == nil {
-        return &AvlTree{key: key, value: value, height: 1}, false
+        return &AvlNode{key: key, value: value, height: 1}, false
     }
 
     if self.key.Equals(key) {
@@ -177,7 +220,7 @@ func (self *AvlTree) Put(key types.Sortable, value interface{}) (_ *AvlTree, upd
     return self, updated
 }
 
-func (self *AvlTree) Remove(key types.Sortable) (_ *AvlTree, value interface{}, err error) {
+func (self *AvlNode) Remove(key types.Hashable) (_ *AvlNode, value interface{}, err error) {
     if self == nil {
         return nil, nil, errors.NotFound(key)
     }
@@ -212,14 +255,14 @@ func (self *AvlTree) Remove(key types.Sortable) (_ *AvlTree, value interface{}, 
     return self, value, err
 }
 
-func (self *AvlTree) Height() int {
+func (self *AvlNode) Height() int {
     if self == nil {
         return 0
     }
     return self.height
 }
 
-func (self *AvlTree) Size() int {
+func (self *AvlNode) Size() int {
     if self == nil {
         return 0
     }
@@ -227,7 +270,7 @@ func (self *AvlTree) Size() int {
 }
 
 
-func pop(stack []*AvlTree) ([]*AvlTree, *AvlTree) {
+func pop(stack []*AvlNode) ([]*AvlNode, *AvlNode) {
     if len(stack) <= 0 {
         return stack, nil
     } else {
@@ -235,7 +278,7 @@ func pop(stack []*AvlTree) ([]*AvlTree, *AvlTree) {
     }
 }
 
-func procnode(stack []*AvlTree, node *AvlTree) []*AvlTree {
+func procnode(stack []*AvlNode, node *AvlNode) []*AvlNode {
     if node == nil {
         return stack
     }
@@ -248,8 +291,8 @@ func procnode(stack []*AvlTree, node *AvlTree) []*AvlTree {
     return stack
 }
 
-func (self *AvlTree) Iterate() types.KVIterator {
-    stack := make([]*AvlTree, 0, 10)
+func (self *AvlNode) Iterate() types.KVIterator {
+    stack := make([]*AvlNode, 0, 10)
     cur := self
     var kv_iterator types.KVIterator
     kv_iterator = func()(key types.Equatable, val interface{}, next types.KVIterator) {
@@ -270,35 +313,17 @@ func (self *AvlTree) Iterate() types.KVIterator {
     return kv_iterator
 }
 
-func (self *AvlTree) Keys() types.KIterator {
-    kv_iterator := self.Iterate()
-    var k_iterator types.KIterator
-    k_iterator = func() (key types.Equatable, next types.KIterator) {
-        key, _, kv_iterator = kv_iterator()
-        if kv_iterator == nil {
-            return nil, nil
-        }
-        return key, k_iterator
-    }
-    return k_iterator
+func (self *AvlNode) Keys() types.KIterator {
+    return types.MakeKeysIterator(self)
 }
 
-func (self *AvlTree) Values() types.Iterator {
-    kv_iterator := self.Iterate()
-    var v_iterator types.Iterator
-    v_iterator = func() (value interface{}, next types.Iterator) {
-        _, value, kv_iterator = kv_iterator()
-        if kv_iterator == nil {
-            return nil, nil
-        }
-        return value, v_iterator
-    }
-    return v_iterator
+func (self *AvlNode) Values() types.Iterator {
+    return types.MakeValuesIterator(self)
 }
 
 
 
-func (self *AvlTree) _md(side func(*AvlTree)*AvlTree) (*AvlTree) {
+func (self *AvlNode) _md(side func(*AvlNode)*AvlNode) (*AvlNode) {
     if self == nil {
         return nil
     } else if side(self) != nil {
@@ -308,11 +333,11 @@ func (self *AvlTree) _md(side func(*AvlTree)*AvlTree) (*AvlTree) {
     }
 }
 
-func (self *AvlTree) lmd() (*AvlTree) {
-    return self._md(func(node *AvlTree)*AvlTree { return node.left })
+func (self *AvlNode) lmd() (*AvlNode) {
+    return self._md(func(node *AvlNode)*AvlNode { return node.left })
 }
 
-func (self *AvlTree) rmd() (*AvlTree) {
-    return self._md(func(node *AvlTree)*AvlTree { return node.right })
+func (self *AvlNode) rmd() (*AvlNode) {
+    return self._md(func(node *AvlNode)*AvlNode { return node.right })
 }
 
