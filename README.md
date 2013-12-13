@@ -13,8 +13,14 @@ for completeness and instructional usage.
 The library also provided generic types to allow the user to swap out various
 data structures transparently. The interfaces provide operation for adding,
 removing, retrieving objects from collections as well as iterating over the
-collection using functional iterators. Finally, the tree sub-package provides a
-variety of generic tree traversals.
+collection using functional iterators.
+
+Finally, the tree sub-package provides a variety of generic tree traversals. The
+tree traversals and other iterators in the package use a functional iteration
+technique [detailed on my blog](
+http://hackthology.com/proposal-functional-iteration-in-go.html).
+
+
 
 # Current Collection
 
