@@ -7,7 +7,7 @@ import (
 
 const (
     UTILIZATION = .75
-    RECORDS_PER_BLOCK = 8
+    RECORDS_PER_BLOCK = 16
 )
 
 type bst struct {

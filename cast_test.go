@@ -9,7 +9,12 @@ import (
 
 func TestAvlTreeCast(t *testing.T) {
     tree := tree.NewAvlTree()
-    _ = types.Map(tree)
+    _ = types.TreeMap(tree)
+}
+
+func TestImmutableAvlTreeCast(t *testing.T) {
+    tree := tree.NewImmutableAvlTree()
+    _ = types.TreeMap(tree)
 }
 
 func TestHashtableCast(t *testing.T) {
@@ -27,5 +32,4 @@ func TestLinearHashtableCast(t *testing.T) {
     _ = types.MapOperable(hash)
     _ = types.Map(hash)
 }
-
 
