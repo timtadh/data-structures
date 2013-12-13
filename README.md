@@ -10,6 +10,12 @@ To collect many important data structures for usage in go programs. Some of
 these data structures may have implementations elsewhere but are collected here
 for completeness and instructional usage.
 
+The library also provided generic types to allow the user to swap out various
+data structures transparently. The interfaces provide operation for adding,
+removing, retrieving objects from collections as well as iterating over the
+collection using functional iterators. Finally, the tree sub-package provides a
+variety of generic tree traversals.
+
 # Current Collection
 
 ## Trees
