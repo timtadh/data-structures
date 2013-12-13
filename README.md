@@ -17,23 +17,15 @@ for completeness and instructional usage.
 ### Classic AVL Tree
 
 An AVL tree is a height balanced binary search tree. It is commonly taught in
-algorithms courses. The one I implemented here is from the exercise in CLRS\*:
+algorithms courses
 
-> An AVL Tree is a binary search tree that is **height balanced**: for each node
-> *x*, the heights of the left and right subtrees differ by at most 1. To
-> implement an AVL tree, we maintain an extra field in each node: *h*[x] is the
-> height of the node *x*.
->
-> 2. To insert into an AVL tree, a node is first placed in the appropriated
->    place in the binary search tree order. After this insertion, the tree
->    may no longer be height blanced. Specifically, the heights of the left
->    and right children of some node may differ by 2. Describe a procedure
->    BALANCE(*x*), which takes a subtree rooted at *x* whole left and right
->    children are height balanced and have heights that differ by at most
->    2.
+### Immutable AVL Tree
 
-\* : Cormen, T., Leiserson, C., Rivest, R., Stein, C. *Introduction to
-Algorithms*. McGraw-Hill Book Company. 2nd Edition. 2001.
+This version of the classic is immutable and should be thread safe due to
+immutability. However, there is a performance hit:
+
+    BenchmarkAvlTree           10000            166657 ns/op
+    BenchmarkImmutableAvlTree   5000            333709 ns/op
 
 ## Hash Tables
 
