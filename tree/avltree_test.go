@@ -186,8 +186,7 @@ func TestImmutableAvlPutHasGetRemove(t *testing.T) {
     }
 }
 
-
-func TestAvlIterators(t *testing.T) {
+func TestIterators(t *testing.T) {
     var data []int = []int{
         1, 5, 7, 9, 12, 13, 17, 18, 19, 20,
     }
@@ -195,87 +194,98 @@ func TestAvlIterators(t *testing.T) {
         6, 1, 8, 2, 4 , 9 , 5 , 7 , 0 , 3 ,
     }
 
-    var tree *AvlNode
-    var updated bool
+    test := func(tree types.TreeMap) {
+        t.Logf("%T", tree)
+        for j := range order {
+            if err := tree.Put(types.Int(data[order[j]]), order[j]); err != nil {
+                t.Error(err)
+            }
+        }
 
-    for j := range order {
-        if tree, updated = tree.Put(types.Int(data[order[j]]), order[j]); updated {
-            t.Error("should have not been updated")
+        j := 0
+        for k, v, next := tree.Iterate()(); next != nil; k, v, next = next() {
+            if !k.Equals(types.Int(data[j])) {
+                t.Error("Wrong key")
+            }
+            if v.(int) != j {
+                t.Error("Wrong value")
+            }
+            j += 1
+        }
+
+        j = 0
+        for k, next := tree.Keys()(); next != nil; k, next = next() {
+            if !k.Equals(types.Int(data[j])) {
+                t.Error("Wrong key")
+            }
+            j += 1
+        }
+
+        j = 0
+        for v, next := tree.Values()(); next != nil; v, next = next() {
+            if v.(int) != j {
+                t.Error("Wrong value")
+            }
+            j += 1
         }
     }
-
-    j := 0
-    for k, v, next := tree.Iterate()(); next != nil; k, v, next = next() {
-        if !k.Equals(types.Int(data[j])) {
-            t.Error("Wrong key")
-        }
-        if v.(int) != j {
-            t.Error("Wrong value")
-        }
-        j += 1
-    }
-
-    j = 0
-    for k, next := tree.Keys()(); next != nil; k, next = next() {
-        if !k.Equals(types.Int(data[j])) {
-            t.Error("Wrong key")
-        }
-        j += 1
-    }
-
-    j = 0
-    for v, next := tree.Values()(); next != nil; v, next = next() {
-        if v.(int) != j {
-            t.Error("Wrong value")
-        }
-        j += 1
-    }
+    test(NewAvlTree())
+    test(NewImmutableAvlTree())
 }
 
-func TestImmutableAvlIterators(t *testing.T) {
+func TestTraversals(t *testing.T) {
     var data []int = []int{
         1, 5, 7, 9, 12, 13, 17, 18, 19, 20,
     }
     var order []int = []int{
         6, 1, 8, 2, 4 , 9 , 5 , 7 , 0 , 3 ,
     }
-
-    var tree *ImmutableAvlNode
-    var updated bool
-
-    for j := range order {
-        if tree, updated = tree.Put(types.Int(data[order[j]]), order[j]); updated {
-            t.Error("should have not been updated")
-        }
+    var preorder []int = []int {
+        17, 7, 5, 1, 12, 9, 13, 19, 18, 20,
+    }
+    var postorder []int = []int {
+        1, 5, 9, 13, 12, 7, 18, 20, 19, 17,
     }
 
-    j := 0
-    for k, v, next := tree.Iterate()(); next != nil; k, v, next = next() {
-        if !k.Equals(types.Int(data[j])) {
-            t.Error("Wrong key")
+    test := func(tree types.TreeMap) {
+        t.Logf("%T", tree)
+        for j := range order {
+            if err := tree.Put(types.Int(data[order[j]]), order[j]); err != nil {
+                t.Error(err)
+            }
         }
-        if v.(int) != j {
-            t.Error("Wrong value")
-        }
-        j += 1
-    }
 
-    j = 0
-    for k, next := tree.Keys()(); next != nil; k, next = next() {
-        if !k.Equals(types.Int(data[j])) {
-            t.Error("Wrong key")
+        j := 0
+        for
+          tn, next := TraverseBinaryTreeInOrder(tree.Root().(types.BinaryTreeNode))();
+          next != nil;
+          tn, next = next () {
+            if int(tn.Key().(types.Int)) != data[j] {
+                t.Error("key in wrong spot in-order")
+            }
+            j += 1
         }
-        j += 1
-    }
 
-    j = 0
-    for v, next := tree.Values()(); next != nil; v, next = next() {
-        if v.(int) != j {
-            t.Error("Wrong value")
+        j = 0
+        for tn, next := TraverseTreePreOrder(tree.Root())(); next != nil; tn, next = next () {
+            if int(tn.Key().(types.Int)) != preorder[j] {
+                t.Error("key in wrong spot pre-order")
+            }
+            j += 1
         }
-        j += 1
+
+        j = 0
+        for tn, next := TraverseTreePostOrder(tree.Root())(); next != nil; tn, next = next () {
+            if int(tn.Key().(types.Int)) != postorder[j] {
+                t.Error("key in wrong spot post-order")
+            }
+            j += 1
+        }
     }
+    test(NewAvlTree())
+    test(NewImmutableAvlTree())
 }
+
 
 
 func BenchmarkAvlTree(b *testing.B) {

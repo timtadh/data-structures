@@ -27,6 +27,10 @@ func NewAvlTree() *AvlTree {
     return &AvlTree{}
 }
 
+func (self *AvlTree) Root() types.TreeNode {
+    return self.root
+}
+
 func (self *AvlTree) Size() int {
     return self.root.Size()
 }
@@ -270,34 +274,43 @@ func (self *AvlNode) Size() int {
 }
 
 
-func pop(stack []*AvlNode) ([]*AvlNode, *AvlNode) {
-    if len(stack) <= 0 {
-        return stack, nil
-    } else {
-        return stack[0:len(stack)-1], stack[len(stack)-1]
+func (self *AvlNode) Key() types.Equatable {
+    return self.key
+}
+
+func (self *AvlNode) Value() interface{} {
+    return self.value
+}
+
+func (self *AvlNode) Left() types.BinaryTreeNode {
+    if self.left == nil {
+        return nil
     }
+    return self.left
+}
+
+func (self *AvlNode) Right() types.BinaryTreeNode {
+    if self.right == nil {
+        return nil
+    }
+    return self.right
+}
+
+func (self *AvlNode) GetChild(i int) types.TreeNode {
+    return types.DoGetChild(self, i)
+}
+
+func (self *AvlNode) ChildCount() int {
+    return types.DoChildCount(self)
+}
+
+func (self *AvlNode) Children() types.TreeNodeIterator {
+    return types.MakeChildrenIterator(self)
 }
 
 func (self *AvlNode) Iterate() types.KVIterator {
-    stack := make([]*AvlNode, 0, 10)
-    cur := self
-    var kv_iterator types.KVIterator
-    kv_iterator = func()(key types.Equatable, val interface{}, next types.KVIterator) {
-        if len(stack) > 0 || cur != nil {
-            for cur != nil {
-                stack = append(stack, cur)
-                cur = cur.left
-            }
-            stack, cur = pop(stack)
-            key = cur.key
-            val = cur.value
-            cur = cur.right
-            return key, val, kv_iterator
-        } else {
-            return nil, nil, nil
-        }
-    }
-    return kv_iterator
+    tni := TraverseBinaryTreeInOrder(self)
+    return types.MakeKVIteratorFromTreeNodeIterator(tni)
 }
 
 func (self *AvlNode) Keys() types.KIterator {

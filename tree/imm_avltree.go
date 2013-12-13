@@ -13,6 +13,10 @@ func NewImmutableAvlTree() *ImmutableAvlTree {
     return &ImmutableAvlTree{}
 }
 
+func (self *ImmutableAvlTree) Root() types.TreeNode {
+    return self.root.Copy()
+}
+
 func (self *ImmutableAvlTree) Size() int {
     return self.root.Size()
 }
@@ -279,34 +283,43 @@ func (self *ImmutableAvlNode) Size() int {
 }
 
 
+func (self *ImmutableAvlNode) Key() types.Equatable {
+    return self.key
+}
+
+func (self *ImmutableAvlNode) Value() interface{} {
+    return self.value
+}
+
+func (self *ImmutableAvlNode) Left() types.BinaryTreeNode {
+    if self.left == nil {
+        return nil
+    }
+    return self.left
+}
+
+func (self *ImmutableAvlNode) Right() types.BinaryTreeNode {
+    if self.right == nil {
+        return nil
+    }
+    return self.right
+}
+
+func (self *ImmutableAvlNode) GetChild(i int) types.TreeNode {
+    return types.DoGetChild(self, i)
+}
+
+func (self *ImmutableAvlNode) ChildCount() int {
+    return types.DoChildCount(self)
+}
+
+func (self *ImmutableAvlNode) Children() types.TreeNodeIterator {
+    return types.MakeChildrenIterator(self)
+}
 
 func (self *ImmutableAvlNode) Iterate() types.KVIterator {
-    pop := func (stack []*ImmutableAvlNode) ([]*ImmutableAvlNode, *ImmutableAvlNode) {
-        if len(stack) <= 0 {
-            return stack, nil
-        } else {
-            return stack[0:len(stack)-1], stack[len(stack)-1]
-        }
-    }
-    stack := make([]*ImmutableAvlNode, 0, 10)
-    cur := self
-    var kv_iterator types.KVIterator
-    kv_iterator = func()(key types.Equatable, val interface{}, next types.KVIterator) {
-        if len(stack) > 0 || cur != nil {
-            for cur != nil {
-                stack = append(stack, cur)
-                cur = cur.left
-            }
-            stack, cur = pop(stack)
-            key = cur.key
-            val = cur.value
-            cur = cur.right
-            return key, val, kv_iterator
-        } else {
-            return nil, nil, nil
-        }
-    }
-    return kv_iterator
+    tni := TraverseBinaryTreeInOrder(self)
+    return types.MakeKVIteratorFromTreeNodeIterator(tni)
 }
 
 func (self *ImmutableAvlNode) Keys() types.KIterator {
