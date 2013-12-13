@@ -58,3 +58,31 @@ type Map interface {
     MapOperable
 }
 
+type Tree interface {
+    Root() TreeNode
+}
+
+type TreeMap interface {
+    Tree
+    Map
+}
+
+type TreeNode interface {
+    Key() Equatable
+    Value() interface{}
+    Children() TreeNodeIterator
+    GetChild(int) TreeNode // if your tree can't support this simply panic
+                           // many of the utility functions do not require this
+                           // however, it is recommended that you implement it
+                           // if possible (for instance, post-order traversal
+                           // requires it).
+    ChildCount() int // a negative value indicates this tree can't provide
+                     // an accurate count.
+}
+type TreeNodeIterator func() (node TreeNode, next TreeNodeIterator)
+
+type BinaryTreeNode interface {
+    TreeNode
+    Left() BinaryTreeNode
+    Right() BinaryTreeNode
+}
