@@ -145,6 +145,7 @@ func TestPutHasGetRemove(t *testing.T) {
 func TestIterate(t *testing.T) {
 
     test := func(table Map) {
+        t.Logf("%T", table)
         for k, v, next := table.Iterate()(); next != nil; k, v, next = next() {
             t.Errorf("Should never reach here %v %v %v", k, v, next)
         }
@@ -179,7 +180,7 @@ func TestIterate(t *testing.T) {
         }
         for k, v := range records {
             if v2, has := newrecs[k]; !has {
-                t.Error("bad key went missing")
+                t.Error("key went missing")
             } else if !v2.Equals(v) {
                 t.Error("values don't agree")
             }
@@ -188,6 +189,7 @@ func TestIterate(t *testing.T) {
     test(NewHashTable(64))
     test(NewLinearHash())
     test(tree.NewAvlTree())
+    test(tree.NewImmutableAvlTree())
 }
 
 func BenchmarkGoMap(b *testing.B) {
