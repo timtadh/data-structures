@@ -18,7 +18,7 @@ collection using functional iterators.
 Finally, the tree sub-package provides a variety of generic tree traversals. The
 tree traversals and other iterators in the package use a functional iteration
 technique [detailed on my blog](
-http://hackthology.com/proposal-functional-iteration-in-go.html).
+http://hackthology.com/functional-iteration-in-go.html).
 
 
 
