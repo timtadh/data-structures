@@ -1,5 +1,10 @@
 package trie
 
+import (
+  "fmt"
+  "strings"
+)
+
 import "github.com/timtadh/data-structures/errors"
 
 type TST struct {
@@ -23,12 +28,19 @@ func (self *TST) Put(key []byte, value interface{}) (err error) {
         return err
     }
     symbol := append(key, END)
-    node, err := self.heads[symbol[0]].insert(key, value, 1)
+    node, err := self.heads[symbol[0]].insert(symbol, value, 1)
     if err != nil {
         return err
     }
     self.heads[symbol[0]] = node
     return nil
+}
+
+func (self *TST) Has(key []byte) bool {
+    if _, err := self.Get(key); err != nil {
+        return false
+    }
+    return true
 }
 
 func (self *TST) Get(key []byte) (value interface{}, err error) {
@@ -61,5 +73,14 @@ func (self *TST) Get(key []byte) (value interface{}, err error) {
     }
     // should never reach ...
     return nil, errors.NotFound(key)
+}
+
+func (self *TST) String() string {
+    var nodes []string
+    for i,n := range self.heads {
+        if n == nil { continue }
+        nodes = append(nodes, fmt.Sprintf("%x:(%v)", i, n))
+    }
+    return fmt.Sprintf("TST<%v>", strings.Join(nodes, ", "))
 }
 

@@ -33,20 +33,6 @@ type TSTNode struct {
     accepting bool "is this an accepting node"
 }
 
-func (self *TSTNode) Copy() *TSTNode {
-    return &TSTNode {
-        KV: KV{
-            key: self.key,
-            value: self.value,
-        },
-        ch: self.ch,
-        l: self.l,
-        m: self.m,
-        r: self.r,
-        accepting: self.accepting,
-    }
-}
-
 func NewTSTNode(ch byte) *TSTNode {
     return &TSTNode{
         ch: ch,
@@ -64,23 +50,41 @@ func NewAcceptingTSTNode(ch byte, key []byte, value interface{}) *TSTNode {
     }
 }
 
+func (self *TSTNode) Copy() *TSTNode {
+    node := &TSTNode {
+        KV: KV{
+            key: self.key,
+            value: self.value,
+        },
+        ch: self.ch,
+        l: self.l,
+        m: self.m,
+        r: self.r,
+        accepting: self.accepting,
+    }
+    return node
+}
+
 func (self *TSTNode) Internal() bool {
     return self.l != nil || self.m != nil || self.r != nil
 }
 
 func (self *TSTNode) String() string {
-    ch := string([]byte{self.ch})
+    if self == nil {
+        return "-"
+    }
+    ch := fmt.Sprintf("%x" , self.ch)
     key := ""
     if self.ch == END {
-        ch = "\\0"
+        ch = "00"
     }
     if self.key != nil {
         key = string(self.key[:len(self.key)-1])
     }
     if self.accepting {
-        return fmt.Sprintf("%v %v %v", ch, key, self.value)
+        return fmt.Sprintf("[%v %x]", ch, key)
     }
-    return ch
+    return fmt.Sprintf("%v(%v, %v, %v)", ch, self.l, self.m, self.r)
 }
 
 func (n *TSTNode) insert(key []byte, val interface{}, d int) (*TSTNode, error) {
@@ -106,7 +110,7 @@ func (n *TSTNode) insert(key []byte, val interface{}, d int) (*TSTNode, error) {
     } else {
         // it is an internal node
         ch := key[d]
-        n = NewTSTNode(n.ch)
+        n = n.Copy()
         if ch < n.ch {
            l, err := n.l.insert(key, val, d)
            if err != nil {
@@ -147,7 +151,9 @@ func (b *TSTNode) split(a *TSTNode, d int) (t *TSTNode, err error) {
     }
     t = NewTSTNode(b.ch)
     b = b.Copy()
+    a = a.Copy()
     b.ch = b.key[d+1]
+    a.ch = a.key[d]
     if a.ch < t.ch {
         t.m = b
         t.l = a
@@ -160,6 +166,9 @@ func (b *TSTNode) split(a *TSTNode, d int) (t *TSTNode, err error) {
     } else if a.ch > t.ch {
         t.m = b
         t.r = a
+    }
+    if t.m == nil {
+        panic("m is nil")
     }
     return t, nil
 }
