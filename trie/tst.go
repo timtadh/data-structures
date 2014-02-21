@@ -189,7 +189,7 @@ func (self *TST) PrefixFind(prefix ByteSlice) KVIterator {
             }
             n := tn.(*TSTNode)
             if n.accepting {
-                return n.key[:len(n.key)-1], value, kv_iterator
+                return n.key[:len(n.key)-1], n.value, kv_iterator
             }
         }
     }
