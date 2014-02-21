@@ -285,3 +285,32 @@ func TestPutHasGetRemove(t *testing.T) {
     test(new(TST))
 }
 
+func BenchmarkTST(b *testing.B) {
+    b.StopTimer()
+
+    type record struct {
+        key types.ByteSlice
+        value types.ByteSlice
+    }
+
+    records := make([]*record, 100)
+
+    ranrec := func() *record {
+        return &record{ randslice(20), randslice(20) }
+    }
+
+    for i := range records {
+        records[i] = ranrec()
+    }
+
+    b.StartTimer()
+    for i := 0; i < b.N; i++ {
+        t := new(TST)
+        for _, r := range records {
+            t.Put(r.key, r.value)
+        }
+        for _, r := range records {
+            t.Remove(r.key)
+        }
+    }
+}
