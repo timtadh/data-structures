@@ -82,6 +82,7 @@ func (self ByteSlices) Swap(i, j int) {
 
 func TestIteratorPrefixFindDotty(t *testing.T) {
     items := ByteSlices{
+        types.ByteSlice("0:java.io.File;"),
         types.ByteSlice("cat"),
         types.ByteSlice("catty"),
         types.ByteSlice("car"),
@@ -89,12 +90,14 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
         types.ByteSlice("candy"),
         types.ByteSlice("coo"),
         types.ByteSlice("coon"),
+        types.ByteSlice("0:java.io.File;1:new,0:java.util.ArrayList;"),
         types.ByteSlice("andy"),
         types.ByteSlice("alex"),
         types.ByteSlice("andrie"),
         types.ByteSlice("alexander"),
         types.ByteSlice("alexi"),
         types.ByteSlice("bob"),
+        types.ByteSlice("0:java.io.File;"),
         types.ByteSlice("bobcat"),
         types.ByteSlice("barnaby"),
         types.ByteSlice("baskin"),
@@ -113,6 +116,9 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
             t.Error(string(k.(types.ByteSlice)), "!=", string(items[i]))
         }
         i++
+        for items[i].Equals(items[i-1]) {
+            i++
+        }
     }
     co_items := ByteSlices{
         types.ByteSlice("coo"),

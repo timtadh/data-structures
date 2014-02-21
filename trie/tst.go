@@ -19,6 +19,9 @@ func (self *TST) ValidateKey(key []byte) error {
     if key == nil {
         return errors.InvalidKey(key, "key is nil")
     }
+    if len(key) == 0 {
+        return errors.InvalidKey(key, "len(key) == 0")
+    }
     for _, ch := range key {
         if ch == 0 {
             return errors.InvalidKey(key, "key contains a null byte")

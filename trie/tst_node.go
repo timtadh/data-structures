@@ -168,11 +168,16 @@ func (n *TSTNode) insert(key ByteSlice, val interface{}, d int) (*TSTNode, error
            }
            n.l = l
         } else if ch == n.ch {
-           m, err := n.m.insert(key, val, d+1)
-           if err != nil {
-                return nil, err
+           if d+1 == len(key) && ch == END {
+               n.m = n.m.Copy()
+               n.m.value = val
+           } else {
+               m, err := n.m.insert(key, val, d+1)
+               if err != nil {
+                    return nil, err
+               }
+               n.m = m
            }
-           n.m = m
         } else if ch > n.ch {
            r, err := n.r.insert(key, val, d)
            if err != nil {
