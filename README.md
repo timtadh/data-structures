@@ -39,6 +39,15 @@ immutability. However, there is a performance hit:
     BenchmarkAvlTree           10000            166657 ns/op
     BenchmarkImmutableAvlTree   5000            333709 ns/op
 
+### Ternary Search Trie
+
+A [ternary search trie](
+http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html)
+is a data symbol table specialized to byte strings. It can be used to build a
+suffix tree for full text string indexing. However, even without a suffix tree
+it is still a great structure for flexible prefix searches.
+
+
 ## Hash Tables
 
 ### Classic Separate Chaining Hash Table
