@@ -128,11 +128,11 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
     }
 }
 
-func TestPutHasGet(t *testing.T) {
+func TestPutHasGetRemove(t *testing.T) {
 
     type record struct {
-        key bs.ByteSlice
-        value bs.ByteSlice
+        key types.ByteSlice
+        value types.ByteSlice
     }
 
     ranrec := func() *record {
@@ -163,8 +163,29 @@ func TestPutHasGet(t *testing.T) {
             }
             if val, err := table.Get(r.key); err != nil {
                 t.Error(err)
-            } else if !(val.(bs.ByteSlice)).Eq(r.value) {
+            } else if !(val.(types.ByteSlice)).Equals(r.value) {
                 t.Error("wrong value")
+            }
+        }
+        rs := randslice(12)
+        for i, x := range records {
+            if val, err := table.Remove(x.key); err != nil {
+                t.Error(err)
+            } else if !(val.(types.ByteSlice)).Equals(x.value) {
+                t.Error("wrong value")
+            }
+            for _, r := range records[i+1:] {
+                if has := table.Has(r.key); !has {
+                    t.Error("Missing key")
+                }
+                if has := table.Has(rs); has {
+                    t.Error("Table has extra key")
+                }
+                if val, err := table.Get(r.key); err != nil {
+                    t.Error(err)
+                } else if !(val.(types.ByteSlice)).Equals(r.value) {
+                    t.Error("wrong value")
+                }
             }
         }
     }

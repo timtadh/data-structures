@@ -79,6 +79,64 @@ func (self *TST) Get(key []byte) (value interface{}, err error) {
     return nil, errors.NotFound(key)
 }
 
+func (self *TST) Remove(key []byte) (value interface{}, err error) {
+    if err := self.ValidateKey(key); err != nil {
+        return nil, err
+    }
+    symbol := ByteSlice(append(key, END))
+    check := func(n *TSTNode, err error) (*TSTNode, error) {
+        if err != nil {
+            return nil, err
+        } else if n == nil {
+            return nil, nil
+        } else if !n.Internal() && n.key == nil {
+            return nil, nil
+        }
+        return n, nil
+    }
+    var remove func(n *TSTNode, d int) (*TSTNode, error)
+    remove = func(n *TSTNode, d int) (*TSTNode, error) {
+        if n == nil {
+            return nil, errors.NotFound(key)
+        } else if n.Internal() {
+            n = n.Copy()
+            ch := symbol[d]
+            if ch < n.ch {
+                l, err := check(remove(n.l, d))
+                if err != nil {
+                    return nil, err
+                }
+                n.l = l
+            } else if ch == n.ch {
+                m, err := check(remove(n.m, d+1))
+                if err != nil {
+                    return nil, err
+                }
+                n.m = m
+            } else if ch > n.ch{
+                r, err := check(remove(n.r, d))
+                if err != nil {
+                    return nil, err
+                }
+                n.r = r
+            }
+        } else if n.key.Equals(symbol) {
+            // found it
+            value = n.value
+            return nil, nil
+        } else {
+            return nil, errors.NotFound(key)
+        }
+        return n, nil
+    }
+    n, err := remove(self.heads[symbol[0]], 1)
+    if err != nil {
+        return nil, err
+    }
+    self.heads[symbol[0]] = n
+    return value, nil
+}
+
 func (self *TST) PrefixFind(prefix ByteSlice) KVIterator {
     if len(prefix) == 0 {
         return self.Iterate()

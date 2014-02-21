@@ -5,7 +5,8 @@ import "fmt"
 type ErrorFmter func(a ...interface{}) error
 
 func NotFound(a ...interface{}) error {
-    return fmt.Errorf("Key '%v' was not found.", a...)
+    // return fmt.Errorf("Key '%v' was not found.", a...)
+    return fmt.Errorf("Key was not found.")
 }
 
 func NotFoundInBucket(a ...interface{}) error {
