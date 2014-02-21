@@ -134,6 +134,92 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
     }
 }
 
+func TestComplete4(t *testing.T) {
+    items := ByteSlices{
+        types.ByteSlice("abaa"),
+        types.ByteSlice("abab"),
+        types.ByteSlice("abac"),
+        types.ByteSlice("abad"),
+        types.ByteSlice("abba"),
+        types.ByteSlice("abbb"),
+        types.ByteSlice("abbc"),
+        types.ByteSlice("abbd"),
+        types.ByteSlice("abca"),
+        types.ByteSlice("abcb"),
+        types.ByteSlice("abcc"),
+        types.ByteSlice("abcd"),
+        types.ByteSlice("abda"),
+        types.ByteSlice("abdb"),
+        types.ByteSlice("abdc"),
+        types.ByteSlice("abdd"),
+        types.ByteSlice("aaaa"),
+        types.ByteSlice("aaab"),
+        types.ByteSlice("aaac"),
+        types.ByteSlice("aaad"),
+        types.ByteSlice("aaba"),
+        types.ByteSlice("aabb"),
+        types.ByteSlice("aabc"),
+        types.ByteSlice("aabd"),
+        types.ByteSlice("aaca"),
+        types.ByteSlice("aacb"),
+        types.ByteSlice("aacc"),
+        types.ByteSlice("aacd"),
+        types.ByteSlice("aada"),
+        types.ByteSlice("aadb"),
+        types.ByteSlice("aadc"),
+        types.ByteSlice("aadd"),
+        types.ByteSlice("adaa"),
+        types.ByteSlice("adab"),
+        types.ByteSlice("adac"),
+        types.ByteSlice("adad"),
+        types.ByteSlice("adba"),
+        types.ByteSlice("adbb"),
+        types.ByteSlice("adbc"),
+        types.ByteSlice("adbd"),
+        types.ByteSlice("adca"),
+        types.ByteSlice("adcb"),
+        types.ByteSlice("adcc"),
+        types.ByteSlice("adcd"),
+        types.ByteSlice("adda"),
+        types.ByteSlice("addb"),
+        types.ByteSlice("addc"),
+        types.ByteSlice("addd"),
+        types.ByteSlice("acaa"),
+        types.ByteSlice("acab"),
+        types.ByteSlice("acac"),
+        types.ByteSlice("acad"),
+        types.ByteSlice("acba"),
+        types.ByteSlice("acbb"),
+        types.ByteSlice("acbc"),
+        types.ByteSlice("acbd"),
+        types.ByteSlice("acca"),
+        types.ByteSlice("accb"),
+        types.ByteSlice("accc"),
+        types.ByteSlice("accd"),
+        types.ByteSlice("acda"),
+        types.ByteSlice("acdb"),
+        types.ByteSlice("acdc"),
+        types.ByteSlice("addd"),
+    }
+    table := new(TST)
+    for _, key := range items {
+        if err := table.Put(key, nil); err != nil { t.Error(table, err) }
+        if has := table.Has(key); !has { t.Error(table, "Missing key") }
+    }
+    write("TestComplete4.dot", table.Dotty())
+    sort.Sort(items)
+    i := 0
+    for k, _, next := table.Iterate()(); next != nil; k, _, next = next() {
+        if !k.Equals(types.ByteSlice(items[i])) {
+            t.Error(string(k.(types.ByteSlice)), "!=", string(items[i]))
+        }
+        i++
+        for i+1 < len(items) && items[i].Equals(items[i-1]) {
+            i++
+        }
+    }
+}
+
 func TestPutHasGetRemove(t *testing.T) {
 
     type record struct {
