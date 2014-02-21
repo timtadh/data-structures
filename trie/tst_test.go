@@ -5,10 +5,16 @@ import "testing"
 import (
     "os"
     "math/rand"
+    "fmt"
+    "sort"
 )
 
 import (
     bs "file-structures/block/byteslice"
+)
+
+import (
+    "github.com/timtadh/data-structures/types"
 )
 
 
@@ -54,6 +60,74 @@ func randslice_nonzero(length int) []byte {
     return slice
 }
 
+func write(name, contents string) {
+    file, _ := os.Create(name)
+    fmt.Fprintln(file, contents)
+    file.Close()
+}
+
+type ByteSlices []types.ByteSlice
+
+func (self ByteSlices) Len() int {
+    return len(self)
+}
+
+func (self ByteSlices) Less(i, j int) bool {
+    return self[i].Less(self[j])
+}
+
+func (self ByteSlices) Swap(i, j int) {
+    self[i], self[j] = self[j], self[i]
+}
+
+func TestIteratorPrefixFindDotty(t *testing.T) {
+    items := ByteSlices{
+        types.ByteSlice("cat"),
+        types.ByteSlice("catty"),
+        types.ByteSlice("car"),
+        types.ByteSlice("cow"),
+        types.ByteSlice("candy"),
+        types.ByteSlice("coo"),
+        types.ByteSlice("coon"),
+        types.ByteSlice("andy"),
+        types.ByteSlice("alex"),
+        types.ByteSlice("andrie"),
+        types.ByteSlice("alexander"),
+        types.ByteSlice("alexi"),
+        types.ByteSlice("bob"),
+        types.ByteSlice("bobcat"),
+        types.ByteSlice("barnaby"),
+        types.ByteSlice("baskin"),
+        types.ByteSlice("balm"),
+    }
+    table := new(TST)
+    for _, key := range items {
+        if err := table.Put(key, nil); err != nil { t.Error(table, err) }
+        if has := table.Has(key); !has { t.Error(table, "Missing key") }
+    }
+    write("TestDotty.dot", table.Dotty())
+    sort.Sort(items)
+    i := 0
+    for k, _, next := table.Iterate()(); next != nil; k, _, next = next() {
+        if !k.Equals(types.ByteSlice(items[i])) {
+            t.Error(string(k.(types.ByteSlice)), "!=", string(items[i]))
+        }
+        i++
+    }
+    co_items := ByteSlices{
+        types.ByteSlice("coo"),
+        types.ByteSlice("coon"),
+        types.ByteSlice("cow"),
+    }
+    i = 0
+    for k, _, next := table.PrefixFind([]byte("co"))(); next != nil; k, _, next = next() {
+        if !k.Equals(types.ByteSlice(co_items[i])) {
+            t.Error(string(k.(types.ByteSlice)), "!=", string(co_items[i]))
+        }
+        i++
+    }
+}
+
 func TestPutHasGet(t *testing.T) {
 
     type record struct {
@@ -78,7 +152,6 @@ func TestPutHasGet(t *testing.T) {
             if err != nil {
                 t.Error(err)
             }
-            t.Logf("put %v, %v", r.key, []byte(r.key))
         }
 
         for _, r := range records {

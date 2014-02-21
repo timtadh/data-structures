@@ -3,16 +3,28 @@ package trie
 import (
   "fmt"
 )
+
+import (
+  . "github.com/timtadh/data-structures/types"
+)
 // import "github.com/timtadh/data-structures/errors"
 
 const END = 0
 
 type KV struct {
-    key []byte
+    key ByteSlice
     value interface{}
 }
 
-func (self *KV) KeyEq(key []byte) bool {
+func (self *KV) Key() Equatable {
+    return self.key
+}
+
+func (self *KV) Value() interface{} {
+    return self.value
+}
+
+func (self *KV) KeyEq(key ByteSlice) bool {
     if len(self.key) != len(key) {
         return false
     }
@@ -39,7 +51,7 @@ func NewTSTNode(ch byte) *TSTNode {
     }
 }
 
-func NewAcceptingTSTNode(ch byte, key []byte, value interface{}) *TSTNode {
+func NewAcceptingTSTNode(ch byte, key ByteSlice, value interface{}) *TSTNode {
     return &TSTNode{
         KV: KV{
             key: key,
@@ -69,6 +81,44 @@ func (self *TSTNode) Internal() bool {
     return self.l != nil || self.m != nil || self.r != nil
 }
 
+func (self *TSTNode) make_child_slice() []*TSTNode {
+    nodes := make([]*TSTNode, 0, 3)
+    if self != nil {
+        if self.l != nil {
+            nodes = append(nodes, self.l)
+        }
+        if self.m != nil {
+            nodes = append(nodes, self.m)
+        }
+        if self.r != nil {
+            nodes = append(nodes, self.r)
+        }
+    }
+    return nodes
+}
+
+func (self *TSTNode) Children() TreeNodeIterator {
+    nodes := self.make_child_slice()
+    var make_tn_iterator func(int) TreeNodeIterator
+    make_tn_iterator = func(i int) TreeNodeIterator {
+        return func() (kid TreeNode, next TreeNodeIterator) {
+            if i < len(nodes) {
+                return nodes[i], make_tn_iterator(i+1)
+            }
+            return nil, nil
+        }
+    }
+    return make_tn_iterator(0)
+}
+
+func (self *TSTNode) GetChild(i int) TreeNode {
+    return self.make_child_slice()[i]
+}
+
+func (self *TSTNode) ChildCount() int {
+    return len(self.make_child_slice())
+}
+
 func (self *TSTNode) String() string {
     if self == nil {
         return "-"
@@ -87,7 +137,7 @@ func (self *TSTNode) String() string {
     return fmt.Sprintf("%v(%v, %v, %v)", ch, self.l, self.m, self.r)
 }
 
-func (n *TSTNode) insert(key []byte, val interface{}, d int) (*TSTNode, error) {
+func (n *TSTNode) insert(key ByteSlice, val interface{}, d int) (*TSTNode, error) {
     if d >= len(key) {
         return nil, fmt.Errorf("depth exceeds key length")
     }
@@ -146,13 +196,15 @@ func (b *TSTNode) split(a *TSTNode, d int) (t *TSTNode, err error) {
     } else if !b.accepting {
         return nil, fmt.Errorf("`b` must be an accepting node")
     }
-    if d+1 >= len(b.key) {
+    if d >= len(b.key) {
         return nil, fmt.Errorf("depth of split exceeds key length of b")
     }
     t = NewTSTNode(b.ch)
     b = b.Copy()
     a = a.Copy()
-    b.ch = b.key[d+1]
+    if d+1 < len(b.key) {
+        b.ch = b.key[d+1]
+    }
     a.ch = a.key[d]
     if a.ch < t.ch {
         t.m = b

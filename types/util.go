@@ -21,6 +21,31 @@ func MakeKVIteratorFromTreeNodeIterator(tni TreeNodeIterator) KVIterator {
     return kv_iterator
 }
 
+func ChainTreeNodeIterators(tnis ...TreeNodeIterator) TreeNodeIterator {
+    var make_tni func(int)TreeNodeIterator
+    make_tni = func(i int) TreeNodeIterator {
+        var tni TreeNodeIterator = nil
+        if i < len(tnis) {
+            tni = tnis[i]
+        }
+        return func() (tn TreeNode, next TreeNodeIterator) {
+            if tni == nil {
+                return nil, nil
+            }
+            tn, next = tni()
+            for next == nil && i < len(tnis) {
+                tni = make_tni(i+1)
+                tn, next = tni()
+            }
+            if next == nil {
+                return nil, nil
+            }
+            return tn, next
+        }
+    }
+    return make_tni(0)
+}
+
 func MakeKeysIterator(obj KVIterable) KIterator {
     kv_iterator := obj.Iterate()
     var k_iterator KIterator
