@@ -69,19 +69,30 @@ the `linhash` directory.
 
 ### Benchmarks
 
+Benchmarks Put + Remove
+
     $ go test -v -bench '.*' \
     >   github.com/timtadh/data-structures/hashtable
     >   github.com/timtadh/data-structures/tree
     >   github.com/timtadh/data-structures/trie
 
     BenchmarkGoMap             50000             30051 ns/op
-    BenchmarkHash              20000             81012 ns/op
     BenchmarkMLHash            20000             78840 ns/op
+    BenchmarkHash              20000             81012 ns/op
     BenchmarkTST               10000            149985 ns/op
     BenchmarkAvlTree           10000            176373 ns/op
     BenchmarkImmutableAvlTree   5000            367602 ns/op
     BenchmarkLHash              1000           2743693 ns/op
 
+Benchmarks Put
+
+    BenchmarkGoMap            100000             22036 ns/op
+    BenchmarkMLHash            50000             52104 ns/op
+    BenchmarkHash              50000             53426 ns/op
+    BenchmarkTST               50000             69852 ns/op
+    BenchmarkAvlTree           10000            142104 ns/op
+    BenchmarkImmutableAvlTree  10000            302196 ns/op
+    BenchmarkLHash              1000           1739710 ns/op
 
 The performance of the in memory linear hash (MLHash) is slightly improved since
 the [blog post](
