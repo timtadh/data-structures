@@ -4,6 +4,7 @@ import "testing"
 import (
     "github.com/timtadh/data-structures/types"
     "github.com/timtadh/data-structures/tree"
+    "github.com/timtadh/data-structures/trie"
     "github.com/timtadh/data-structures/hashtable"
 )
 
@@ -31,5 +32,10 @@ func TestLinearHashtableCast(t *testing.T) {
     _ = types.MapIterable(hash)
     _ = types.MapOperable(hash)
     _ = types.Map(hash)
+}
+
+func TestTSTCast(t *testing.T) {
+    hash := new(trie.TST)
+    _ = types.MapIterable(hash)
 }
 
