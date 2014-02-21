@@ -6,8 +6,8 @@ import (
 
 import (
   . "github.com/timtadh/data-structures/types"
+  "github.com/timtadh/data-structures/errors"
 )
-// import "github.com/timtadh/data-structures/errors"
 
 const END = 0
 
@@ -139,10 +139,10 @@ func (self *TSTNode) String() string {
 
 func (n *TSTNode) insert(key ByteSlice, val interface{}, d int) (*TSTNode, error) {
     if d >= len(key) {
-        return nil, fmt.Errorf("depth exceeds key length")
+        return nil, errors.TSTError("depth exceeds key length")
     }
     if key[len(key)-1] != END {
-        return nil, fmt.Errorf("key must end in 0")
+        return nil, errors.TSTError("key must end in 0")
     }
     if n == nil {
         // if the node is nil we found teh spot, make a new node and return it
@@ -197,12 +197,13 @@ func (n *TSTNode) insert(key ByteSlice, val interface{}, d int) (*TSTNode, error
  */
 func (b *TSTNode) split(a *TSTNode, d int) (t *TSTNode, err error) {
     if !a.accepting {
-        return nil, fmt.Errorf("`a` must be an accepting node")
+        return nil, errors.TSTError("`a` must be an accepting node")
     } else if !b.accepting {
-        return nil, fmt.Errorf("`b` must be an accepting node")
+        return nil, errors.TSTError("`b` must be an accepting node")
     }
     if d >= len(b.key) {
-        return nil, fmt.Errorf("depth of split exceeds key length of b")
+        return nil,
+          errors.TSTError("depth of split exceeds key length of b")
     }
     t = NewTSTNode(b.ch)
     b = b.Copy()
