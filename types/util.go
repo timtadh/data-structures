@@ -1,7 +1,7 @@
 package types
 
 import (
-    "reflect"
+  "reflect"
 )
 
 func IsNil(object interface{}) bool {
@@ -23,25 +23,25 @@ func MakeKVIteratorFromTreeNodeIterator(tni TreeNodeIterator) KVIterator {
 
 func ChainTreeNodeIterators(tnis ...TreeNodeIterator) TreeNodeIterator {
     var make_tni func(int)TreeNodeIterator
-    make_tni = func(i int) TreeNodeIterator {
-        var tni TreeNodeIterator = nil
-        if i < len(tnis) {
-            tni = tnis[i]
+    make_tni = func(i int) (tni_iterator TreeNodeIterator) {
+        if i >= len(tnis) {
+            return nil
         }
-        return func() (tn TreeNode, next TreeNodeIterator) {
-            if tni == nil {
-                return nil, nil
-            }
-            tn, next = tni()
-            for next == nil && i < len(tnis) {
-                tni = make_tni(i+1)
-                tn, next = tni()
-            }
+        var next TreeNodeIterator = tnis[i]
+        tni_iterator = func() (TreeNode, TreeNodeIterator) {
+            var tn TreeNode
+            tn, next = next()
             if next == nil {
-                return nil, nil
+                tni := make_tni(i+1)
+                if tni == nil {
+                    return nil, nil
+                } else {
+                    return tni()
+                }
             }
-            return tn, next
+            return tn, tni_iterator
         }
+        return tni_iterator
     }
     return make_tni(0)
 }

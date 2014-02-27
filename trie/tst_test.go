@@ -116,7 +116,7 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
             t.Error(string(k.(types.ByteSlice)), "!=", string(items[i]))
         }
         i++
-        for items[i].Equals(items[i-1]) {
+        for i < len(items) && items[i].Equals(items[i-1]) {
             i++
         }
     }
