@@ -91,8 +91,192 @@ func Test_balance_internal_nodes(t *testing.T) {
     t.Log(b)
 }
 
+func Test_put_no_root_split(t *testing.T) {
+    a := NewLeaf(2)
+    if err := a.put_kv(types.Int(1), 1); err != nil { t.Error(err) }
+    p, err := a.put(types.Int(1), 2)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if !p.Has(types.Int(1)) {
+            t.Error("p didn't have the right keys", p)
+        }
+    }
+    p, err = a.put(types.Int(1), 3)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if !p.Has(types.Int(1)) {
+            t.Error("p didn't have the right keys", p)
+        }
+        if p.next == nil {
+            t.Error("p.next should not be nil")
+        }
+        t.Log(p)
+        t.Log(p.next)
+    }
+}
+
+func Test_put_root_split(t *testing.T) {
+    a := NewLeaf(2)
+    p, err := a.put(types.Int(1), 1)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if !p.Has(types.Int(1)) {
+            t.Error("p didn't have the right keys", p)
+        }
+    }
+    p, err = a.put(types.Int(3), 3)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if !p.Has(types.Int(1)) || !p.Has(types.Int(3)) {
+            t.Error("p didn't have the right keys", p)
+        }
+    }
+    p, err = a.put(types.Int(2), 2)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p == a {
+            t.Errorf("p == a")
+        }
+        if !p.Has(types.Int(1)) || !p.Has(types.Int(3)) {
+            t.Error("p didn't have the right keys", p)
+        }
+        if len(p.pointers) != 2 {
+            t.Error("p didn't have right number of pointers", p)
+        }
+        if !p.pointers[0].Has(types.Int(1)) || !p.pointers[0].Has(types.Int(2)) {
+            t.Error("p.pointers[0] didn't have the right keys", p.pointers[0])
+        }
+        if !p.pointers[1].Has(types.Int(3)) {
+            t.Error("p.pointers[1] didn't have the right keys", p.pointers[1])
+        }
+        t.Log(p)
+        t.Log(p.pointers[0])
+        t.Log(p.pointers[1])
+    }
+}
+
 func Test_internal_insert_no_split(t *testing.T) {
-    t.Fatal("not tested and split not written ")
+    a := NewInternal(3)
+    leaf := NewLeaf(1)
+    if err := leaf.put_kv(types.Int(1), 1); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(1), leaf); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(5), nil); err != nil { t.Error(err) }
+    p, q, err := a.internal_insert(types.Int(2), nil)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if q != nil {
+            t.Errorf("q != nil")
+        }
+        if !p.Has(types.Int(1)) || !p.Has(types.Int(2)) || !p.Has(types.Int(5)) {
+            t.Error("p didn't have the right keys", p)
+        }
+    }
+}
+
+func Test_internal_insert_split_less(t *testing.T) {
+    a := NewInternal(3)
+    leaf := NewLeaf(1)
+    if err := leaf.put_kv(types.Int(1), 1); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(1), leaf); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(3), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(5), nil); err != nil { t.Error(err) }
+    p, q, err := a.internal_insert(types.Int(2), nil)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if q == nil {
+            t.Errorf("q == nil")
+        }
+        if !p.Has(types.Int(1)) || !p.Has(types.Int(2)) {
+            t.Error("p didn't have the right keys", p)
+        }
+        if !q.Has(types.Int(3)) || !q.Has(types.Int(5)) {
+            t.Error("q didn't have the right keys", q)
+        }
+    }
+}
+
+func Test_internal_split_less(t *testing.T) {
+    a := NewInternal(3)
+    if err := a.put_kp(types.Int(1), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(3), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(5), nil); err != nil { t.Error(err) }
+    p, q, err := a.internal_split(types.Int(2), nil)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if q == nil {
+            t.Errorf("q == nil")
+        }
+        if !p.Has(types.Int(1)) || !p.Has(types.Int(2)) {
+            t.Error("p didn't have the right keys", p)
+        }
+        if !q.Has(types.Int(3)) || !q.Has(types.Int(5)) {
+            t.Error("q didn't have the right keys", q)
+        }
+    }
+}
+
+func Test_internal_split_equal(t *testing.T) {
+    a := NewInternal(3)
+    if err := a.put_kp(types.Int(1), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(3), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(5), nil); err != nil { t.Error(err) }
+    p, q, err := a.internal_split(types.Int(3), nil)
+    if err == nil {
+        t.Error("split succeeded should have failed", p, q)
+    }
+}
+
+func Test_internal_split_greater(t *testing.T) {
+    a := NewInternal(3)
+    if err := a.put_kp(types.Int(1), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(3), nil); err != nil { t.Error(err) }
+    if err := a.put_kp(types.Int(5), nil); err != nil { t.Error(err) }
+    p, q, err := a.internal_split(types.Int(4), nil)
+    if err != nil {
+        t.Error(err)
+    } else {
+        if p != a {
+            t.Errorf("p != a")
+        }
+        if q == nil {
+            t.Errorf("q == nil")
+        }
+        if !p.Has(types.Int(1)) {
+            t.Error("p didn't have the right keys", p)
+        }
+        if !q.Has(types.Int(3)) || !q.Has(types.Int(4)) || !q.Has(types.Int(5)) {
+            t.Error("q didn't have the right keys", q)
+        }
+    }
 }
 
 func Test_leaf_insert_no_split(t *testing.T) {

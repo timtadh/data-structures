@@ -171,8 +171,32 @@ func (self *BpNode) internal_insert(key types.Sortable, value interface{}) (a, b
     return self, nil, nil
 }
 
-func (self *BpNode) internal_split(key types.Sortable, ptr interface{}) (a, b *BpNode, err error) {
-    panic("unimplemented")
+/* On split
+ * - first assert that the key to be inserted is not already in the block.
+ * - Make a new block
+ * - balance the two blocks.
+ * - insert the new key/pointer combo into the correct block
+ */
+func (self *BpNode) internal_split(key types.Sortable, ptr *BpNode) (a, b *BpNode, err error) {
+    if !self.Internal() {
+        return nil, nil, errors.BpTreeError("Expected a internal node")
+    }
+    if self.Has(key) {
+        return nil, nil, errors.BpTreeError("Tried to split an internal block on duplicate key")
+    }
+    a = self
+    b = NewInternal(self.Size())
+    balance_nodes(a, b)
+    if key.Less(b.keys[0]) {
+        if err := a.put_kp(key, ptr); err != nil {
+            return nil, nil, err
+        }
+    } else {
+        if err := b.put_kp(key, ptr); err != nil {
+            return nil, nil, err
+        }
+    }
+    return a, b, nil
 }
 
 /* if the leaf is full then it will defer to a leaf_split
@@ -261,6 +285,9 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
                 return nil, nil, err
             }
             insert_linked_list_node(b, e, e.next)
+            if e.keys[0].Equals(key) {
+                return a, nil, nil
+            }
             return a, b, nil
         }
     }
