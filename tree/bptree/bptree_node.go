@@ -1,4 +1,4 @@
-package tree
+package bptree
 
 import (
     "github.com/timtadh/data-structures/types"
@@ -54,10 +54,9 @@ func (self *BpNode) Internal() bool {
     return cap(self.pointers) > 0
 }
 
-func (self *BpNode) Size() int {
+func (self *BpNode) NodeSize() int {
     return cap(self.keys)
 }
-
 
 func (self *BpNode) Height() int {
     if !self.Internal() {
@@ -68,12 +67,7 @@ func (self *BpNode) Height() int {
     return self.pointers[0].Height() + 1
 }
 
-func (self *BpNode) Has(key types.Sortable) bool {
-    _, has := self.find(key)
-    return has
-}
-
-func (self *BpNode) Count(key types.Sortable) int {
+func (self *BpNode) count(key types.Sortable) int {
     i, _ := self.find(key)
     count := 0
     for ; i < len(self.keys); i++ {
@@ -86,28 +80,99 @@ func (self *BpNode) Count(key types.Sortable) int {
     return count
 }
 
-func (self *BpNode) setNext(next *BpNode) {
-    if self.Internal() {
-        panic(errors.BpTreeError("Expected a leaf node"))
-    }
-    if next.Internal() {
-        panic(errors.BpTreeError("Expected a leaf node"))
-    }
-    self.next = next
-    next.prev = self
+func (self *BpNode) has(key types.Sortable) bool {
+    _, has := self.find(key)
+    return has
 }
 
-func (self *BpNode) setPrev(prev *BpNode) {
+func (self *BpNode) left_most_leaf() *BpNode {
     if self.Internal() {
-        panic(errors.BpTreeError("Expected a leaf node"))
+        return self.pointers[0].left_most_leaf()
     }
-    if prev.Internal() {
-        panic(errors.BpTreeError("Expected a leaf node"))
-    }
-    self.prev = prev
-    prev.next = self
+    return self
 }
 
+/* returns the index and leaf-block of the first key greater than or equal to
+ * the search key. (unless the search key is greater than all the keys in the
+ * tree, in that case it will be the last key in the tree)
+ */
+func (self *BpNode) get_start(key types.Sortable) (i int, leaf *BpNode) {
+    if self.Internal() {
+        return self.internal_get_start(key)
+    } else {
+        return self.leaf_get_start(key)
+    }
+}
+
+func next_location(i int, leaf *BpNode) (int, *BpNode, bool) {
+    j := i + 1
+    for j >= len(leaf.keys) && leaf.next != nil {
+        j = 0
+        leaf = leaf.next
+    }
+    if j >= len(leaf.keys) {
+        return -1, nil, true
+    }
+    return j, leaf, false
+}
+
+func prev_location(i int, leaf *BpNode) (int, *BpNode, bool) {
+    j := i - 1
+    for j < 0 && leaf.prev != nil {
+        leaf = leaf.prev
+        j = len(leaf.keys) - 1
+    }
+    if j < 0 {
+        return -1, nil, true
+    }
+    return j, leaf, false
+}
+
+/* returns the index and leaf-block of the last key equal to the search key or
+ * the first key greater than the search key. (unless the search key is greater
+ * than all the keys in the tree, in that case it will be the last key in the
+ * tree)
+ */
+func (self *BpNode) get_end(key types.Sortable) (i int, leaf *BpNode) {
+    end := false
+    i, leaf = self.get_start(key)
+    pi, pleaf := i, leaf
+    for !end && leaf.keys[i].Equals(key) {
+        pi, pleaf = i, leaf
+        i, leaf, end = next_location(i, leaf)
+    }
+    return pi, pleaf
+}
+
+func (self *BpNode) internal_get_start(key types.Sortable) (i int, leaf *BpNode) {
+    if !self.Internal() {
+        panic(errors.BpTreeError("Expected a internal node"))
+    }
+    i, has := self.find(key)
+    if !has && i > 0 {
+        // if it doesn't have it and the index > 0 then we have the next block
+        // so we have to subtract one from the index.
+        i--
+    }
+    child := self.pointers[i]
+    return child.get_start(key)
+}
+
+func (self *BpNode) leaf_get_start(key types.Sortable) (i int, leaf *BpNode) {
+    i, has := self.find(key)
+    if i >= len(self.keys) {
+        i = len(self.keys)-1
+    }
+    if !has && self.keys[i].Less(key) && self.next != nil {
+        return self.next.leaf_get_start(key)
+    }
+    return i, self
+}
+
+
+/* This puts the k/v pair into the B+Tree rooted at this node and returns the
+ * (possibly) new root of the tree.
+ */
 func (self *BpNode) put(key types.Sortable, value interface{}) (root *BpNode, err error) {
     a, b, err := self.insert(key, value)
     if err != nil {
@@ -116,7 +181,7 @@ func (self *BpNode) put(key types.Sortable, value interface{}) (root *BpNode, er
         return a, nil
     }
     // else we have root split
-    root = NewInternal(self.Size())
+    root = NewInternal(self.NodeSize())
     root.put_kp(a.keys[0], a)
     root.put_kp(b.keys[0], b)
     return root, nil
@@ -162,7 +227,7 @@ func (self *BpNode) internal_insert(key types.Sortable, value interface{}) (a, b
         if self.Full() {
             return self.internal_split(q.keys[0], q)
         } else {
-            if err := self.put_kp(key, q); err != nil {
+            if err := self.put_kp(q.keys[0], q); err != nil {
                 return nil, nil, err
             }
             return self, nil, nil
@@ -181,11 +246,11 @@ func (self *BpNode) internal_split(key types.Sortable, ptr *BpNode) (a, b *BpNod
     if !self.Internal() {
         return nil, nil, errors.BpTreeError("Expected a internal node")
     }
-    if self.Has(key) {
+    if self.has(key) {
         return nil, nil, errors.BpTreeError("Tried to split an internal block on duplicate key")
     }
     a = self
-    b = NewInternal(self.Size())
+    b = NewInternal(self.NodeSize())
     balance_nodes(a, b)
     if key.Less(b.keys[0]) {
         if err := a.put_kp(key, ptr); err != nil {
@@ -232,7 +297,7 @@ func (self *BpNode) leaf_split(key types.Sortable, value interface{}) (a, b *BpN
         return self.pure_leaf_split(key, value)
     }
     a = self
-    b = NewLeaf(self.Size())
+    b = NewLeaf(self.NodeSize())
     insert_linked_list_node(b, a, a.next)
     balance_nodes(a, b)
     if key.Less(b.keys[0]) {
@@ -264,7 +329,7 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
         return nil, nil, errors.BpTreeError("Expected a pure leaf node")
     }
     if key.Less(self.keys[0]) {
-        a = NewLeaf(self.Size())
+        a = NewLeaf(self.NodeSize())
         b = self
         if err := a.put_kv(key, value); err != nil {
             return nil, nil, err
@@ -280,7 +345,7 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
             }
             return a, nil, nil
         } else {
-            b = NewLeaf(self.Size())
+            b = NewLeaf(self.NodeSize())
             if err := b.put_kv(key, value); err != nil {
                 return nil, nil, err
             }
@@ -477,12 +542,15 @@ func balance_nodes(a, b *BpNode) {
         panic(errors.BpTreeError("cap(a.pointers) != cap(b.pointers)"))
     }
     m := len(a.keys)/2
-    var lim int
-    if len(a.keys) % 2 == 0 {
-        lim = m
-    } else {
-        lim = m + 1
+    for m < len(a.keys) && a.keys[m-1].Equals(a.keys[m]) {
+        m++
     }
+    if m == len(a.keys) {
+        for m > 0 && a.keys[m-1].Equals(a.keys[m]) {
+            m--
+        }
+    }
+    var lim int = len(a.keys) - m
     b.keys = b.keys[:lim]
     if cap(a.values) > 0 {
         if cap(a.values) != cap(a.keys) {

@@ -14,7 +14,7 @@ import (
     "file-structures/linhash"
     "file-structures/linhash/bucket"
     . "github.com/timtadh/data-structures/types"
-    "github.com/timtadh/data-structures/tree"
+    "github.com/timtadh/data-structures/tree/avl"
 )
 
 
@@ -188,8 +188,8 @@ func TestIterate(t *testing.T) {
     }
     test(NewHashTable(64))
     test(NewLinearHash())
-    test(tree.NewAvlTree())
-    test(tree.NewImmutableAvlTree())
+    test(avl.NewAvlTree())
+    test(avl.NewImmutableAvlTree())
 }
 
 func BenchmarkGoMap(b *testing.B) {
