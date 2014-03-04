@@ -2,7 +2,7 @@ package hashtable
 
 import (
     . "github.com/timtadh/data-structures/types"
-    "github.com/timtadh/data-structures/tree"
+    "github.com/timtadh/data-structures/tree/avl"
 )
 
 const (
@@ -19,7 +19,7 @@ type bst struct {
 }
 
 type LinearHash struct {
-    table []*tree.AvlNode
+    table []*avl.AvlNode
     n uint
     r uint
     i uint
@@ -29,7 +29,7 @@ func NewLinearHash() *LinearHash {
     N := uint(32)
     I := uint(5)
     return &LinearHash{
-        table: make([]*tree.AvlNode, N),
+        table: make([]*avl.AvlNode, N),
         n: N,
         r: 0,
         i: I,
@@ -85,7 +85,7 @@ func (self *LinearHash) Remove(key Hashable) (value interface{}, err error) {
 func (self *LinearHash) split() (err error) {
     bkt_idx := self.n % (1 << (self.i - 1))
     old_bkt := self.table[bkt_idx]
-    var bkt_a, bkt_b *tree.AvlNode
+    var bkt_a, bkt_b *avl.AvlNode
     self.n += 1
     if self.n > (1 << self.i) {
         self.i += 1

@@ -34,7 +34,7 @@ func randslice(length int) []byte {
     if urandom, err := os.Open("/dev/urandom"); err != nil {
         panic(err)
     } else {
-        slice := make(bs.ByteSlice, length)
+        slice := make([]byte, length)
         if _, err := urandom.Read(slice); err != nil {
             panic(err)
         }

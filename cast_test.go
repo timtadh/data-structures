@@ -3,18 +3,19 @@ package data_structures
 import "testing"
 import (
     "github.com/timtadh/data-structures/types"
-    "github.com/timtadh/data-structures/tree"
+    "github.com/timtadh/data-structures/tree/avl"
+    "github.com/timtadh/data-structures/tree/bptree"
     "github.com/timtadh/data-structures/trie"
     "github.com/timtadh/data-structures/hashtable"
 )
 
 func TestAvlTreeCast(t *testing.T) {
-    tree := tree.NewAvlTree()
+    tree := avl.NewAvlTree()
     _ = types.TreeMap(tree)
 }
 
 func TestImmutableAvlTreeCast(t *testing.T) {
-    tree := tree.NewImmutableAvlTree()
+    tree := avl.NewImmutableAvlTree()
     _ = types.TreeMap(tree)
 }
 
@@ -35,7 +36,14 @@ func TestLinearHashtableCast(t *testing.T) {
 }
 
 func TestTSTCast(t *testing.T) {
-    hash := new(trie.TST)
-    _ = types.MapIterable(hash)
+    tst := new(trie.TST)
+    _ = types.MapIterable(tst)
+}
+
+func TestBpTreeCast(t *testing.T) {
+    bpt := bptree.NewBpTree(17)
+    _ = types.MapIterable(bpt)
+    _ = types.MultiMapOperable(bpt)
+    _ = types.MultiMap(bpt)
 }
 

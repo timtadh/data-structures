@@ -53,9 +53,26 @@ type MapOperable interface {
     Remove(key Hashable) (value interface{}, err error)
 }
 
+type WhereFunc func(value interface{}) bool
+
+type MultiMapOperable interface {
+    Sized
+    Has(key Hashable) bool
+    Count(key Hashable) int
+    Add(key Hashable, value interface{}) (err error)
+    Replace(key Hashable, where WhereFunc, value interface{}) (err error)
+    Find(key Hashable) KVIterator
+    RemoveWhere(key Hashable, where WhereFunc) (err error)
+}
+
 type Map interface {
     MapIterable
     MapOperable
+}
+
+type MultiMap interface {
+    MapIterable
+    MultiMapOperable
 }
 
 type Tree interface {
