@@ -43,10 +43,17 @@ immutability. However, there is a performance hit:
 
 A [ternary search trie](
 http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html)
-is a data symbol table specialized to byte strings. It can be used to build a
+is a symbol table specialized to byte strings. It can be used to build a
 suffix tree for full text string indexing. However, even without a suffix tree
 it is still a great structure for flexible prefix searches.
 
+### B+Tree (with and without support for duplicate keys)
+
+A
+[B+Tree](http://hackthology.com/lessons-learned-while-implementing-a-btree.html)
+is a general symbol table usually used for database indices. This implementation
+is not currently thread safe. It uses the structure detailed in the link and was
+ported from my file-structures repository.
 
 ## Hash Tables
 
@@ -73,14 +80,15 @@ Benchmarks Put + Remove
 
     $ go test -v -bench '.*' \
     >   github.com/timtadh/data-structures/hashtable
-    >   github.com/timtadh/data-structures/tree
+    >   github.com/timtadh/data-structures/tree/...
     >   github.com/timtadh/data-structures/trie
 
     BenchmarkGoMap             50000             30051 ns/op
     BenchmarkMLHash            20000             78840 ns/op
     BenchmarkHash              20000             81012 ns/op
     BenchmarkTST               10000            149985 ns/op
-    BenchmarkAvlTree           10000            176373 ns/op
+    BenchmarkBpTree            10000            185134 ns/op
+    BenchmarkAvlTree           10000            193069 ns/op
     BenchmarkImmutableAvlTree   5000            367602 ns/op
     BenchmarkLHash              1000           2743693 ns/op
 
@@ -90,6 +98,7 @@ Benchmarks Put
     BenchmarkMLHash            50000             52104 ns/op
     BenchmarkHash              50000             53426 ns/op
     BenchmarkTST               50000             69852 ns/op
+    BenchmarkBpTree            20000             76124 ns/op
     BenchmarkAvlTree           10000            142104 ns/op
     BenchmarkImmutableAvlTree  10000            302196 ns/op
     BenchmarkLHash              1000           1739710 ns/op

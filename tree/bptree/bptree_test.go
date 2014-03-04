@@ -95,9 +95,9 @@ func BenchmarkBpTree(b *testing.B) {
         for _, r := range recs {
             t.Add(r.key, r.value)
         }
-        // for _, r := range recs {
-            // t.RemoveWhere(r.key, func(value interface{}) bool { return true })
-        // }
+        for _, r := range recs {
+            t.RemoveWhere(r.key, func(value interface{}) bool { return true })
+        }
     }
 }
 
