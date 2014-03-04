@@ -11,6 +11,7 @@ type BpNode struct {
     pointers []*BpNode
     next *BpNode
     prev *BpNode
+    no_dup bool
 }
 
 func NewInternal(size int) *BpNode {
@@ -23,13 +24,14 @@ func NewInternal(size int) *BpNode {
     }
 }
 
-func NewLeaf(size int) *BpNode {
+func NewLeaf(size int, no_dup bool) *BpNode {
     if size < 0 {
         panic(errors.NegativeSize())
     }
     return &BpNode{
         keys: make([]types.Sortable, 0, size),
         values: make([]interface{}, 0, size),
+        no_dup: no_dup,
     }
 }
 
@@ -160,7 +162,7 @@ func (self *BpNode) internal_get_start(key types.Sortable) (i int, leaf *BpNode)
 
 func (self *BpNode) leaf_get_start(key types.Sortable) (i int, leaf *BpNode) {
     i, has := self.find(key)
-    if i >= len(self.keys) {
+    if i >= len(self.keys) && i > 0 {
         i = len(self.keys)-1
     }
     if !has && self.keys[i].Less(key) && self.next != nil {
@@ -273,6 +275,13 @@ func (self *BpNode) leaf_insert(key types.Sortable, value interface{}) (a, b *Bp
     if self.Internal() {
         return nil, nil, errors.BpTreeError("Expected a leaf node")
     }
+    if self.no_dup {
+        i, has := self.find(key)
+        if has {
+            self.values[i] = value
+            return self, nil, nil
+        }
+    }
     if self.Full() {
         return self.leaf_split(key, value)
     } else {
@@ -297,7 +306,7 @@ func (self *BpNode) leaf_split(key types.Sortable, value interface{}) (a, b *BpN
         return self.pure_leaf_split(key, value)
     }
     a = self
-    b = NewLeaf(self.NodeSize())
+    b = NewLeaf(self.NodeSize(), self.no_dup)
     insert_linked_list_node(b, a, a.next)
     balance_nodes(a, b)
     if key.Less(b.keys[0]) {
@@ -329,7 +338,7 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
         return nil, nil, errors.BpTreeError("Expected a pure leaf node")
     }
     if key.Less(self.keys[0]) {
-        a = NewLeaf(self.NodeSize())
+        a = NewLeaf(self.NodeSize(), self.no_dup)
         b = self
         if err := a.put_kv(key, value); err != nil {
             return nil, nil, err
@@ -345,7 +354,7 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
             }
             return a, nil, nil
         } else {
-            b = NewLeaf(self.NodeSize())
+            b = NewLeaf(self.NodeSize(), self.no_dup)
             if err := b.put_kv(key, value); err != nil {
                 return nil, nil, err
             }
@@ -446,26 +455,120 @@ func (self *BpNode) put_pointer_at(i int, pointer *BpNode) error {
     return nil
 }
 
-func (self *BpNode) get_p(key types.Sortable) (ptr *BpNode, err error) {
-    if !self.Internal() {
-        return nil, errors.BpTreeError("Expected a internal node")
+func (self *BpNode) remove(key types.Sortable, where types.WhereFunc) (a *BpNode, err error) {
+    if self.Internal() {
+        return self.internal_remove(key, nil, where)
+    } else {
+        return self.leaf_remove(key, self.keys[len(self.keys)-1], where)
     }
-    i, has := self.find(key)
-    if !has {
-        return nil, errors.BpTreeError("Key was not in node")
-    }
-    return self.pointers[i], nil
 }
 
-func (self *BpNode) get_v(key types.Sortable) (value interface{}, err error) {
+func (self *BpNode) internal_remove(key types.Sortable, sibling *BpNode, where types.WhereFunc) (a *BpNode, err error) {
+    if !self.Internal() {
+        panic(errors.BpTreeError("Expected a internal node"))
+    }
+    i, has := self.find(key)
+    if !has && i > 0 {
+        // if it doesn't have it and the index > 0 then we have the next block
+        // so we have to subtract one from the index.
+        i--
+    }
+    if i+1 < len(self.keys) {
+        sibling = self.pointers[i+1]
+    } else if sibling != nil {
+        sibling = sibling.left_most_leaf()
+    }
+    child := self.pointers[i]
+    if child.Internal() {
+        child, err = child.internal_remove(key, sibling, where)
+    } else {
+        if sibling == nil {
+            child, err = child.leaf_remove(key, nil, where)
+        } else {
+            child, err = child.leaf_remove(key, sibling.keys[0], where)
+        }
+    }
+    if err != nil {
+        return nil, err
+    }
+    if child == nil {
+        if err := self.remove_key_at(i); err != nil {
+            return nil, err
+        }
+        if err := self.remove_ptr_at(i); err != nil {
+            return nil, err
+        }
+    } else {
+        self.keys[i] = child.keys[0]
+        self.pointers[i] = child
+    }
+    if len(self.keys) == 0 {
+        return nil, nil
+    }
+    return self, nil
+}
+
+func (self *BpNode) leaf_remove(key, stop types.Sortable, where types.WhereFunc) (a *BpNode, err error) {
     if self.Internal() {
         return nil, errors.BpTreeError("Expected a leaf node")
     }
-    i, has := self.find(key)
-    if !has {
-        return nil, errors.BpTreeError("Key was not in node")
+    a = self
+    for j, l, next := self.forward(key, key)(); next != nil; j, l, next = next() {
+        if where(l.values[j]) {
+            if err := l.remove_key_at(j); err != nil {
+                return nil, err
+            }
+            if err := l.remove_value_at(j); err != nil {
+                return nil, err
+            }
+        }
+        if len(l.keys) == 0 {
+            remove_linked_list_node(l)
+            if l.next == nil {
+                a = nil
+            } else if stop == nil {
+                a = nil
+            } else if !l.next.keys[0].Equals(stop) {
+                a = l.next
+            } else {
+                a = nil
+            }
+        }
     }
-    return self.values[i], nil
+    return a, nil
+}
+
+func (self *BpNode) remove_key_at(i int) error {
+    if i >= len(self.keys) || i < 0 {
+        return errors.BpTreeError("i, %v, is out of bounds, %v, %v %v.", i, len(self.keys), len(self.values), self)
+    }
+    for j := i; j < len(self.keys)-1; j++ {
+        self.keys[j] = self.keys[j+1]
+    }
+    self.keys = self.keys[:len(self.keys)-1]
+    return nil
+}
+
+func (self *BpNode) remove_value_at(i int) error {
+    if i >= len(self.values) || i < 0 {
+        return errors.BpTreeError("i, %v, is out of bounds, %v.", i, len(self.values))
+    }
+    for j := i; j < len(self.values)-1; j++ {
+        self.values[j] = self.values[j+1]
+    }
+    self.values = self.values[:len(self.values)-1]
+    return nil
+}
+
+func (self *BpNode) remove_ptr_at(i int) error {
+    if i >= len(self.pointers) || i < 0 {
+        return errors.BpTreeError("i, %v, is out of bounds, %v.", i, len(self.pointers))
+    }
+    for j := i; j < len(self.pointers)-1; j++ {
+        self.pointers[j] = self.pointers[j+1]
+    }
+    self.pointers = self.pointers[:len(self.pointers)-1]
+    return nil
 }
 
 func (self *BpNode) find(key types.Sortable) (int, bool) {
@@ -498,6 +601,52 @@ func (self *BpNode) find_end_of_pure_run() *BpNode {
         n = n.next
     }
     return p
+}
+
+func (self *BpNode) all() (li loc_iterator) {
+    j := -1
+    l := self.left_most_leaf()
+    end := false
+    j, l, end = next_location(j, l)
+    li = func() (i int, leaf *BpNode, next loc_iterator) {
+        if end {
+            return -1, nil, nil
+        }
+        i = j
+        leaf = l
+        j, l, end = next_location(j, l)
+        return i, leaf, li
+    }
+    return li
+}
+
+func (self *BpNode) forward(from, to types.Sortable) (li loc_iterator) {
+    j, l := self.get_start(from)
+    end := false
+    j--
+    li = func() (i int, leaf *BpNode, next loc_iterator) {
+        j, l, end = next_location(j, l)
+        if end || to.Less(l.keys[j]) {
+            return -1, nil, nil
+        }
+        return j, l, li
+    }
+    return li
+}
+
+func (self *BpNode) backward(from, to types.Sortable) (li loc_iterator) {
+    j, l := self.get_end(from)
+    end := false
+    li = func() (i int, leaf *BpNode, next loc_iterator) {
+        if end || l.keys[j].Less(to) {
+            return -1, nil, nil
+        }
+        i = j
+        leaf = l
+        j, l, end = prev_location(i, l)
+        return i, leaf, li
+    }
+    return li
 }
 
 func insert_linked_list_node(n, prev, next *BpNode) {

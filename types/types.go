@@ -62,7 +62,7 @@ type MultiMapOperable interface {
     Add(key Hashable, value interface{}) (err error)
     Replace(key Hashable, where WhereFunc, value interface{}) (err error)
     Find(key Hashable) KVIterator
-    RemoveWhere(key Hashable, where WhereFunc) (value interface{}, err error)
+    RemoveWhere(key Hashable, where WhereFunc) (err error)
 }
 
 type Map interface {
