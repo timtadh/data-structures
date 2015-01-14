@@ -695,6 +695,7 @@ func balance_nodes(a, b *BpNode) {
         m++
     }
     if m == len(a.keys) {
+        m--
         for m > 0 && a.keys[m-1].Equals(a.keys[m]) {
             m--
         }
