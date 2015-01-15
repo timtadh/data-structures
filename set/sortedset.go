@@ -134,9 +134,10 @@ func (s *SortedSet) Union(o *SortedSet) (n *SortedSet) {
 // intersect s with o and returns a new Sorted Set
 func (s *SortedSet) Intersect(o *SortedSet) (n *SortedSet) {
 	n = NewSortedSet(cap(s.set))
-	for cs, si := s.Items()(); si != nil; cs, si = si() {
-		if o.Has(cs.(types.Hashable)) {
-			n.set = append(n.set, cs.(types.Hashable))
+	for v, next := s.Items()(); next != nil; v, next = next() {
+		item := v.(types.Hashable)
+		if o.Has(item) {
+			n.set = append(n.set, item)
 		}
 	}
 	return n
@@ -177,9 +178,9 @@ func (s *SortedSet) insert(i int, item types.Hashable) {
 			break
 		}
 		s.set[j] = s.set[j-1]
-		if j == 1 && i == 0 {
-			s.set[i] = item
-		}
+	}
+	if i == 0 {
+		s.set[i] = item
 	}
 }
 
