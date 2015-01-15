@@ -2,48 +2,47 @@ package data_structures
 
 import "testing"
 import (
-    "github.com/timtadh/data-structures/types"
-    "github.com/timtadh/data-structures/tree/avl"
-    "github.com/timtadh/data-structures/tree/bptree"
-    "github.com/timtadh/data-structures/trie"
-    "github.com/timtadh/data-structures/hashtable"
+	"github.com/timtadh/data-structures/hashtable"
+	"github.com/timtadh/data-structures/tree/avl"
+	"github.com/timtadh/data-structures/tree/bptree"
+	"github.com/timtadh/data-structures/trie"
+	"github.com/timtadh/data-structures/types"
 )
 
 func TestAvlTreeCast(t *testing.T) {
-    tree := avl.NewAvlTree()
-    _ = types.TreeMap(tree)
+	tree := avl.NewAvlTree()
+	_ = types.TreeMap(tree)
 }
 
 func TestImmutableAvlTreeCast(t *testing.T) {
-    tree := avl.NewImmutableAvlTree()
-    _ = types.TreeMap(tree)
+	tree := avl.NewImmutableAvlTree()
+	_ = types.TreeMap(tree)
 }
 
 func TestHashtableCast(t *testing.T) {
-    hash := hashtable.NewHashTable(16)
-    _ = types.Sized(hash)
-    _ = types.MapIterable(hash)
-    _ = types.MapOperable(hash)
-    _ = types.Map(hash)
+	hash := hashtable.NewHashTable(16)
+	_ = types.Sized(hash)
+	_ = types.MapIterable(hash)
+	_ = types.MapOperable(hash)
+	_ = types.Map(hash)
 }
 
 func TestLinearHashtableCast(t *testing.T) {
-    hash := hashtable.NewLinearHash()
-    _ = types.Sized(hash)
-    _ = types.MapIterable(hash)
-    _ = types.MapOperable(hash)
-    _ = types.Map(hash)
+	hash := hashtable.NewLinearHash()
+	_ = types.Sized(hash)
+	_ = types.MapIterable(hash)
+	_ = types.MapOperable(hash)
+	_ = types.Map(hash)
 }
 
 func TestTSTCast(t *testing.T) {
-    tst := new(trie.TST)
-    _ = types.MapIterable(tst)
+	tst := new(trie.TST)
+	_ = types.MapIterable(tst)
 }
 
 func TestBpTreeCast(t *testing.T) {
-    bpt := bptree.NewBpTree(17)
-    _ = types.MapIterable(bpt)
-    _ = types.MultiMapOperable(bpt)
-    _ = types.MultiMap(bpt)
+	bpt := bptree.NewBpTree(17)
+	_ = types.MapIterable(bpt)
+	_ = types.MultiMapOperable(bpt)
+	_ = types.MultiMap(bpt)
 }
-
