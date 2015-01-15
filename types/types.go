@@ -75,6 +75,18 @@ type MultiMap interface {
 	MultiMapOperable
 }
 
+type SetOperable interface {
+	Sized
+	Has(item Hashable) bool
+	Add(item Hashable) (err error)
+	Remove(item Hashable) (err error)
+}
+
+type Set interface {
+	Items() KIterator
+	SetOperable
+}
+
 type Tree interface {
 	Root() TreeNode
 }
