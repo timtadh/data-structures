@@ -67,7 +67,7 @@ func (s *SortedSet) equals(o types.SetOperable) bool {
 	return true
 }
 
-func (s *SortedSet) Less(b types.Equatable) bool {
+func (s *SortedSet) Less(b types.Sortable) bool {
 	if o, ok := b.(types.Set); ok {
 		return s.less(o)
 	} else {

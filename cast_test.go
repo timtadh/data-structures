@@ -3,6 +3,7 @@ package data_structures
 import "testing"
 import (
 	"github.com/timtadh/data-structures/hashtable"
+	"github.com/timtadh/data-structures/set"
 	"github.com/timtadh/data-structures/tree/avl"
 	"github.com/timtadh/data-structures/tree/bptree"
 	"github.com/timtadh/data-structures/trie"
@@ -45,4 +46,10 @@ func TestBpTreeCast(t *testing.T) {
 	_ = types.MapIterable(bpt)
 	_ = types.MultiMapOperable(bpt)
 	_ = types.MultiMap(bpt)
+}
+
+func TestSetCast(t *testing.T) {
+	s := set.NewSortedSet(17)
+	_ = types.Set(s)
+	_ = types.Hashable(s)
 }
