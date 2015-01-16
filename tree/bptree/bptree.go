@@ -107,7 +107,22 @@ func (self *BpTree) RemoveWhere(key types.Hashable, where types.WhereFunc) (err 
 }
 
 func (self *BpTree) Keys() (ki types.KIterator) {
-	return types.MakeKeysIterator(self)
+	li := self.root.all()
+	var prev types.Equatable
+	ki = func() (key types.Equatable, next types.KIterator) {
+		var i int
+		var leaf *BpNode
+		i, leaf, li = li()
+		if li == nil {
+			return nil, nil
+		}
+		if leaf.keys[i].Equals(prev) {
+			return ki()
+		}
+		prev = leaf.keys[i]
+		return leaf.keys[i], ki
+	}
+	return ki
 }
 
 func (self *BpTree) Values() (vi types.Iterator) {
