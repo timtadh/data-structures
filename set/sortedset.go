@@ -1,9 +1,9 @@
 package set
 
 import (
+	"encoding/binary"
 	"fmt"
 	"hash/fnv"
-	"encoding/binary"
 )
 
 import (
@@ -171,7 +171,7 @@ func (s *SortedSet) Items() types.KIterator {
 	mk_iterator = func(i int) types.KIterator {
 		return func() (item types.Equatable, next types.KIterator) {
 			if i < len(s.set) {
-				return s.set[i], mk_iterator(i+1)
+				return s.set[i], mk_iterator(i + 1)
 			}
 			return nil, nil
 		}
@@ -197,7 +197,7 @@ func (s *SortedSet) insert(i int, item types.Hashable) {
 }
 
 func (s *SortedSet) remove(i int) {
-	for j := i; j + 1 < len(s.set); j++ {
+	for j := i; j+1 < len(s.set); j++ {
 		s.set[j] = s.set[j+1]
 	}
 	s.set = s.set[:len(s.set)-1]
@@ -207,15 +207,15 @@ func (s *SortedSet) remove(i int) {
 func (s *SortedSet) expand() {
 	set := s.set
 	if cap(set) < 100 {
-		s.set = make([]types.Hashable, len(set), cap(set) * 2)
+		s.set = make([]types.Hashable, len(set), cap(set)*2)
 	} else {
-		s.set = make([]types.Hashable, len(set), cap(set) + 100)
+		s.set = make([]types.Hashable, len(set), cap(set)+100)
 	}
 	copy(s.set, set)
 }
 
 func (s *SortedSet) shrink() {
-	if (len(s.set)-1) * 2 >= cap(s.set) {
+	if (len(s.set)-1)*2 >= cap(s.set) {
 		return
 	}
 	set := s.set
@@ -243,4 +243,3 @@ func (s *SortedSet) find(item types.Hashable) (int, bool) {
 	}
 	return l, false
 }
-
