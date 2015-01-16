@@ -143,12 +143,24 @@ func (s *SortedSet) Intersect(o *SortedSet) (n *SortedSet) {
 	return n
 }
 
+// Are there any overlapping elements?
+func (s *SortedSet) Overlap(o *SortedSet) bool {
+	for v, next := s.Items()(); next != nil; v, next = next() {
+		item := v.(types.Hashable)
+		if o.Has(item) {
+			return true
+		}
+	}
+	return false
+}
+
 // subtract o from s and return new Sorted Set
 func (s *SortedSet) Subtract(o *SortedSet) (n *SortedSet) {
 	n = NewSortedSet(cap(s.set))
-	for cs, si := s.Items()(); si != nil; cs, si = si() {
-		if !o.Has(cs.(types.Hashable)) {
-			n.set = append(n.set, cs.(types.Hashable))
+	for v, next := s.Items()(); next != nil; v, next = next() {
+		item := v.(types.Hashable)
+		if !o.Has(item) {
+			n.set = append(n.set, item)
 		}
 	}
 	return n
