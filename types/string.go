@@ -1,6 +1,9 @@
 package types
 
-import "bytes"
+import (
+	"bytes"
+	"hash/fnv"
+)
 
 type String string
 type ByteSlice []byte
@@ -22,12 +25,9 @@ func (self String) Less(other Sortable) bool {
 }
 
 func (self String) Hash() int {
-	bytes := []byte(self)
-	hash := 0
-	for i, c := range bytes {
-		hash += (i + 1) * int(c)
-	}
-	return hash
+	h := fnv.New32a()
+	h.Write([]byte(string(self)))
+	return int(h.Sum32())
 }
 
 func (self ByteSlice) Equals(other Equatable) bool {
@@ -47,9 +47,7 @@ func (self ByteSlice) Less(other Sortable) bool {
 }
 
 func (self ByteSlice) Hash() int {
-	hash := 0
-	for i, c := range self {
-		hash += (i + 1) * int(c)
-	}
-	return hash
+	h := fnv.New32a()
+	h.Write([]byte(self))
+	return int(h.Sum32())
 }

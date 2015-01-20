@@ -145,10 +145,17 @@ func (s *SortedSet) Intersect(o *SortedSet) (n *SortedSet) {
 
 // Are there any overlapping elements?
 func (s *SortedSet) Overlap(o *SortedSet) bool {
-	for v, next := s.Items()(); next != nil; v, next = next() {
-		item := v.(types.Hashable)
-		if o.Has(item) {
+	cs, si := s.Items()()
+	co, oi := o.Items()()
+	for si != nil && oi != nil {
+		s := cs.(types.Hashable)
+		o := co.(types.Hashable)
+		if s.Equals(o) {
 			return true
+		} else if s.Less(o) {
+			cs, si = si()
+		} else {
+			co, oi = oi()
 		}
 	}
 	return false
@@ -166,17 +173,16 @@ func (s *SortedSet) Subtract(o *SortedSet) (n *SortedSet) {
 	return n
 }
 
-func (s *SortedSet) Items() types.KIterator {
-	var mk_iterator func(int) types.KIterator
-	mk_iterator = func(i int) types.KIterator {
-		return func() (item types.Equatable, next types.KIterator) {
-			if i < len(s.set) {
-				return s.set[i], mk_iterator(i + 1)
-			}
-			return nil, nil
+func (s *SortedSet) Items() (it types.KIterator) {
+	i := 0
+	return func() (item types.Equatable, next types.KIterator) {
+		if i < len(s.set) {
+			item = s.set[i]
+			i++
+			return item, it
 		}
+		return nil, nil
 	}
-	return mk_iterator(0)
 }
 
 func (s *SortedSet) insert(i int, item types.Hashable) {
