@@ -94,6 +94,13 @@ func (self *BpNode) left_most_leaf() *BpNode {
 	return self
 }
 
+func (self *BpNode) right_most_leaf() *BpNode {
+	if self.Internal() {
+		return self.pointers[len(self.pointers)-1].right_most_leaf()
+	}
+	return self
+}
+
 /* returns the index and leaf-block of the first key greater than or equal to
  * the search key. (unless the search key is greater than all the keys in the
  * tree, in that case it will be the last key in the tree)
@@ -614,6 +621,23 @@ func (self *BpNode) all() (li loc_iterator) {
 		i = j
 		leaf = l
 		j, l, end = next_location(j, l)
+		return i, leaf, li
+	}
+	return li
+}
+
+func (self *BpNode) all_backward() (li loc_iterator) {
+	l := self.right_most_leaf()
+	j := len(l.keys)
+	end := false
+	j, l, end = prev_location(j, l)
+	li = func() (i int, leaf *BpNode, next loc_iterator) {
+		if end {
+			return -1, nil, nil
+		}
+		i = j
+		leaf = l
+		j, l, end = prev_location(j, l)
 		return i, leaf, li
 	}
 	return li

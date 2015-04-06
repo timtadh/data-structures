@@ -142,3 +142,17 @@ func (self *BpTree) Iterate() (kvi types.KVIterator) {
 	}
 	return kvi
 }
+
+func (self *BpTree) Backward() (kvi types.KVIterator) {
+	li := self.root.all_backward()
+	kvi = func() (key types.Equatable, value interface{}, next types.KVIterator) {
+		var i int
+		var leaf *BpNode
+		i, leaf, li = li()
+		if li == nil {
+			return nil, nil, nil
+		}
+		return leaf.keys[i], leaf.values[i], kvi
+	}
+	return kvi
+}

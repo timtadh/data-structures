@@ -165,6 +165,16 @@ func TestAddHasCountFindIterateRemove(t *testing.T) {
 			}
 			i++
 		}
+		i = len(recs) - 1
+		for k, v, next := bpt.Backward()(); next != nil; k, v, next = next() {
+			if !recs[i].key.Equals(k) {
+				t.Error("iterate error wrong key")
+			}
+			if !new_recs[i].value.Equals(v.(types.String)) {
+				t.Error("iterate error wrong value")
+			}
+			i--
+		}
 		i = 0
 		for k, next := bpt.Keys()(); next != nil; k, next = next() {
 			if !recs[i].key.Equals(k) {
