@@ -20,6 +20,10 @@ func NewSortedSet(initialSize int) *SortedSet {
 	}
 }
 
+func (s *SortedSet) Clear() {
+	s.set = s.set[:0]
+}
+
 func (s *SortedSet) Size() int {
 	return len(s.set)
 }
