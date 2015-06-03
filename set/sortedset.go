@@ -33,6 +33,15 @@ func (s *SortedSet) Has(item types.Hashable) (has bool) {
 	return has
 }
 
+func (s *SortedSet) Extend(other *SortedSet) (err error) {
+	for _, item := range other.set {
+		if err := s.Add(item); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (s *SortedSet) Add(item types.Hashable) (err error) {
 	i, has := s.find(item)
 	if !has {
