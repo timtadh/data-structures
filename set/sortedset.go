@@ -1,14 +1,28 @@
 package set
 
 import (
-	"encoding/binary"
 	"fmt"
 	"hash/fnv"
+	"encoding/binary"
+	"math/rand"
+	"os"
 )
 
 import (
 	"github.com/timtadh/data-structures/types"
 )
+
+func init() {
+	if urandom, err := os.Open("/dev/urandom"); err != nil {
+		panic(err)
+	} else {
+		seed := make([]byte, 8)
+		if _, err := urandom.Read(seed); err == nil {
+			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
+		}
+		urandom.Close()
+	}
+}
 
 type SortedSet struct {
 	set []types.Hashable
@@ -57,6 +71,16 @@ func (s *SortedSet) Remove(item types.Hashable) (err error) {
 	}
 	s.remove(i)
 	return nil
+}
+
+func (s *SortedSet) Random() (item types.Hashable, err error) {
+	if len(s.set) <= 0 {
+		return nil, fmt.Errorf("Set is empty")
+	} else if len(s.set) <= 1 {
+		return s.set[0], nil
+	}
+	i := rand.Intn(len(s.set) - 1)
+	return s.set[i], nil
 }
 
 func (s *SortedSet) Equals(b types.Equatable) bool {
