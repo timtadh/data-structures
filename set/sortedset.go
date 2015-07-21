@@ -240,9 +240,9 @@ func (s *SortedSet) insert(i int, item types.Hashable) {
 }
 
 func (s *SortedSet) remove(i int) {
-	for j := i; j+1 < len(s.set); j++ {
-		s.set[j] = s.set[j+1]
-	}
+	dst := s.set[i:len(s.set)-1]
+	src := s.set[i+1:len(s.set)]
+	copy(dst, src)
 	s.set = s.set[:len(s.set)-1]
 	s.shrink()
 }
