@@ -79,7 +79,7 @@ func (s *SortedSet) Random() (item types.Hashable, err error) {
 	} else if len(s.set) <= 1 {
 		return s.set[0], nil
 	}
-	i := rand.Intn(len(s.set) - 1)
+	i := rand.Intn(len(s.set))
 	return s.set[i], nil
 }
 
