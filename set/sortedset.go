@@ -258,7 +258,7 @@ func (s *SortedSet) expand() {
 }
 
 func (s *SortedSet) shrink() {
-	if (len(s.set)-1)*2 >= cap(s.set) {
+	if (len(s.set)-1)*2 >= cap(s.set) || cap(s.set)/2 <= 10 {
 		return
 	}
 	set := s.set
