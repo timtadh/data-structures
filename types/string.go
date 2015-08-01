@@ -5,8 +5,19 @@ import (
 	"hash/fnv"
 )
 
+
 type String string
 type ByteSlice []byte
+
+
+func (self *String) MarshalBinary() ([]byte, error) {
+	return []byte(*self), nil
+}
+
+func (self *String) UnmarshalBinary(data []byte) error {
+	*self = String(data)
+	return nil
+}
 
 func (self String) Equals(other Equatable) bool {
 	if o, ok := other.(String); ok {
@@ -28,6 +39,16 @@ func (self String) Hash() int {
 	h := fnv.New32a()
 	h.Write([]byte(string(self)))
 	return int(h.Sum32())
+}
+
+
+func (self *ByteSlice) MarshalBinary() ([]byte, error) {
+	return []byte(*self), nil
+}
+
+func (self *ByteSlice) UnmarshalBinary(data []byte) error {
+	*self = ByteSlice(data)
+	return nil
 }
 
 func (self ByteSlice) Equals(other Equatable) bool {
