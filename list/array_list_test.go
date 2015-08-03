@@ -80,6 +80,45 @@ func TestAppendGet(x *testing.T) {
 	}
 }
 
+func TestAppendMarshalUnmarshalGet(x *testing.T) {
+	t := (*T)(x)
+	SIZE := 100
+	list := New(10)
+	items := make([]types.Int, 0, SIZE)
+	for i := 0; i < SIZE; i++ {
+		item := types.Int(rand.Intn(1000))
+		items = append(items, item)
+		t.assert_nil(list.Append(item))
+	}
+	for i, item := range items {
+		lg, err := list.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i)", i), lg.Equals(item))
+	}
+	marshal := func(item types.Hashable) ([]byte, error) {
+		i := item.(types.Int)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (types.Hashable, error) {
+		i := types.Int(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	mlist1 := NewMList(list, marshal, unmarshal)
+	bytes, err := mlist1.MarshalBinary()
+	t.assert_nil(err)
+	mlist2 := &MList{MarshalItem: marshal, UnmarshalItem: unmarshal}
+	t.assert_nil(mlist2.UnmarshalBinary(bytes))
+	for i, item := range items {
+		lg, err := mlist2.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i)", i), lg.Equals(item))
+	}
+}
+
 func TestInsertGetSet(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100

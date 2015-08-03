@@ -1,6 +1,7 @@
 package list
 
 import (
+	"bytes"
 	"encoding/binary"
 	"hash/fnv"
 )
@@ -13,6 +14,62 @@ import (
 
 type List struct {
 	list []types.Hashable
+}
+
+type ItemMarshal func(types.Hashable) ([]byte, error)
+type ItemUnmarshal func([]byte) (types.Hashable, error)
+
+type MList struct {
+	List
+	MarshalItem ItemMarshal
+	UnmarshalItem ItemUnmarshal
+}
+
+func NewMList(list *List, marshal ItemMarshal, unmarshal ItemUnmarshal) *MList {
+	return &MList{
+		List: List{
+			list: list.list,
+		},
+		MarshalItem: marshal,
+		UnmarshalItem: unmarshal,
+	}
+}
+
+func (m *MList) MarshalBinary() ([]byte, error) {
+	items := make([][]byte, 0, m.Size())
+	size := make([]byte, 4)
+	binary.LittleEndian.PutUint32(size, uint32(m.Size()))
+	items = append(items, size)
+	for item, next := m.Items()(); next != nil; item, next = next() {
+		b, err := m.MarshalItem(item)
+		if err != nil {
+			return nil, err
+		}
+		size := make([]byte, 4)
+		binary.LittleEndian.PutUint32(size, uint32(len(b)))
+		items = append(items, size, b)
+	}
+	return bytes.Join(items, []byte{}), nil
+}
+
+func (m *MList) UnmarshalBinary(bytes []byte) (error) {
+	size := int(binary.LittleEndian.Uint32(bytes[0:4]))
+	off := 4
+	m.list = make([]types.Hashable, 0, size)
+	for i := 0; i < size; i++ {
+		s := off
+		e := off + 4
+		size := int(binary.LittleEndian.Uint32(bytes[s:e]))
+		s = e
+		e = s + size
+		item, err := m.UnmarshalItem(bytes[s:e])
+		if err != nil {
+			return err
+		}
+		m.Append(item)
+		off = e
+	}
+	return nil
 }
 
 func New(initialSize int) *List {
