@@ -1,32 +1,78 @@
 package errors
 
-import "fmt"
+import (
+	"fmt"
+	"runtime"
+	"strings"
+)
+
+
+type Error struct {
+	Errs  []error
+	Stack []byte
+}
+
+func Errorf(format string, args ...interface{}) error {
+	buf := make([]byte, 50000)
+	n := runtime.Stack(buf, true)
+	trace := make([]byte, n)
+	copy(trace, buf)
+	return &Error{
+		Errs:  []error{fmt.Errorf(format, args...)},
+		Stack: trace,
+	}
+}
+
+func (e *Error) Chain(err error) error {
+	e.Errs = append(e.Errs, err)
+	return e
+}
+
+func (e *Error) Error() string {
+	if e == nil {
+		return "Error <nil>"
+	} else if len(e.Errs) == 0 {
+		return fmt.Sprintf("%v\n%s", e.Errs, string(e.Stack))
+	} else if len(e.Errs) == 1 {
+		return fmt.Sprintf("%v\n%s", e.Errs[0], string(e.Stack))
+	} else {
+		errs := make([]string, 0, len(e.Errs))
+		for _, err := range e.Errs {
+			errs = append(errs, err.Error())
+		}
+		return fmt.Sprintf("{%v}\n%s", strings.Join(errs, ", "), string(e.Stack))
+	}
+}
+
+func (e *Error) String() string {
+	return e.Error()
+}
 
 type ErrorFmter func(a ...interface{}) error
 
 func NotFound(a ...interface{}) error {
 	// return fmt.Errorf("Key '%v' was not found.", a...)
-	return fmt.Errorf("Key was not found.")
+	return Errorf("Key was not found.")
 }
 
 func NotFoundInBucket(a ...interface{}) error {
-	return fmt.Errorf("Key, '%v', was not in bucket when expected.", a...)
+	return Errorf("Key, '%v', was not in bucket when expected.", a...)
 }
 
 func InvalidKey(a ...interface{}) error {
-	return fmt.Errorf("Key, '%v', is invalid, %s", a...)
+	return Errorf("Key, '%v', is invalid, %s", a...)
 }
 
 func TSTError(a ...interface{}) error {
-	return fmt.Errorf("Internal TST error - "+a[0].(string), a[1:]...)
+	return Errorf("Internal TST error - "+a[0].(string), a[1:]...)
 }
 
 func NegativeSize(a ...interface{}) error {
-	return fmt.Errorf("Negative size")
+	return Errorf("Negative size")
 }
 
 func BpTreeError(a ...interface{}) error {
-	return fmt.Errorf("Internal B+ Tree error - "+a[0].(string), a[1:]...)
+	return Errorf("Internal B+ Tree error - "+a[0].(string), a[1:]...)
 }
 
 var Errors map[string]ErrorFmter = map[string]ErrorFmter{
@@ -37,3 +83,4 @@ var Errors map[string]ErrorFmter = map[string]ErrorFmter{
 	"negative-size":       NegativeSize,
 	"bptree-error":        BpTreeError,
 }
+
