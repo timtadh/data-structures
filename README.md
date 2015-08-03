@@ -24,6 +24,20 @@ http://hackthology.com/functional-iteration-in-go.html).
 
 # Current Collection
 
+[godoc](https://godoc.org/github.com/timtadh/data-structures)
+
+## Lists
+
+### Array List
+
+Similar to a Java ArrayList or a Python or Ruby "list".
+
+### Sorted Set
+
+Built on top of `*list.List`, it provides basic set operations. With
+`set.SortedSet` you don't have to write code re-implementing sets with the
+`map[type]` datatype.
+
 ## Trees
 
 ### Classic AVL Tree
