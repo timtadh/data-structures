@@ -3,14 +3,11 @@ package trie
 import "testing"
 
 import (
+	"encoding/binary"
 	"fmt"
 	"math/rand"
 	"os"
 	"sort"
-)
-
-import (
-	bs "file-structures/block/byteslice"
 )
 
 import (
@@ -19,11 +16,11 @@ import (
 
 func init() {
 	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		return
+		panic(err)
 	} else {
 		seed := make([]byte, 8)
 		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(bs.ByteSlice(seed).Int64()))
+			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
 		}
 		urandom.Close()
 	}

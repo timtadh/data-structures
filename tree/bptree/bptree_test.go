@@ -3,23 +3,23 @@ package bptree
 import "testing"
 
 import (
+	"encoding/binary"
 	"math/rand"
 	"os"
 	"sort"
 )
 
 import (
-	bs "file-structures/block/byteslice"
 	"github.com/timtadh/data-structures/types"
 )
 
 func init() {
 	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		return
+		panic(err)
 	} else {
 		seed := make([]byte, 8)
 		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(bs.ByteSlice(seed).Int64()))
+			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
 		}
 		urandom.Close()
 	}
@@ -41,7 +41,7 @@ func randslice(length int) []byte {
 }
 
 func randstr(length int) types.String {
-	return types.String(bs.ByteSlice(randslice(length)).String()[2:])
+	return types.String(randslice(length))
 }
 
 type Strings []types.String

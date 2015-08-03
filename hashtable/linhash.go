@@ -106,7 +106,7 @@ func (self *LinearHash) Iterate() KVIterator {
 	i := 0
 	iter := table[i].Iterate()
 	var kv_iterator KVIterator
-	kv_iterator = func() (key Equatable, val interface{}, next KVIterator) {
+	kv_iterator = func() (key Hashable, val interface{}, next KVIterator) {
 		key, val, iter = iter()
 		for iter == nil {
 			i++

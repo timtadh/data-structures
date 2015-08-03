@@ -174,13 +174,13 @@ func (self *TST) PrefixFind(prefix ByteSlice) KVIterator {
 		}
 	}
 	if root == nil {
-		return func() (Equatable, interface{}, KVIterator) {
+		return func() (Hashable, interface{}, KVIterator) {
 			return nil, nil, nil
 		}
 	}
 	tni := tree.TraverseTreePreOrder(root)
 	var kv_iterator KVIterator
-	kv_iterator = func() (key Equatable, value interface{}, next KVIterator) {
+	kv_iterator = func() (key Hashable, value interface{}, next KVIterator) {
 		var tn TreeNode
 		for {
 			tn, tni = tni()
@@ -205,7 +205,7 @@ func (self *TST) Iterate() KVIterator {
 	}
 	tni := ChainTreeNodeIterators(tnis...)
 	var kv_iterator KVIterator
-	kv_iterator = func() (key Equatable, value interface{}, next KVIterator) {
+	kv_iterator = func() (key Hashable, value interface{}, next KVIterator) {
 		var tn TreeNode
 		for {
 			tn, tni = tni()

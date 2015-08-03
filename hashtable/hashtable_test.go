@@ -3,27 +3,23 @@ package hashtable
 import "testing"
 
 import (
+	"encoding/binary"
 	"math/rand"
 	"os"
 )
 
 import (
-	buf "file-structures/block/buffers"
-	bs "file-structures/block/byteslice"
-	file "file-structures/block/file2"
-	"file-structures/linhash"
-	"file-structures/linhash/bucket"
 	"github.com/timtadh/data-structures/tree/avl"
 	. "github.com/timtadh/data-structures/types"
 )
 
 func init() {
 	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		return
+		panic(err)
 	} else {
 		seed := make([]byte, 8)
 		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(bs.ByteSlice(seed).Int64()))
+			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
 		}
 		urandom.Close()
 	}
@@ -60,8 +56,8 @@ func TestHashable(t *testing.T) {
 	if a.Equals(c) {
 		t.Error("a == c")
 	}
-	if a.Hash() != c.Hash() {
-		t.Error("hash(a) != hash(c)")
+	if a.Hash() == c.Hash() {
+		t.Error("hash(a) == hash(c)")
 	}
 }
 
@@ -74,8 +70,8 @@ func TestPutHasGetRemove(t *testing.T) {
 
 	ranrec := func() *record {
 		return &record{
-			String(bs.ByteSlice(randstr(20)).String()),
-			String(bs.ByteSlice(randstr(20)).String()),
+			String(randstr(20)),
+			String(randstr(20)),
 		}
 	}
 
@@ -277,78 +273,5 @@ func BenchmarkMLHash(b *testing.B) {
 		for _, r := range records {
 			t.Remove(r.key)
 		}
-	}
-}
-
-func mkfile(path string, size uint64, blksize uint32) (*file.BlockFile, *file.LRUCacheFile) {
-	ibf := file.NewBlockFileCustomBlockSize(path, &buf.NoBuffer{}, blksize)
-	if err := ibf.Open(); err != nil {
-		panic(err)
-	}
-	f, err := file.NewLRUCacheFile(ibf, size)
-	if err != nil {
-		panic(err)
-	}
-	return ibf, f
-}
-
-func randstr_safe(length int) string {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
-	} else {
-		slice := make(bs.ByteSlice, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return slice.String()
-	}
-	panic("unreachable")
-}
-
-func BenchmarkLHash(b *testing.B) {
-	b.StopTimer()
-
-	type record struct {
-		key   String
-		value String
-	}
-
-	records := make([]*record, 100)
-
-	ranrec := func() *record {
-		return &record{randstr(20), randstr(20)}
-	}
-
-	for i := range records {
-		records[i] = ranrec()
-	}
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-
-		hash_file, hf := mkfile("/tmp/linhash_"+string(randstr_safe(8))+".cache",
-			1024*1024*512, // 256 MB
-			4096)
-		store, err := bucket.NewBytesStore(20, 20)
-		if err != nil {
-			panic(err)
-		}
-		linhash, err := linhash.NewLinearHash(hf, store)
-		if err != nil {
-			panic(err)
-		}
-
-		for _, r := range records {
-			err := linhash.Put([]byte(r.key), []byte(r.value))
-			if err != nil {
-				panic(err)
-			}
-		}
-		for _, r := range records {
-			linhash.Remove([]byte(r.key))
-		}
-
-		linhash.Close()
-		hash_file.Remove()
 	}
 }

@@ -273,7 +273,7 @@ func (self *AvlNode) Size() int {
 	return 1 + self.left.Size() + self.right.Size()
 }
 
-func (self *AvlNode) Key() types.Equatable {
+func (self *AvlNode) Key() types.Hashable {
 	return self.key
 }
 

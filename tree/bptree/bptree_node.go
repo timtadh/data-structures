@@ -6,7 +6,7 @@ import (
 )
 
 type BpNode struct {
-	keys     []types.Sortable
+	keys     []types.Hashable
 	values   []interface{}
 	pointers []*BpNode
 	next     *BpNode
@@ -19,7 +19,7 @@ func NewInternal(size int) *BpNode {
 		panic(errors.NegativeSize())
 	}
 	return &BpNode{
-		keys:     make([]types.Sortable, 0, size),
+		keys:     make([]types.Hashable, 0, size),
 		pointers: make([]*BpNode, 0, size),
 	}
 }
@@ -29,7 +29,7 @@ func NewLeaf(size int, no_dup bool) *BpNode {
 		panic(errors.NegativeSize())
 	}
 	return &BpNode{
-		keys:   make([]types.Sortable, 0, size),
+		keys:   make([]types.Hashable, 0, size),
 		values: make([]interface{}, 0, size),
 		no_dup: no_dup,
 	}
@@ -69,7 +69,7 @@ func (self *BpNode) Height() int {
 	return self.pointers[0].Height() + 1
 }
 
-func (self *BpNode) count(key types.Sortable) int {
+func (self *BpNode) count(key types.Hashable) int {
 	i, _ := self.find(key)
 	count := 0
 	for ; i < len(self.keys); i++ {
@@ -82,7 +82,7 @@ func (self *BpNode) count(key types.Sortable) int {
 	return count
 }
 
-func (self *BpNode) has(key types.Sortable) bool {
+func (self *BpNode) has(key types.Hashable) bool {
 	_, has := self.find(key)
 	return has
 }
@@ -105,7 +105,7 @@ func (self *BpNode) right_most_leaf() *BpNode {
  * the search key. (unless the search key is greater than all the keys in the
  * tree, in that case it will be the last key in the tree)
  */
-func (self *BpNode) get_start(key types.Sortable) (i int, leaf *BpNode) {
+func (self *BpNode) get_start(key types.Hashable) (i int, leaf *BpNode) {
 	if self.Internal() {
 		return self.internal_get_start(key)
 	} else {
@@ -142,7 +142,7 @@ func prev_location(i int, leaf *BpNode) (int, *BpNode, bool) {
  * than all the keys in the tree, in that case it will be the last key in the
  * tree)
  */
-func (self *BpNode) get_end(key types.Sortable) (i int, leaf *BpNode) {
+func (self *BpNode) get_end(key types.Hashable) (i int, leaf *BpNode) {
 	end := false
 	i, leaf = self.get_start(key)
 	pi, pleaf := i, leaf
@@ -153,7 +153,7 @@ func (self *BpNode) get_end(key types.Sortable) (i int, leaf *BpNode) {
 	return pi, pleaf
 }
 
-func (self *BpNode) internal_get_start(key types.Sortable) (i int, leaf *BpNode) {
+func (self *BpNode) internal_get_start(key types.Hashable) (i int, leaf *BpNode) {
 	if !self.Internal() {
 		panic(errors.BpTreeError("Expected a internal node"))
 	}
@@ -167,7 +167,7 @@ func (self *BpNode) internal_get_start(key types.Sortable) (i int, leaf *BpNode)
 	return child.get_start(key)
 }
 
-func (self *BpNode) leaf_get_start(key types.Sortable) (i int, leaf *BpNode) {
+func (self *BpNode) leaf_get_start(key types.Hashable) (i int, leaf *BpNode) {
 	i, has := self.find(key)
 	if i >= len(self.keys) && i > 0 {
 		i = len(self.keys) - 1
@@ -181,7 +181,7 @@ func (self *BpNode) leaf_get_start(key types.Sortable) (i int, leaf *BpNode) {
 /* This puts the k/v pair into the B+Tree rooted at this node and returns the
  * (possibly) new root of the tree.
  */
-func (self *BpNode) put(key types.Sortable, value interface{}) (root *BpNode, err error) {
+func (self *BpNode) put(key types.Hashable, value interface{}) (root *BpNode, err error) {
 	a, b, err := self.insert(key, value)
 	if err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (self *BpNode) put(key types.Sortable, value interface{}) (root *BpNode, er
 // left is always set. When split is false left is the pointer to block
 //                     When split is true left is the pointer to the new left
 //                     block
-func (self *BpNode) insert(key types.Sortable, value interface{}) (a, b *BpNode, err error) {
+func (self *BpNode) insert(key types.Hashable, value interface{}) (a, b *BpNode, err error) {
 	if self.Internal() {
 		return self.internal_insert(key, value)
 	} else { // leaf node
@@ -213,7 +213,7 @@ func (self *BpNode) insert(key types.Sortable, value interface{}) (a, b *BpNode,
  *    - if the block is full, split this block
  *    - else insert the new key/pointer into this block
  */
-func (self *BpNode) internal_insert(key types.Sortable, value interface{}) (a, b *BpNode, err error) {
+func (self *BpNode) internal_insert(key types.Hashable, value interface{}) (a, b *BpNode, err error) {
 	if !self.Internal() {
 		return nil, nil, errors.BpTreeError("Expected a internal node")
 	}
@@ -250,7 +250,7 @@ func (self *BpNode) internal_insert(key types.Sortable, value interface{}) (a, b
  * - balance the two blocks.
  * - insert the new key/pointer combo into the correct block
  */
-func (self *BpNode) internal_split(key types.Sortable, ptr *BpNode) (a, b *BpNode, err error) {
+func (self *BpNode) internal_split(key types.Hashable, ptr *BpNode) (a, b *BpNode, err error) {
 	if !self.Internal() {
 		return nil, nil, errors.BpTreeError("Expected a internal node")
 	}
@@ -277,7 +277,7 @@ func (self *BpNode) internal_split(key types.Sortable, ptr *BpNode) (a, b *BpNod
  *    a pure block with a matching key)
  * else this leaf will get a new entry.
  */
-func (self *BpNode) leaf_insert(key types.Sortable, value interface{}) (a, b *BpNode, err error) {
+func (self *BpNode) leaf_insert(key types.Hashable, value interface{}) (a, b *BpNode, err error) {
 	if self.Internal() {
 		return nil, nil, errors.BpTreeError("Expected a leaf node")
 	}
@@ -304,7 +304,7 @@ func (self *BpNode) leaf_insert(key types.Sortable, value interface{}) (a, b *Bp
  *    - the two blocks will be balanced with balanced_nodes
  *    - if the key is less than b.keys[0] it will go in a else b
  */
-func (self *BpNode) leaf_split(key types.Sortable, value interface{}) (a, b *BpNode, err error) {
+func (self *BpNode) leaf_split(key types.Hashable, value interface{}) (a, b *BpNode, err error) {
 	if self.Internal() {
 		return nil, nil, errors.BpTreeError("Expected a leaf node")
 	}
@@ -339,7 +339,7 @@ func (self *BpNode) leaf_split(key types.Sortable, value interface{}) (a, b *BpN
  *       and putting the new key there.
  *     - always return the current block as "a" and the new block as "b"
  */
-func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b *BpNode, err error) {
+func (self *BpNode) pure_leaf_split(key types.Hashable, value interface{}) (a, b *BpNode, err error) {
 	if self.Internal() || !self.Pure() {
 		return nil, nil, errors.BpTreeError("Expected a pure leaf node")
 	}
@@ -373,7 +373,7 @@ func (self *BpNode) pure_leaf_split(key types.Sortable, value interface{}) (a, b
 	}
 }
 
-func (self *BpNode) put_kp(key types.Sortable, ptr *BpNode) error {
+func (self *BpNode) put_kp(key types.Hashable, ptr *BpNode) error {
 	if self.Full() {
 		return errors.BpTreeError("Block is full.")
 	}
@@ -397,7 +397,7 @@ func (self *BpNode) put_kp(key types.Sortable, ptr *BpNode) error {
 	return nil
 }
 
-func (self *BpNode) put_kv(key types.Sortable, value interface{}) error {
+func (self *BpNode) put_kv(key types.Hashable, value interface{}) error {
 	if self.Full() {
 		return errors.BpTreeError("Block is full.")
 	}
@@ -419,7 +419,7 @@ func (self *BpNode) put_kv(key types.Sortable, value interface{}) error {
 	return nil
 }
 
-func (self *BpNode) put_key_at(i int, key types.Sortable) error {
+func (self *BpNode) put_key_at(i int, key types.Hashable) error {
 	if self.Full() {
 		return errors.BpTreeError("Block is full.")
 	}
@@ -461,7 +461,7 @@ func (self *BpNode) put_pointer_at(i int, pointer *BpNode) error {
 	return nil
 }
 
-func (self *BpNode) remove(key types.Sortable, where types.WhereFunc) (a *BpNode, err error) {
+func (self *BpNode) remove(key types.Hashable, where types.WhereFunc) (a *BpNode, err error) {
 	if self.Internal() {
 		return self.internal_remove(key, nil, where)
 	} else {
@@ -469,7 +469,7 @@ func (self *BpNode) remove(key types.Sortable, where types.WhereFunc) (a *BpNode
 	}
 }
 
-func (self *BpNode) internal_remove(key types.Sortable, sibling *BpNode, where types.WhereFunc) (a *BpNode, err error) {
+func (self *BpNode) internal_remove(key types.Hashable, sibling *BpNode, where types.WhereFunc) (a *BpNode, err error) {
 	if !self.Internal() {
 		panic(errors.BpTreeError("Expected a internal node"))
 	}
@@ -514,7 +514,7 @@ func (self *BpNode) internal_remove(key types.Sortable, sibling *BpNode, where t
 	return self, nil
 }
 
-func (self *BpNode) leaf_remove(key, stop types.Sortable, where types.WhereFunc) (a *BpNode, err error) {
+func (self *BpNode) leaf_remove(key, stop types.Hashable, where types.WhereFunc) (a *BpNode, err error) {
 	if self.Internal() {
 		return nil, errors.BpTreeError("Expected a leaf node")
 	}
@@ -577,7 +577,7 @@ func (self *BpNode) remove_ptr_at(i int) error {
 	return nil
 }
 
-func (self *BpNode) find(key types.Sortable) (int, bool) {
+func (self *BpNode) find(key types.Hashable) (int, bool) {
 	var l int = 0
 	var r int = len(self.keys) - 1
 	var m int
@@ -643,7 +643,7 @@ func (self *BpNode) all_backward() (li loc_iterator) {
 	return li
 }
 
-func (self *BpNode) forward(from, to types.Sortable) (li loc_iterator) {
+func (self *BpNode) forward(from, to types.Hashable) (li loc_iterator) {
 	j, l := self.get_start(from)
 	end := false
 	j--
@@ -657,7 +657,7 @@ func (self *BpNode) forward(from, to types.Sortable) (li loc_iterator) {
 	return li
 }
 
-func (self *BpNode) backward(from, to types.Sortable) (li loc_iterator) {
+func (self *BpNode) backward(from, to types.Hashable) (li loc_iterator) {
 	j, l := self.get_end(from)
 	end := false
 	li = func() (i int, leaf *BpNode, next loc_iterator) {

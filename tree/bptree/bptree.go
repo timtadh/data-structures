@@ -79,7 +79,7 @@ func (self *BpTree) Range(from, to types.Hashable) (kvi types.KVIterator) {
 	} else {
 		li = self.root.backward(from, to)
 	}
-	kvi = func() (key types.Equatable, value interface{}, next types.KVIterator) {
+	kvi = func() (key types.Hashable, value interface{}, next types.KVIterator) {
 		var i int
 		var leaf *BpNode
 		i, leaf, li = li()
@@ -109,7 +109,7 @@ func (self *BpTree) RemoveWhere(key types.Hashable, where types.WhereFunc) (err 
 func (self *BpTree) Keys() (ki types.KIterator) {
 	li := self.root.all()
 	var prev types.Equatable
-	ki = func() (key types.Equatable, next types.KIterator) {
+	ki = func() (key types.Hashable, next types.KIterator) {
 		var i int
 		var leaf *BpNode
 		i, leaf, li = li()
@@ -131,7 +131,7 @@ func (self *BpTree) Values() (vi types.Iterator) {
 
 func (self *BpTree) Iterate() (kvi types.KVIterator) {
 	li := self.root.all()
-	kvi = func() (key types.Equatable, value interface{}, next types.KVIterator) {
+	kvi = func() (key types.Hashable, value interface{}, next types.KVIterator) {
 		var i int
 		var leaf *BpNode
 		i, leaf, li = li()
@@ -145,7 +145,7 @@ func (self *BpTree) Iterate() (kvi types.KVIterator) {
 
 func (self *BpTree) Backward() (kvi types.KVIterator) {
 	li := self.root.all_backward()
-	kvi = func() (key types.Equatable, value interface{}, next types.KVIterator) {
+	kvi = func() (key types.Hashable, value interface{}, next types.KVIterator) {
 		var i int
 		var leaf *BpNode
 		i, leaf, li = li()

@@ -15,8 +15,8 @@ type Hashable interface {
 }
 
 type Iterator func() (item interface{}, next Iterator)
-type KIterator func() (key Equatable, next KIterator)
-type KVIterator func() (key Equatable, value interface{}, next KVIterator)
+type KIterator func() (key Hashable, next KIterator)
+type KVIterator func() (key Hashable, value interface{}, next KVIterator)
 type Coroutine func(send interface{}) (recv interface{}, next Coroutine)
 
 type Iterable interface {
@@ -82,8 +82,12 @@ type SetOperable interface {
 	Remove(item Hashable) (err error)
 }
 
-type Set interface {
+type ListIterable interface {
 	Items() KIterator
+}
+
+type Set interface {
+	ListIterable
 	SetOperable
 }
 
@@ -97,7 +101,7 @@ type TreeMap interface {
 }
 
 type TreeNode interface {
-	Key() Equatable
+	Key() Hashable
 	Value() interface{}
 	Children() TreeNodeIterator
 	GetChild(int) TreeNode // if your tree can't support this simply panic

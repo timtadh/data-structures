@@ -212,7 +212,7 @@ func (s *SortedSet) Subtract(o *SortedSet) (n *SortedSet) {
 
 func (s *SortedSet) Items() (it types.KIterator) {
 	i := 0
-	return func() (item types.Equatable, next types.KIterator) {
+	return func() (item types.Hashable, next types.KIterator) {
 		if i < len(s.set) {
 			item = s.set[i]
 			i++

@@ -16,7 +16,7 @@ type KV struct {
 	value interface{}
 }
 
-func (self *KV) Key() Equatable {
+func (self *KV) Key() Hashable {
 	return self.key
 }
 

@@ -119,7 +119,7 @@ func (self *Hash) Iterate() KVIterator {
 	i := -1
 	var e *entry
 	var kv_iterator KVIterator
-	kv_iterator = func() (key Equatable, val interface{}, next KVIterator) {
+	kv_iterator = func() (key Hashable, val interface{}, next KVIterator) {
 		for e == nil {
 			i++
 			if i >= len(table) {

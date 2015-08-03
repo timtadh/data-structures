@@ -10,7 +10,7 @@ func IsNil(object interface{}) bool {
 
 func MakeKVIteratorFromTreeNodeIterator(tni TreeNodeIterator) KVIterator {
 	var kv_iterator KVIterator
-	kv_iterator = func() (key Equatable, value interface{}, next KVIterator) {
+	kv_iterator = func() (key Hashable, value interface{}, next KVIterator) {
 		var tn TreeNode
 		tn, tni = tni()
 		if tni == nil {
@@ -49,7 +49,7 @@ func ChainTreeNodeIterators(tnis ...TreeNodeIterator) TreeNodeIterator {
 func MakeKeysIterator(obj KVIterable) KIterator {
 	kv_iterator := obj.Iterate()
 	var k_iterator KIterator
-	k_iterator = func() (key Equatable, next KIterator) {
+	k_iterator = func() (key Hashable, next KIterator) {
 		key, _, kv_iterator = kv_iterator()
 		if kv_iterator == nil {
 			return nil, nil
