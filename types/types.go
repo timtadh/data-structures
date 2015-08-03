@@ -86,9 +86,36 @@ type ListIterable interface {
 	Items() KIterator
 }
 
+type IterableContainer interface {
+	Sized
+	ListIterable
+	Has(item Hashable) bool
+}
+
+type ListOperable interface {
+	Sized
+	Has(item Hashable) bool
+	Get(i int) (item Hashable, err error)
+	Set(i int, item Hashable) (err error)
+	Insert(i int, item Hashable) (err error)
+	Append(item Hashable) (err error)
+	Pop() (item Hashable, err error)
+	Remove(i int) (err error)
+}
+
 type Set interface {
 	ListIterable
 	SetOperable
+}
+
+type List interface {
+	ListIterable
+	ListOperable
+}
+
+type HList interface {
+	Hashable
+	List
 }
 
 type Tree interface {

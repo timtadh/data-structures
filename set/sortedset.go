@@ -1,15 +1,16 @@
 package set
 
 import (
-	"fmt"
-	"hash/fnv"
 	"encoding/binary"
 	"math/rand"
+	"log"
 	"os"
 )
 
 import (
 	"github.com/timtadh/data-structures/types"
+	"github.com/timtadh/data-structures/list"
+	"github.com/timtadh/data-structures/errors"
 )
 
 func init() {
@@ -24,22 +25,29 @@ func init() {
 	}
 }
 
-type SortedSet struct {
-	set []types.Hashable
-}
+type SortedSet list.List
 
 func NewSortedSet(initialSize int) *SortedSet {
-	return &SortedSet{
-		set: make([]types.Hashable, 0, initialSize),
+	return (*SortedSet)(list.New(initialSize))
+}
+
+func FromSlice(items []types.Hashable) *SortedSet {
+	s := NewSortedSet(len(items))
+	for _, item := range items {
+		err := s.Add(item)
+		if err != nil {
+			log.Panic(err)
+		}
 	}
+	return s
 }
 
 func (s *SortedSet) Clear() {
-	s.set = s.set[:0]
+	(*list.List)(s).Clear()
 }
 
 func (s *SortedSet) Size() int {
-	return len(s.set)
+	return (*list.List)(s).Size()
 }
 
 func (s *SortedSet) Has(item types.Hashable) (has bool) {
@@ -47,9 +55,10 @@ func (s *SortedSet) Has(item types.Hashable) (has bool) {
 	return has
 }
 
-func (s *SortedSet) Extend(other *SortedSet) (err error) {
-	for _, item := range other.set {
-		if err := s.Add(item); err != nil {
+func (s *SortedSet) Extend(other types.KIterator) (err error) {
+	for item, next := other(); next != nil; item, next = next() {
+		err := s.Add(item)
+		if err != nil {
 			return err
 		}
 	}
@@ -59,7 +68,7 @@ func (s *SortedSet) Extend(other *SortedSet) (err error) {
 func (s *SortedSet) Add(item types.Hashable) (err error) {
 	i, has := s.find(item)
 	if !has {
-		s.insert(i, item)
+		return (*list.List)(s).Insert(i, item)
 	}
 	return nil
 }
@@ -67,82 +76,33 @@ func (s *SortedSet) Add(item types.Hashable) (err error) {
 func (s *SortedSet) Remove(item types.Hashable) (err error) {
 	i, has := s.find(item)
 	if !has {
-		return fmt.Errorf("item %v not in the table", item)
+		return errors.Errorf("item %v not in the table", item)
 	}
-	s.remove(i)
+	return (*list.List)(s).Remove(i)
 	return nil
 }
 
 func (s *SortedSet) Random() (item types.Hashable, err error) {
-	if len(s.set) <= 0 {
-		return nil, fmt.Errorf("Set is empty")
-	} else if len(s.set) <= 1 {
-		return s.set[0], nil
+	l := (*list.List)(s)
+	if l.Size() <= 0 {
+		return nil, errors.Errorf("Set is empty")
+	} else if l.Size() <= 1 {
+		return l.Get(0)
 	}
-	i := rand.Intn(len(s.set))
-	return s.set[i], nil
+	i := rand.Intn(l.Size())
+	return l.Get(i)
 }
 
 func (s *SortedSet) Equals(b types.Equatable) bool {
-	if o, ok := b.(types.SetOperable); ok {
-		return s.equals(o)
-	} else {
-		return false
-	}
-}
-
-func (s *SortedSet) equals(o types.SetOperable) bool {
-	if s.Size() != o.Size() {
-		return false
-	}
-	for v, next := s.Items()(); next != nil; v, next = next() {
-		item := v.(types.Hashable)
-		if !o.Has(item) {
-			return false
-		}
-	}
-	return true
+	return (*list.List)(s).Equals(b)
 }
 
 func (s *SortedSet) Less(b types.Sortable) bool {
-	if o, ok := b.(types.Set); ok {
-		return s.less(o)
-	} else {
-		return false
-	}
-}
-
-func (s *SortedSet) less(o types.Set) bool {
-	if s.Size() < o.Size() {
-		return true
-	} else if s.Size() > o.Size() {
-		return false
-	}
-	cs, si := s.Items()()
-	co, oi := o.Items()()
-	for si != nil || oi != nil {
-		if cs.(types.Hashable).Less(co.(types.Hashable)) {
-			return true
-		} else if !cs.Equals(co) {
-			return false
-		}
-		cs, si = si()
-		co, oi = oi()
-	}
-	return true
+	return (*list.List)(s).Less(b)
 }
 
 func (s *SortedSet) Hash() int {
-	h := fnv.New32a()
-	if len(s.set) == 0 {
-		return 0
-	}
-	bs := make([]byte, 4)
-	for _, item := range s.set {
-		binary.LittleEndian.PutUint32(bs, uint32(item.Hash()))
-		h.Write(bs)
-	}
-	return int(h.Sum32())
+	return (*list.List)(s).Hash()
 }
 
 // Unions s with o and returns a new Sorted Set
@@ -151,18 +111,22 @@ func (s *SortedSet) Union(o *SortedSet) (n *SortedSet) {
 	cs, si := s.Items()()
 	co, oi := o.Items()()
 	for si != nil || oi != nil {
+		var err error
 		if si == nil {
-			n.set = append(n.set, co.(types.Hashable))
+			err = n.Add(co)
 			co, oi = oi()
 		} else if oi == nil {
-			n.set = append(n.set, cs.(types.Hashable))
+			err = n.Add(cs)
 			cs, si = si()
-		} else if cs.(types.Hashable).Less(co.(types.Hashable)) {
-			n.set = append(n.set, cs.(types.Hashable))
+		} else if cs.Less(co) {
+			err = n.Add(cs)
 			cs, si = si()
 		} else {
-			n.set = append(n.set, co.(types.Hashable))
+			err = n.Add(co)
 			co, oi = oi()
+		}
+		if err != nil {
+			log.Panic(err)
 		}
 	}
 	return n
@@ -170,11 +134,15 @@ func (s *SortedSet) Union(o *SortedSet) (n *SortedSet) {
 
 // intersect s with o and returns a new Sorted Set
 func (s *SortedSet) Intersect(o *SortedSet) (n *SortedSet) {
-	n = NewSortedSet(cap(s.set))
+	n = NewSortedSet(s.Size() + o.Size())
+	l := (*list.List)(n)
 	for v, next := s.Items()(); next != nil; v, next = next() {
 		item := v.(types.Hashable)
 		if o.Has(item) {
-			n.set = append(n.set, item)
+			err := l.Append(item)
+			if err != nil {
+				log.Panic(err)
+			}
 		}
 	}
 	return n
@@ -200,89 +168,52 @@ func (s *SortedSet) Overlap(o *SortedSet) bool {
 
 // subtract o from s and return new Sorted Set
 func (s *SortedSet) Subtract(o *SortedSet) (n *SortedSet) {
-	n = NewSortedSet(cap(s.set))
+	n = NewSortedSet(s.Size() + o.Size())
+	l := (*list.List)(n)
 	for v, next := s.Items()(); next != nil; v, next = next() {
 		item := v.(types.Hashable)
 		if !o.Has(item) {
-			n.set = append(n.set, item)
+			err := l.Append(item)
+			if err != nil {
+				log.Panic(err)
+			}
 		}
 	}
 	return n
 }
 
 func (s *SortedSet) Items() (it types.KIterator) {
-	i := 0
-	return func() (item types.Hashable, next types.KIterator) {
-		if i < len(s.set) {
-			item = s.set[i]
-			i++
-			return item, it
-		}
-		return nil, nil
-	}
-}
-
-func (s *SortedSet) insert(i int, item types.Hashable) {
-	if len(s.set) == cap(s.set) {
-		s.expand()
-	}
-	s.set = s.set[:len(s.set)+1]
-	for j := len(s.set) - 1; j > 0; j-- {
-		if j == i {
-			s.set[i] = item
-			break
-		}
-		s.set[j] = s.set[j-1]
-	}
-	if i == 0 {
-		s.set[i] = item
-	}
-}
-
-func (s *SortedSet) remove(i int) {
-	dst := s.set[i:len(s.set)-1]
-	src := s.set[i+1:len(s.set)]
-	copy(dst, src)
-	s.set = s.set[:len(s.set)-1]
-	s.shrink()
-}
-
-func (s *SortedSet) expand() {
-	set := s.set
-	if cap(set) < 100 {
-		s.set = make([]types.Hashable, len(set), cap(set)*2)
-	} else {
-		s.set = make([]types.Hashable, len(set), cap(set)+100)
-	}
-	copy(s.set, set)
-}
-
-func (s *SortedSet) shrink() {
-	if (len(s.set)-1)*2 >= cap(s.set) || cap(s.set)/2 <= 10 {
-		return
-	}
-	set := s.set
-	s.set = make([]types.Hashable, len(set), cap(set)/2)
-	copy(s.set, set)
+	return (*list.List)(s).Items()
 }
 
 func (s *SortedSet) find(item types.Hashable) (int, bool) {
+	x := (*list.List)(s)
 	var l int = 0
-	var r int = len(s.set) - 1
+	var r int = x.Size() - 1
 	var m int
 	for l <= r {
 		m = ((r - l) >> 1) + l
-		if item.Less(s.set[m]) {
+		im, err := x.Get(m)
+		if err != nil {
+			log.Panic(err)
+		}
+		if item.Less(im) {
 			r = m - 1
-		} else if item.Equals(s.set[m]) {
-			for j := m; j >= 0; j-- {
-				if j == 0 || !item.Equals(s.set[j-1]) {
+		} else if item.Equals(im) {
+			for j := m; j > 0; j-- {
+				ij_1, err := x.Get(j-1)
+				if err != nil {
+					log.Panic(err)
+				}
+				if !item.Equals(ij_1) {
 					return j, true
 				}
 			}
+			return 0, true
 		} else {
 			l = m + 1
 		}
 	}
 	return l, false
 }
+
