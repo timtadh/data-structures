@@ -7,6 +7,7 @@ import (
 
 func newSetBestType(a types.Set, sizeHint int) (types.Set) {
 	switch a.(type) {
+	case *MapSet: return NewMapSet(NewSortedSet(sizeHint))
 	case *SortedSet: return NewSortedSet(sizeHint)
 	default: return NewSortedSet(sizeHint)
 	}

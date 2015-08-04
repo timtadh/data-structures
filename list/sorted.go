@@ -102,6 +102,16 @@ func (s *Sorted) Extend(other types.KIterator) (err error) {
 	return nil
 }
 
+func (s *Sorted) Item(item types.Hashable) (types.Hashable, error) {
+	i, has, err := s.Find(item)
+	if err != nil {
+		return nil, err
+	} else if !has {
+		return nil, errors.Errorf("Item not found %v", item)
+	}
+	return s.Get(i)
+}
+
 func (s *Sorted) Get(i int) (item types.Hashable, err error) {
 	return s.list.Get(i)
 }

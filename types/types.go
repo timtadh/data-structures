@@ -91,6 +91,7 @@ type MultiMap interface {
 type ItemsOperable interface {
 	Sized
 	Has(item Hashable) bool
+	Item(item Hashable) (Hashable, error)
 	Add(item Hashable) (err error)
 	Delete(item Hashable) (err error)
 	Extend(items KIterator) (err error)
