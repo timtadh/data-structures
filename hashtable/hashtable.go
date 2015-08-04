@@ -135,6 +135,10 @@ func (self *Hash) Iterate() KVIterator {
 	return kv_iterator
 }
 
+func (self *Hash) Items() (vi KIterator) {
+	return MakeItemsIterator(self)
+}
+
 func (self *Hash) Keys() KIterator {
 	return MakeKeysIterator(self)
 }

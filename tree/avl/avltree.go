@@ -62,6 +62,10 @@ func (self *AvlTree) Iterate() types.KVIterator {
 	return self.root.Iterate()
 }
 
+func (self *AvlTree) Items() (vi types.KIterator) {
+	return types.MakeItemsIterator(self)
+}
+
 func (self *AvlTree) Values() types.Iterator {
 	return self.root.Values()
 }

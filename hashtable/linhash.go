@@ -120,6 +120,10 @@ func (self *LinearHash) Iterate() KVIterator {
 	return kv_iterator
 }
 
+func (self *LinearHash) Items() (vi KIterator) {
+	return MakeItemsIterator(self)
+}
+
 func (self *LinearHash) Keys() KIterator {
 	return MakeKeysIterator(self)
 }

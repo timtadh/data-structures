@@ -221,6 +221,10 @@ func (self *TST) Iterate() KVIterator {
 	return kv_iterator
 }
 
+func (self *TST) Items() (vi KIterator) {
+	return MakeItemsIterator(self)
+}
+
 func (self *TST) Keys() KIterator {
 	return MakeKeysIterator(self)
 }

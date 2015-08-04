@@ -129,6 +129,10 @@ func (self *BpTree) Values() (vi types.Iterator) {
 	return types.MakeValuesIterator(self)
 }
 
+func (self *BpTree) Items() (vi types.KIterator) {
+	return types.MakeItemsIterator(self)
+}
+
 func (self *BpTree) Iterate() (kvi types.KVIterator) {
 	li := self.root.all()
 	kvi = func() (key types.Hashable, value interface{}, next types.KVIterator) {

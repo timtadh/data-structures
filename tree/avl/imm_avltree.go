@@ -48,6 +48,10 @@ func (self *ImmutableAvlTree) Iterate() types.KVIterator {
 	return self.root.Iterate()
 }
 
+func (self *ImmutableAvlTree) Items() (vi types.KIterator) {
+	return types.MakeItemsIterator(self)
+}
+
 func (self *ImmutableAvlTree) Values() types.Iterator {
 	return self.root.Values()
 }
