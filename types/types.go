@@ -88,11 +88,16 @@ type MultiMap interface {
 	MultiMapOperable
 }
 
-type SetOperable interface {
+type ItemsOperable interface {
 	Sized
 	Has(item Hashable) bool
 	Add(item Hashable) (err error)
 	Remove(item Hashable) (err error)
+}
+
+type OrderedOperable interface {
+	Get(i int) (item Hashable, err error)
+	Find(item Hashable) (idx int, has bool, err error)
 }
 
 type ListIterable interface {
@@ -116,9 +121,14 @@ type ListOperable interface {
 	Remove(i int) (err error)
 }
 
+type OrderedList interface {
+	ListIterable
+	OrderedOperable
+}
+
 type Set interface {
 	ListIterable
-	SetOperable
+	ItemsOperable
 }
 
 type List interface {
