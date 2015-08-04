@@ -9,11 +9,11 @@ directly if you require another licensing option. I am willing to work with you.
 
 To collect many important data structures for usage in go programs. Golang's
 standard library lacks many useful and important structures. This library
-attempts to fill the gap. I have implemented data-structure's as I have need
-them. If there is a missing structure or even just a method open a issue, send a
-pull request, or send an email patch.
+attempts to fill the gap. I have implemented data-structure's as I have needed
+them. If there is a missing structure or even just a missing (or incorrect)
+method open an issue, send a pull request, or send an email patch.
 
-The library also provided generic types to allow the user to swap out various
+The library also provides generic types to allow the user to swap out various
 data structures transparently. The interfaces provide operation for adding,
 removing, retrieving objects from collections as well as iterating over the
 collection using functional iterators.
@@ -22,6 +22,9 @@ Finally, the tree sub-package provides a variety of generic tree traversals. The
 tree traversals and other iterators in the package use a functional iteration
 technique [detailed on my blog](
 http://hackthology.com/functional-iteration-in-go.html).
+
+I hope you find my library useful. If you are using it drop me a line I would
+love to hear about it.
 
 
 # Current Collection
