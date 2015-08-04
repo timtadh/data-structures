@@ -28,24 +28,31 @@ http://hackthology.com/functional-iteration-in-go.html).
 
 ## Lists
 
-### Array List
+### Array List `list.List`
 
-Similar to a Java ArrayList or a Python or Ruby "list".
+Similar to a Java ArrayList or a Python or Ruby "list". There is a version
+(called Sortable) which integrates with the `"sort"` package from the standard
+library.
 
-### Sorted Set
+### Sorted Array List `list.Sorted`
 
-Built on top of `*list.List`, it provides basic set operations. With
+Keeps the ArrayList in sorted order for you.
+
+### Sorted Set `set.SortedSet`
+
+Built on top of `*list.Sorted`, it provides basic set operations. With
 `set.SortedSet` you don't have to write code re-implementing sets with the
-`map[type]` datatype.
+`map[type]` datatype. Supports: intersection, union, set difference and overlap
+tests.
 
 ## Trees
 
-### Classic AVL Tree
+### Classic AVL Tree `tree/avl.AvlTree`
 
 An AVL tree is a height balanced binary search tree. It is commonly taught in
-algorithms courses
+algorithms courses.
 
-### Immutable AVL Tree
+### Immutable AVL Tree `tree/avl.ImmutableAvlTree`
 
 This version of the classic is immutable and should be thread safe due to
 immutability. However, there is a performance hit:
@@ -53,7 +60,7 @@ immutability. However, there is a performance hit:
     BenchmarkAvlTree           10000            166657 ns/op
     BenchmarkImmutableAvlTree   5000            333709 ns/op
 
-### Ternary Search Trie
+### Ternary Search Trie `trie.TST`
 
 A [ternary search trie](
 http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html)
@@ -61,7 +68,7 @@ is a symbol table specialized to byte strings. It can be used to build a
 suffix tree for full text string indexing. However, even without a suffix tree
 it is still a great structure for flexible prefix searches.
 
-### B+Tree (with and without support for duplicate keys)
+### B+Tree (with and without support for duplicate keys) `tree/bptree.BpTree`
 
 A
 [B+Tree](http://hackthology.com/lessons-learned-while-implementing-a-btree.html)
@@ -71,12 +78,12 @@ ported from my file-structures repository.
 
 ## Hash Tables
 
-### Classic Separate Chaining Hash Table
+### Classic Separate Chaining Hash Table `hashtable.Hash`
 
 See `hashtable/hashtable.go`. An implementation of the classic hash table with
 separate chaining to handle collisions.
 
-### Linear Hash Table with AVL Tree Buckets
+### Linear Hash Table with AVL Tree Buckets `hashtable.LinearHash`
 
 See `hashtables/linhash.go`. An implementation of [Linear
 Hashing](http://hackthology.com/linear-hashing.html), a technique usually used
