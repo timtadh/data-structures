@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"hash/fnv"
+	"log"
+	"sort"
 )
 
 import (
@@ -70,6 +72,49 @@ func (m *MList) UnmarshalBinary(bytes []byte) (error) {
 		off = e
 	}
 	return nil
+}
+
+type Sortable struct {
+	List
+}
+
+func NewSortable(list *List) sort.Interface {
+	return &Sortable{*list}
+}
+
+func (s *Sortable) Len() int {
+	return s.Size()
+}
+
+func (s *Sortable) Less(i, j int) bool {
+	a, err := s.Get(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	b, err := s.Get(j)
+	if err != nil {
+		log.Panic(err)
+	}
+	return a.Less(b)
+}
+
+func (s *Sortable) Swap(i, j int) {
+	a, err := s.Get(i)
+	if err != nil {
+		log.Panic(err)
+	}
+	b, err := s.Get(j)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = s.Set(i, b)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = s.Set(j, a)
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func New(initialSize int) *List {
