@@ -106,3 +106,207 @@ func MakeChildrenIterator(node BinaryTreeNode) TreeNodeIterator {
 	}
 	return make_tn_iterator(0)
 }
+
+func MakeMarshals(empty func() MHashable) (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Marshaler)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := empty()
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func Int8Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Int8)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := Int8(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func UInt8Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(UInt8)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := UInt8(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func Int16Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Int16)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := Int16(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func UInt16Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(UInt16)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := UInt16(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func Int32Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Int32)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := Int32(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func UInt32Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(UInt32)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := UInt32(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func Int64Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Int64)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := Int64(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func UInt64Marshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(UInt64)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := UInt64(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func IntMarshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(Int)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := Int(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func UIntMarshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(UInt)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := UInt(0)
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func StringMarshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		i := item.(String)
+		return i.MarshalBinary()
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		i := String("")
+		err := i.UnmarshalBinary(bytes)
+		if err != nil {
+			return nil, err
+		}
+		return i, nil
+	}
+	return marshal, unmarshal
+}
+
+func ByteSliceMarshals() (ItemMarshal, ItemUnmarshal) {
+	marshal := func(item Hashable) ([]byte, error) {
+		return []byte(item.(ByteSlice)), nil
+	}
+	unmarshal := func(bytes []byte) (Hashable, error) {
+		return ByteSlice(bytes), nil
+	}
+	return marshal, unmarshal
+}
+
+

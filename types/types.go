@@ -14,6 +14,19 @@ type Hashable interface {
 	Hash() int
 }
 
+type Marshaler interface {
+	MarshalBinary() (data []byte, err error)
+	UnmarshalBinary(data []byte) error
+}
+
+type MHashable interface {
+	Hashable
+	Marshaler
+}
+
+type ItemMarshal func(Hashable) ([]byte, error)
+type ItemUnmarshal func([]byte) (Hashable, error)
+
 type Iterator func() (item interface{}, next Iterator)
 type KIterator func() (key Hashable, next KIterator)
 type KVIterator func() (key Hashable, value interface{}, next KVIterator)

@@ -12,6 +12,41 @@ import (
 )
 
 
+func TestSortedAddMarshalUnmarshalGet(x *testing.T) {
+	t := (*T)(x)
+	SIZE := 100
+	list := NewSorted(10, false)
+	items := make([]types.Int, 0, SIZE)
+	for i := 0; i < SIZE; i++ {
+		item := types.Int(rand.Intn(10)+1)
+		items = append(items, item)
+		t.assert_nil(list.Add(item))
+	}
+	for _, item := range items {
+		i, has, err := list.Find(item)
+		t.assert("has", has)
+		t.assert_nil(err)
+		lg, err := list.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i), %v, %v", i, item, lg), lg.Equals(item))
+	}
+	marshal, unmarshal := types.IntMarshals()
+	mlist1 := NewMSorted(list, marshal, unmarshal)
+	bytes, err := mlist1.MarshalBinary()
+	t.assert_nil(err)
+	mlist2 := &MSorted{MList: MList{MarshalItem: marshal, UnmarshalItem: unmarshal}, AllowDups: false}
+	t.assert_nil(mlist2.UnmarshalBinary(bytes))
+	list2 := mlist2.Sorted()
+	for _, item := range items {
+		i, has, err := list2.Find(item)
+		t.assert("has", has)
+		t.assert_nil(err)
+		lg, err := list2.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i), %v, %v", i, item, lg), lg.Equals(item))
+	}
+}
+
 func TestSortedAddHasRemove(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
@@ -39,12 +74,17 @@ func TestSortedAddHasRemove(x *testing.T) {
 func TestSortedExtend(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
+	all := NewSorted(10, false)
 	a := NewSorted(10, false)
 	b := NewSorted(10, false)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
 		item := t.randslice(rand.Intn(10)+1)
+		for all.Has(item) {
+			item = t.randslice(rand.Intn(10)+1)
+		}
 		items = append(items, item)
+		t.assert_nil(all.Add(item))
 		if i < SIZE/2 {
 			t.assert_nil(a.Add(item))
 		} else {

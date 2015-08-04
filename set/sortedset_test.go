@@ -10,6 +10,7 @@ import (
 
 import (
 	"github.com/timtadh/data-structures/types"
+	"github.com/timtadh/data-structures/list"
 )
 
 
@@ -35,6 +36,31 @@ func (t *T) assert_nil(errors ...error) {
 	}
 }
 
+
+func TestSortedAddMarshalUnmarshalGet(x *testing.T) {
+	t := (*T)(x)
+	SIZE := 100
+	set := NewSortedSet(10)
+	items := make([]types.Int, 0, SIZE)
+	for i := 0; i < SIZE; i++ {
+		item := types.Int(rand.Intn(10)+1)
+		items = append(items, item)
+		t.assert_nil(set.Add(item))
+	}
+	for i, item := range items {
+		t.assert(fmt.Sprintf("!set.Has(item)", i), set.Has(item))
+	}
+	marshal, unmarshal := types.IntMarshals()
+	mset1 := NewMSortedSet(set, marshal, unmarshal)
+	bytes, err := mset1.MarshalBinary()
+	t.assert_nil(err)
+	mset2 := &MSortedSet{MSorted: list.MSorted{MList: list.MList{MarshalItem: marshal, UnmarshalItem: unmarshal}}}
+	t.assert_nil(mset2.UnmarshalBinary(bytes))
+	set2 := mset2.SortedSet()
+	for i, item := range items {
+		t.assert(fmt.Sprintf("!set.Has(item)", i), set2.Has(item))
+	}
+}
 
 func TestAddHasRemoveRandom(x *testing.T) {
 	t := (*T)(x)

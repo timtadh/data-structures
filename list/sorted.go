@@ -1,6 +1,7 @@
 package list
 
 import (
+	"bytes"
 	"log"
 )
 
@@ -9,6 +10,45 @@ import (
 	"github.com/timtadh/data-structures/errors"
 )
 
+type MSorted struct {
+	MList
+	AllowDups bool
+}
+
+func NewMSorted(s *Sorted, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MSorted {
+	return &MSorted{
+		MList: *NewMList(&s.list, marshal, unmarshal),
+		AllowDups: s.allowDups,
+	}
+}
+
+func (m *MSorted) Sorted() *Sorted {
+	return &Sorted{m.MList.List, m.AllowDups}
+}
+
+func (m *MSorted) MarshalBinary() ([]byte, error) {
+	var allowDups byte
+	if m.AllowDups {
+		allowDups = 1
+	} else {
+		allowDups = 0
+	}
+	b, err := m.MList.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	return bytes.Join([][]byte{[]byte{allowDups}, b}, []byte{}), nil
+}
+
+func (m *MSorted) UnmarshalBinary(bytes []byte) (error) {
+	allowDups := bytes[0]
+	if allowDups == 0 {
+		m.AllowDups = false
+	} else {
+		m.AllowDups = true
+	}
+	return m.MList.UnmarshalBinary(bytes[1:])
+}
 
 type Sorted struct {
 	list List

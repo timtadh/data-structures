@@ -86,7 +86,7 @@ func TestAppendMarshalUnmarshalGet(x *testing.T) {
 	list := New(10)
 	items := make([]types.Int, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := types.Int(rand.Intn(1000))
+		item := types.Int(rand.Intn(10)+1)
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
@@ -95,18 +95,7 @@ func TestAppendMarshalUnmarshalGet(x *testing.T) {
 		t.assert_nil(err)
 		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i)", i), lg.Equals(item))
 	}
-	marshal := func(item types.Hashable) ([]byte, error) {
-		i := item.(types.Int)
-		return i.MarshalBinary()
-	}
-	unmarshal := func(bytes []byte) (types.Hashable, error) {
-		i := types.Int(0)
-		err := i.UnmarshalBinary(bytes)
-		if err != nil {
-			return nil, err
-		}
-		return i, nil
-	}
+	marshal, unmarshal := types.IntMarshals()
 	mlist1 := NewMList(list, marshal, unmarshal)
 	bytes, err := mlist1.MarshalBinary()
 	t.assert_nil(err)

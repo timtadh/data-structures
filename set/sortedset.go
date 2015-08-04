@@ -25,6 +25,20 @@ func init() {
 	}
 }
 
+type MSortedSet struct {
+	list.MSorted
+}
+
+func NewMSortedSet(s *SortedSet, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MSortedSet {
+	return &MSortedSet{
+		MSorted: *list.NewMSorted(&s.Sorted, marshal, unmarshal),
+	}
+}
+
+func (m *MSortedSet) SortedSet() *SortedSet {
+	return &SortedSet{*m.MSorted.Sorted()}
+}
+
 // SortedSet is a list.Sorted and therefore has all of the methods
 // that list.Sorted has. So although they do not show up in the generated
 // docs you can just do this:

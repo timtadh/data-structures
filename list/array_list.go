@@ -18,16 +18,13 @@ type List struct {
 	list []types.Hashable
 }
 
-type ItemMarshal func(types.Hashable) ([]byte, error)
-type ItemUnmarshal func([]byte) (types.Hashable, error)
-
 type MList struct {
 	List
-	MarshalItem ItemMarshal
-	UnmarshalItem ItemUnmarshal
+	MarshalItem types.ItemMarshal
+	UnmarshalItem types.ItemUnmarshal
 }
 
-func NewMList(list *List, marshal ItemMarshal, unmarshal ItemUnmarshal) *MList {
+func NewMList(list *List, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MList {
 	return &MList{
 		List: List{
 			list: list.list,
