@@ -237,7 +237,7 @@ func TestPutHasGetRemove(t *testing.T) {
 	}
 
 	test := func(table *TST) {
-		records := make([]*record, 1000)
+		records := make([]*record, 500)
 		for i := range records {
 			r := ranrec()
 			records[i] = r

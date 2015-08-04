@@ -92,7 +92,7 @@ type ItemsOperable interface {
 	Sized
 	Has(item Hashable) bool
 	Add(item Hashable) (err error)
-	Remove(item Hashable) (err error)
+	Delete(item Hashable) (err error)
 	Extend(items KIterator) (err error)
 }
 

@@ -47,7 +47,7 @@ func TestSortedAddMarshalUnmarshalGet(x *testing.T) {
 	}
 }
 
-func TestSortedAddHasRemove(x *testing.T) {
+func TestSortedAddHasDelete(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	set := NewSorted(10, false)
@@ -64,7 +64,7 @@ func TestSortedAddHasRemove(x *testing.T) {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), set.Has(item))
 	}
 	for _, item := range items {
-		t.assert_nil(set.Remove(item))
+		t.assert_nil(set.Delete(item))
 	}
 	for i, item := range items {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), !set.Has(item))
@@ -93,7 +93,7 @@ func TestSortedExtend(x *testing.T) {
 	}
 	t.assert_nil(a.Extend(b.Items()))
 	for i := SIZE - 1; i >= 0; i-- {
-		err := a.Remove(items[i])
+		err := a.Delete(items[i])
 		t.assert_nil(err)
 		t.assert(fmt.Sprintf("i %v, !a.Has(item)", i), !a.Has(items[i]))
 	}

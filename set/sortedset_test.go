@@ -67,7 +67,7 @@ func TestAddMarshalUnmarshalHas(x *testing.T) {
 	}
 }
 
-func TestAddHasRemoveRandom(x *testing.T) {
+func TestAddHasDeleteRandom(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	set := NewSortedSet(10)
@@ -89,7 +89,7 @@ func TestAddHasRemoveRandom(x *testing.T) {
 		t.assert(fmt.Sprintf("!set.Has(item)", i), set.Has(item))
 	}
 	for _, item := range items {
-		t.assert_nil(set.Remove(item))
+		t.assert_nil(set.Delete(item))
 	}
 	for i, item := range items {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), !set.Has(item))
@@ -102,7 +102,7 @@ func TestAddHasRemoveRandom(x *testing.T) {
 	t.assert(fmt.Sprintf("item == 1"), item.Equals(types.Int(1)))
 }
 
-func TestAddHasRemove(x *testing.T) {
+func TestAddHasDelete(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	set := NewSortedSet(10)
@@ -119,7 +119,7 @@ func TestAddHasRemove(x *testing.T) {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), set.Has(item))
 	}
 	for _, item := range items {
-		t.assert_nil(set.Remove(item))
+		t.assert_nil(set.Delete(item))
 	}
 	for i, item := range items {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), !set.Has(item))

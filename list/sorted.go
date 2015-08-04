@@ -118,7 +118,7 @@ func (s *Sorted) Add(item types.Hashable) (err error) {
 	return nil
 }
 
-func (s *Sorted) Remove(item types.Hashable) (err error) {
+func (s *Sorted) Delete(item types.Hashable) (err error) {
 	i, has, err := s.Find(item)
 	if err != nil {
 		return err
