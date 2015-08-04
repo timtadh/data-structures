@@ -37,7 +37,7 @@ func (t *T) assert_nil(errors ...error) {
 }
 
 
-func TestSortedAddMarshalUnmarshalGet(x *testing.T) {
+func TestAddMarshalUnmarshalHas(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	set := NewSortedSet(10)
