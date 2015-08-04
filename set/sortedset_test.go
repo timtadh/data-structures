@@ -27,6 +27,11 @@ func (t *T) assert(msg string, oks ...bool) {
 	}
 }
 
+func (t *T) assert_set(set types.Set, err error) (types.Set) {
+	t.assert_nil(err)
+	return set
+}
+
 func (t *T) assert_nil(errors ...error) {
 	for _, err := range errors {
 		if err != nil {
@@ -165,8 +170,10 @@ func TestUnion(x *testing.T) {
 	a := FromSlice([]types.Hashable{types.Int(0), types.Int(1), types.Int(2), types.Int(3)})
 	b := FromSlice([]types.Hashable{types.Int(1), types.Int(2), types.Int(4)})
 	c := FromSlice([]types.Hashable{types.Int(0), types.Int(1), types.Int(2), types.Int(3), types.Int(4)})
-	t.assert("a | b == c", a.Union(b).Equals(c))
-	t.assert("b | a == c", b.Union(a).Equals(c))
+	t.assert("a | b == c", t.assert_set(a.Union(b)).Equals(c))
+	t.assert("b | a == c", t.assert_set(b.Union(a)).Equals(c))
+	t.assert("a | b == c", t.assert_set(Union(a, b)).Equals(c))
+	t.assert("b | a == c", t.assert_set(Union(b, a)).Equals(c))
 }
 
 func TestIntersect(x *testing.T) {
@@ -176,12 +183,21 @@ func TestIntersect(x *testing.T) {
 	c := FromSlice([]types.Hashable{types.Int(1), types.Int(2)})
 	d := FromSlice([]types.Hashable{types.Int(50), types.Int(20), types.Int(30), types.Int(40), types.Int(10)})
 	e := FromSlice([]types.Hashable{})
-	t.assert("a & b == c", a.Intersect(b).Equals(c))
-	t.assert("b & a == c", b.Intersect(a).Equals(c))
-	t.assert("a & d == e", a.Intersect(d).Equals(e))
-	t.assert("d & a == e", d.Intersect(a).Equals(e))
+	t.assert("a & b == c", t.assert_set(a.Intersect(b)).Equals(c))
+	t.assert("b & a == c", t.assert_set(b.Intersect(a)).Equals(c))
+	t.assert("a & d == e", t.assert_set(a.Intersect(d)).Equals(e))
+	t.assert("d & a == e", t.assert_set(d.Intersect(a)).Equals(e))
 }
 
+func TestSubtract(x *testing.T) {
+	t := (*T)(x)
+	a := FromSlice([]types.Hashable{types.Int(0), types.Int(1), types.Int(2), types.Int(3)})
+	b := FromSlice([]types.Hashable{types.Int(1), types.Int(2), types.Int(4)})
+	c := FromSlice([]types.Hashable{types.Int(0), types.Int(3)})
+	d := FromSlice([]types.Hashable{types.Int(4)})
+	t.assert("a - b == c", t.assert_set(a.Subtract(b)).Equals(c))
+	t.assert("b - a == d", t.assert_set(b.Subtract(a)).Equals(d))
+}
 
 func TestOverlap(x *testing.T) {
 	t := (*T)(x)
@@ -194,12 +210,26 @@ func TestOverlap(x *testing.T) {
 	t.assert("a & d == 0", !a.Overlap(d))
 }
 
-func TestSubtract(x *testing.T) {
+func TestSubsetSuperset(x *testing.T) {
 	t := (*T)(x)
 	a := FromSlice([]types.Hashable{types.Int(0), types.Int(1), types.Int(2), types.Int(3)})
 	b := FromSlice([]types.Hashable{types.Int(1), types.Int(2), types.Int(4)})
-	c := FromSlice([]types.Hashable{types.Int(0), types.Int(3)})
-	d := FromSlice([]types.Hashable{types.Int(4)})
-	t.assert("a - b == c", a.Subtract(b).Equals(c))
-	t.assert("b - a == d", b.Subtract(a).Equals(d))
+	c := FromSlice([]types.Hashable{types.Int(1), types.Int(2)})
+	t.assert("a not subset b", !a.Subset(b))
+	t.assert("b not subset a", !b.Subset(a))
+	t.assert("c subset a", c.Subset(a))
+	t.assert("c subset b", c.Subset(b))
+	t.assert("c proper subset a", c.ProperSubset(a))
+	t.assert("c proper subset b", c.ProperSubset(b))
+	t.assert("a subset a", a.Subset(a))
+	t.assert("a not proper subset a", !a.ProperSubset(a))
+	t.assert("a superset a", a.Superset(a))
+	t.assert("a not proper superset a", !a.ProperSuperset(a))
+	t.assert("a superset c", a.Superset(c))
+	t.assert("b superset c", b.Superset(c))
+	t.assert("a superset c", a.ProperSuperset(c))
+	t.assert("b superset c", b.ProperSuperset(c))
 }
+
+
+

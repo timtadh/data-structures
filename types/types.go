@@ -93,6 +93,7 @@ type ItemsOperable interface {
 	Has(item Hashable) bool
 	Add(item Hashable) (err error)
 	Remove(item Hashable) (err error)
+	Extend(items KIterator) (err error)
 }
 
 type OrderedOperable interface {
@@ -127,8 +128,16 @@ type OrderedList interface {
 }
 
 type Set interface {
+	Equatable
 	ListIterable
 	ItemsOperable
+	Union(Set) (Set, error)
+	Intersect(Set) (Set, error)
+	Subtract(Set) (Set, error)
+	Subset(Set) bool
+	Superset(Set) bool
+	ProperSubset(Set) bool
+	ProperSuperset(Set) bool
 }
 
 type List interface {

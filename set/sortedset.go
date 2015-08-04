@@ -79,7 +79,15 @@ func (s *SortedSet) Random() (item types.Hashable, err error) {
 }
 
 // Unions s with o and returns a new Sorted Set
-func (s *SortedSet) Union(o *SortedSet) (n *SortedSet) {
+func (s *SortedSet) Union(other types.Set) (types.Set, error) {
+	if o, ok := other.(*SortedSet); ok {
+		return s.union(o)
+	} else {
+		return Union(s, other)
+	}
+}
+
+func (s *SortedSet) union(o *SortedSet) (n *SortedSet, err error) {
 	n = NewSortedSet(s.Size() + o.Size() + 10)
 	cs, si := s.Items()()
 	co, oi := o.Items()()
@@ -99,25 +107,20 @@ func (s *SortedSet) Union(o *SortedSet) (n *SortedSet) {
 			co, oi = oi()
 		}
 		if err != nil {
-			log.Panic(err)
+			return nil, err
 		}
 	}
-	return n
+	return n, nil
 }
 
-// intersect s with o and returns a new Sorted Set
-func (s *SortedSet) Intersect(o *SortedSet) (n *SortedSet) {
-	n = NewSortedSet(s.Size() + o.Size())
-	for v, next := s.Items()(); next != nil; v, next = next() {
-		item := v.(types.Hashable)
-		if o.Has(item) {
-			err := n.Add(item)
-			if err != nil {
-				log.Panic(err)
-			}
-		}
-	}
-	return n
+// Unions s with o and returns a new Sorted Set
+func (s *SortedSet) Intersect(other types.Set) (types.Set, error) {
+	return Intersect(s, other)
+}
+
+// Unions s with o and returns a new Sorted Set
+func (s *SortedSet) Subtract(other types.Set) (types.Set, error) {
+	return Subtract(s, other)
 }
 
 // Are there any overlapping elements?
@@ -138,19 +141,24 @@ func (s *SortedSet) Overlap(o *SortedSet) bool {
 	return false
 }
 
-// subtract o from s and return new Sorted Set
-func (s *SortedSet) Subtract(o *SortedSet) (n *SortedSet) {
-	n = NewSortedSet(s.Size() + o.Size())
-	for v, next := s.Items()(); next != nil; v, next = next() {
-		item := v.(types.Hashable)
-		if !o.Has(item) {
-			err := n.Add(item)
-			if err != nil {
-				log.Panic(err)
-			}
-		}
-	}
-	return n
+// Is s a subset of o?
+func (s *SortedSet) Subset(o types.Set) bool {
+	return Subset(s, o)
+}
+
+// Is s a proper subset of o?
+func (s *SortedSet) ProperSubset(o types.Set) bool {
+	return ProperSubset(s, o)
+}
+
+// Is s a superset of o?
+func (s *SortedSet) Superset(o types.Set) bool {
+	return Superset(s, o)
+}
+
+// Is s a proper superset of o?
+func (s *SortedSet) ProperSuperset(o types.Set) bool {
+	return ProperSuperset(s, o)
 }
 
 
