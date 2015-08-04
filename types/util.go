@@ -72,6 +72,20 @@ func MakeValuesIterator(obj KVIterable) Iterator {
 	return v_iterator
 }
 
+func MakeItemsIterator(obj KVIterable) (kit KIterator) {
+	kv_iterator := obj.Iterate()
+	kit = func() (item Hashable, next KIterator) {
+		var key Hashable
+		var value interface{}
+		key, value, kv_iterator = kv_iterator()
+		if kv_iterator == nil {
+			return nil, nil
+		}
+		return &MapEntry{key, value}, kit
+	}
+	return kit
+}
+
 func make_child_slice(node BinaryTreeNode) []BinaryTreeNode {
 	nodes := make([]BinaryTreeNode, 0, 2)
 	if !IsNil(node) {
