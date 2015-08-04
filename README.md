@@ -26,7 +26,6 @@ http://hackthology.com/functional-iteration-in-go.html).
 I hope you find my library useful. If you are using it drop me a line I would
 love to hear about it.
 
-
 # Current Collection
 
 [godoc](https://godoc.org/github.com/timtadh/data-structures)
@@ -139,4 +138,13 @@ the [blog post](
 http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html) do
 to the usage of an AVL Tree `tree/avltree.go` instead of an unbalanced binary
 search tree.
+
+# Related Projects
+
+- [fs2](https://github.com/timtadh/fs2) Memory mapped datastructures. A B+Tree,
+  a list, and a platform for implementing more.
+
+- [file-structures](https://github.com/timtadh/file-structures) The previous
+  version of fs2 of disk based file-structures. Also includes a linear virtual
+  hashing implementation.
 
