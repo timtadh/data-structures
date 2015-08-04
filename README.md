@@ -2,7 +2,8 @@
 
 by Tim Henderson (tim.tadh@gmail.com)
 
-Copyright 2013, Licensed under the GPL version 2.
+Copyright 2013, Licensed under the GPL version 2. Please reach out to me
+directly if you require another licensing option. I am willing to work with you.
 
 ## Purpose
 
