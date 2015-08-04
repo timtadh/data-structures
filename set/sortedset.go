@@ -25,6 +25,16 @@ func init() {
 	}
 }
 
+// SortedSet is a list.Sorted and therefore has all of the methods
+// that list.Sorted has. So although they do not show up in the generated
+// docs you can just do this:
+//
+//     s := NewSortedSet(10)
+//     s.Add(types.Int(5))
+//     s2 = s.Union(FromSlice([]types.Hashable{types.Int(7)}))
+//     fmt.Println(s2.Has(types.Int(7)))
+//     fmt.Println(s.Has(types.Int(7)))
+//
 type SortedSet struct {
 	list.Sorted
 }
