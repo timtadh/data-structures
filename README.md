@@ -49,6 +49,20 @@ Built on top of `*list.Sorted`, it provides basic set operations. With
 `map[type]` datatype. Supports: intersection, union, set difference and overlap
 tests.
 
+### Fixed Size Lists
+
+Both `list.List` and `list.Sorted` have alternative constructors which make them
+fixed size. This prevents them from growing beyond a certain size bound and is
+useful for implementing other data structures on top of them.
+
+### Serialization
+
+`list.List`, `list.Sorted`, and `set.SortedSet` all can be serialized provided
+their contents can be serialized. They are therefore suitable for being sent
+over the wire. See this
+[example](https://github.com/timtadh/data-structures/blob/master/set/example_serialize_test.go)
+for how to use the serialization.
+
 ## Trees
 
 ### Classic AVL Tree `tree/avl.AvlTree`
