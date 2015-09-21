@@ -91,8 +91,14 @@ it is still a great structure for flexible prefix searches.
 A
 [B+Tree](http://hackthology.com/lessons-learned-while-implementing-a-btree.html)
 is a general symbol table usually used for database indices. This implementation
-is not currently thread safe. It uses the structure detailed in the link and was
-ported from my file-structures repository.
+is not currently thread safe. However, unlike many B+Trees it fully supports
+duplicate keys making it suitable for use as a Multi-Map. There is also a
+variant which has unique keys, `bptree.BpMap`. B+Trees are storted and efficient
+to iterate over making them ideal choices for storing a large amount of data
+in sorted order. For storing a **very** large amount of data please utilize the
+fs2 version, [fs2/bptree](https://github.com/timtadh/fs2#b-tree). fs2 utilizes
+memory mapped files in order to allow you to store more data than your computer
+has RAM.
 
 ## Hash Tables
 
