@@ -21,6 +21,7 @@ func TestFixed(x *testing.T) {
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
+	t.assert(fmt.Sprintf("list.Full() (%v)", list.Full()) , list.Full())
 	t.assert(fmt.Sprintf("list.Size == %d (%d)", SIZE, list.Size()) , list.Size() == SIZE)
 	err := list.Append(t.randslice(10))
 	t.assert(fmt.Sprintf("err != nil (%v)", err), err != nil)
@@ -44,6 +45,7 @@ func TestFixedSorted(x *testing.T) {
 		items = append(items, item)
 		t.assert_nil(set.Add(item))
 	}
+	t.assert(fmt.Sprintf("set.Full() (%v)", set.Full()) , set.Full())
 	t.assert(fmt.Sprintf("set.Size == %d (%d)", SIZE, set.Size()) , set.Size() == SIZE)
 	for i, item := range items {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), set.Has(item))

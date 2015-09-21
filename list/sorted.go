@@ -90,6 +90,14 @@ func (s *Sorted) Size() int {
 	return s.list.Size()
 }
 
+func (s *Sorted) Full() bool {
+	return s.list.Full()
+}
+
+func (s *Sorted) Empty() bool {
+	return s.list.Empty()
+}
+
 func (s *Sorted) Has(item types.Hashable) (has bool) {
 	_, has, err := s.Find(item)
 	if err != nil {

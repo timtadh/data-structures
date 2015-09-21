@@ -158,6 +158,14 @@ func (l *List) Size() int {
 	return len(l.list)
 }
 
+func (l *List) Full() bool {
+	return l.fixed && cap(l.list) == len(l.list)
+}
+
+func (l *List) Empty() bool {
+	return len(l.list) == 0
+}
+
 func (l *List) Has(item types.Hashable) (has bool) {
 	for i := range l.list {
 		if l.list[i].Equals(item) {
