@@ -82,9 +82,14 @@ immutability. However, there is a performance hit:
 
 A [ternary search trie](
 http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html)
-is a symbol table specialized to byte strings. It can be used to build a
-suffix tree for full text string indexing. However, even without a suffix tree
-it is still a great structure for flexible prefix searches.
+is a symbol table specialized to byte strings.  Ternary Search Tries (TSTs)
+are a particularly fast version of the more common R-Way Trie. They utilize less
+memory allowing them to store more data while still retaining all of the
+flexibility of the R-Way Trie. TSTs can be used to build a suffix tree for full
+text string indexing by storing every suffix of each string in addition to the
+string. However, even without storing all of the suffixes it is still a great
+structure for flexible prefix searches. TSTs can be using to implement extremely
+fast autocomplete functionality.
 
 ### B+Tree (with and without support for duplicate keys) `tree/bptree.BpTree`
 
