@@ -1,8 +1,11 @@
 package types
 
 import (
-	"fmt"
 	"encoding/binary"
+)
+
+import (
+	"github.com/timtadh/data-structures/errors"
 )
 
 type Int8 int8
@@ -26,7 +29,7 @@ func (self *Int8) MarshalBinary() ([]byte, error) {
 
 func (self *Int8) UnmarshalBinary(data []byte) error {
 	if len(data) != 1 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = Int8(data[0])
 	return nil
@@ -61,7 +64,7 @@ func (self *UInt8) MarshalBinary() ([]byte, error) {
 
 func (self *UInt8) UnmarshalBinary(data []byte) error {
 	if len(data) != 1 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = UInt8(data[0])
 	return nil
@@ -96,7 +99,7 @@ func (self *Int16) MarshalBinary() ([]byte, error) {
 
 func (self *Int16) UnmarshalBinary(data []byte) error {
 	if len(data) != 2 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = Int16(binary.LittleEndian.Uint16(data))
 	return nil
@@ -131,7 +134,7 @@ func (self *UInt16) MarshalBinary() ([]byte, error) {
 
 func (self *UInt16) UnmarshalBinary(data []byte) error {
 	if len(data) != 2 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = UInt16(binary.LittleEndian.Uint16(data))
 	return nil
@@ -166,7 +169,7 @@ func (self *Int32) MarshalBinary() ([]byte, error) {
 
 func (self *Int32) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = Int32(binary.LittleEndian.Uint32(data))
 	return nil
@@ -197,7 +200,7 @@ func (self *UInt32) MarshalBinary() ([]byte, error) {
 
 func (self *UInt32) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = UInt32(binary.LittleEndian.Uint32(data))
 	return nil
@@ -236,7 +239,7 @@ func (self *Int64) MarshalBinary() ([]byte, error) {
 
 func (self *Int64) UnmarshalBinary(data []byte) error {
 	if len(data) != 8 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = Int64(binary.LittleEndian.Uint64(data))
 	return nil
@@ -271,7 +274,7 @@ func (self *UInt64) MarshalBinary() ([]byte, error) {
 
 func (self *UInt64) UnmarshalBinary(data []byte) error {
 	if len(data) != 8 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = UInt64(binary.LittleEndian.Uint64(data))
 	return nil
@@ -306,7 +309,7 @@ func (self *Int) MarshalBinary() ([]byte, error) {
 
 func (self *Int) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = Int(binary.LittleEndian.Uint32(data))
 	return nil
@@ -341,7 +344,7 @@ func (self *UInt) MarshalBinary() ([]byte, error) {
 
 func (self *UInt) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
-		return fmt.Errorf("data wrong size")
+		return errors.Errorf("data wrong size")
 	}
 	*self = UInt(binary.LittleEndian.Uint32(data))
 	return nil

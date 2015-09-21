@@ -14,9 +14,6 @@ import (
 )
 
 
-type List struct {
-	list []types.Hashable
-}
 
 type MList struct {
 	List
@@ -26,9 +23,7 @@ type MList struct {
 
 func NewMList(list *List, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MList {
 	return &MList{
-		List: List{
-			list: list.list,
-		},
+		List: *list,
 		MarshalItem: marshal,
 		UnmarshalItem: unmarshal,
 	}
@@ -36,8 +31,17 @@ func NewMList(list *List, marshal types.ItemMarshal, unmarshal types.ItemUnmarsh
 
 func (m *MList) MarshalBinary() ([]byte, error) {
 	items := make([][]byte, 0, m.Size())
+	_cap := make([]byte, 4)
 	size := make([]byte, 4)
 	binary.LittleEndian.PutUint32(size, uint32(m.Size()))
+	if m.List.fixed {
+		binary.LittleEndian.PutUint32(_cap, uint32(cap(m.List.list)))
+		items = append(items, []byte{1})
+	} else {
+		binary.LittleEndian.PutUint32(_cap, uint32(m.Size()))
+		items = append(items, []byte{0})
+	}
+	items = append(items, _cap)
 	items = append(items, size)
 	for item, next := m.Items()(); next != nil; item, next = next() {
 		b, err := m.MarshalItem(item)
@@ -52,9 +56,11 @@ func (m *MList) MarshalBinary() ([]byte, error) {
 }
 
 func (m *MList) UnmarshalBinary(bytes []byte) (error) {
-	size := int(binary.LittleEndian.Uint32(bytes[0:4]))
-	off := 4
-	m.list = make([]types.Hashable, 0, size)
+	m.List.fixed = bytes[0] == 1
+	_cap := int(binary.LittleEndian.Uint32(bytes[1:5]))
+	size := int(binary.LittleEndian.Uint32(bytes[5:9]))
+	off := 9
+	m.list = make([]types.Hashable, 0, _cap)
 	for i := 0; i < size; i++ {
 		s := off
 		e := off + 4
@@ -114,9 +120,25 @@ func (s *Sortable) Swap(i, j int) {
 	}
 }
 
+type List struct {
+	list []types.Hashable
+	fixed bool
+}
+
+// Creates a list.
 func New(initialSize int) *List {
+	return newList(initialSize, false)
+}
+
+// Creates a Fixed Size list.
+func Fixed(size int) *List {
+	return newList(size, true)
+}
+
+func newList(initialSize int, fixedSize bool) *List {
 	return &List{
 		list: make([]types.Hashable, 0, initialSize),
+		fixed: fixedSize,
 	}
 }
 
@@ -243,7 +265,9 @@ func (l *List) Insert(i int, item types.Hashable) error {
 		return errors.Errorf("Access out of bounds. len(*List) = %v, idx = %v", len(l.list), i)
 	}
 	if len(l.list) == cap(l.list) {
-		l.expand()
+		if err := l.expand(); err != nil {
+			return err
+		}
 	}
 	l.list = l.list[:len(l.list)+1]
 	for j := len(l.list) - 1; j > 0; j-- {
@@ -288,11 +312,16 @@ func (l *List) Remove(i int) error {
 	src := l.list[i+1:len(l.list)]
 	copy(dst, src)
 	l.list = l.list[:len(l.list)-1]
-	l.shrink()
+	if err := l.shrink(); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (l *List) expand() {
+func (l *List) expand() error {
+	if l.fixed {
+		return errors.Errorf("Fixed size list is full!")
+	}
 	list := l.list
 	if cap(list) < 100 {
 		l.list = make([]types.Hashable, len(list), cap(list)*2)
@@ -300,13 +329,18 @@ func (l *List) expand() {
 		l.list = make([]types.Hashable, len(list), cap(list)+100)
 	}
 	copy(l.list, list)
+	return nil
 }
 
-func (l *List) shrink() {
+func (l *List) shrink() error {
+	if l.fixed {
+		return nil
+	}
 	if (len(l.list)-1)*2 >= cap(l.list) || cap(l.list)/2 <= 10 {
-		return
+		return nil
 	}
 	list := l.list
 	l.list = make([]types.Hashable, len(list), cap(list)/2)
 	copy(l.list, list)
+	return nil
 }

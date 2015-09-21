@@ -55,11 +55,18 @@ type Sorted struct {
 	allowDups bool
 }
 
+// Creates a sorted list.
 func NewSorted(initialSize int, allowDups bool) *Sorted {
 	return &Sorted{
-		list: List{
-			list: make([]types.Hashable, 0, initialSize),
-		},
+		list: *New(initialSize),
+		allowDups: allowDups,
+	}
+}
+
+// Creates a fixed size sorted list.
+func NewFixedSorted(size int, allowDups bool) *Sorted {
+	return &Sorted{
+		list: *Fixed(size),
 		allowDups: allowDups,
 	}
 }
