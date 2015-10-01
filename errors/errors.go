@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"strings"
 )
@@ -10,6 +11,10 @@ import (
 type Error struct {
 	Errs  []error
 	Stack []byte
+}
+
+func Panic(err error) {
+	log.Panic(err)
 }
 
 func Errorf(format string, args ...interface{}) error {
