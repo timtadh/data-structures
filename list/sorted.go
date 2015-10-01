@@ -82,6 +82,10 @@ func SortedFromSlice(items []types.Hashable, allowDups bool) *Sorted {
 	return s
 }
 
+func (s *Sorted) DuplicatesAllowed() bool {
+	return s.allowDups
+}
+
 func (s *Sorted) Clear() {
 	s.list.Clear()
 }
