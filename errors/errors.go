@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"strings"
 )
@@ -21,6 +22,17 @@ func Errorf(format string, args ...interface{}) error {
 		Errs:  []error{fmt.Errorf(format, args...)},
 		Stack: trace,
 	}
+}
+
+func Logf(level, format string, args ...interface{}) {
+	pc, _, line, ok := runtime.Caller(1)
+	if !ok {
+		log.Printf(format, args)
+		return
+	}
+	fn := runtime.FuncForPC(pc)
+	msg := fmt.Sprintf(format, args...)
+	log.Printf("%v (%v:%v): %v", level, fn.Name(), line, msg)
 }
 
 func (e *Error) Chain(err error) error {
