@@ -3,9 +3,11 @@ package list
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"hash/fnv"
 	"log"
 	"sort"
+	"strings"
 )
 
 import (
@@ -148,6 +150,12 @@ func FromSlice(list []types.Hashable) *List {
 	}
 	copy(l.list, list)
 	return l
+}
+
+func (l *List) Copy() *List {
+	list := make([]types.Hashable, len(l.list), cap(l.list))
+	copy(list, l.list)
+	return &List{list, l.fixed}
 }
 
 func (l *List) Clear() {
@@ -324,6 +332,17 @@ func (l *List) Remove(i int) error {
 		return err
 	}
 	return nil
+}
+
+func (l *List) String() string {
+	if len(l.list) <= 0 {
+		return "{}"
+	}
+	items := make([]string, 0, len(l.list))
+	for _, item := range l.list {
+		items = append(items, fmt.Sprintf("%v", item))
+	}
+	return "{" + strings.Join(items, ", ") + "}"
 }
 
 func (l *List) expand() error {

@@ -98,6 +98,10 @@ func (s *Sorted) Empty() bool {
 	return s.list.Empty()
 }
 
+func (s *Sorted) Copy() *Sorted {
+	return &Sorted{ *s.list.Copy(), s.allowDups, }
+}
+
 func (s *Sorted) Has(item types.Hashable) (has bool) {
 	_, has, err := s.Find(item)
 	if err != nil {
@@ -168,6 +172,10 @@ func (s *Sorted) Hash() int {
 
 func (s *Sorted) Items() (it types.KIterator) {
 	return s.list.Items()
+}
+
+func (s *Sorted) String() (string) {
+	return s.list.String()
 }
 
 func (s *Sorted) Find(item types.Hashable) (int, bool, error) {

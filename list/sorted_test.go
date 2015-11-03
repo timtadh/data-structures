@@ -71,6 +71,34 @@ func TestSortedAddHasDelete(x *testing.T) {
 	}
 }
 
+func TestSortedAddHasCopyDeleteHas(x *testing.T) {
+	t := (*T)(x)
+	SIZE := 100
+	set := NewSorted(10, false)
+	items := make([]types.Int, 0, SIZE)
+	for i := 0; i < SIZE; i++ {
+		item := types.Int(rand.Intn(1000))
+		for set.Has(item) {
+			item = types.Int(rand.Intn(1000))
+		}
+		items = append(items, item)
+		t.assert_nil(set.Add(item))
+	}
+	for i, item := range items {
+		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), set.Has(item))
+	}
+	set2 := set.Copy()
+	for _, item := range items {
+		t.assert_nil(set.Delete(item))
+	}
+	for i, item := range items {
+		t.assert(fmt.Sprintf("i %v, set.Has(item)", i), !set.Has(item))
+	}
+	for i, item := range items {
+		t.assert(fmt.Sprintf("i %v, %v !set2.Has(item) %v", i, item, set2), set2.Has(item))
+	}
+}
+
 func TestSortedExtend(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100

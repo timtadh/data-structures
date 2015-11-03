@@ -80,6 +80,29 @@ func TestAppendGet(x *testing.T) {
 	}
 }
 
+func TestAppendGetCopy(x *testing.T) {
+	t := (*T)(x)
+	SIZE := 100
+	list := New(10)
+	items := make([]types.ByteSlice, 0, SIZE)
+	for i := 0; i < SIZE; i++ {
+		item := t.randslice(rand.Intn(10)+1)
+		items = append(items, item)
+		t.assert_nil(list.Append(item))
+	}
+	for i, item := range items {
+		lg, err := list.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list.Get(i)", i), lg.Equals(item))
+	}
+	list2 := list.Copy()
+	for i, item := range items {
+		lg, err := list2.Get(i)
+		t.assert_nil(err)
+		t.assert(fmt.Sprintf("i %v, items[i] == list2.Get(i)", i), lg.Equals(item))
+	}
+}
+
 func TestAppendMarshalUnmarshalGet(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100

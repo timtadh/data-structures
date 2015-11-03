@@ -68,6 +68,10 @@ func FromSlice(items []types.Hashable) *SortedSet {
 	return s
 }
 
+func (s *SortedSet) Copy() *SortedSet {
+	return &SortedSet{ *s.Sorted.Copy() }
+}
+
 func (s *SortedSet) Random() (item types.Hashable, err error) {
 	if s.Size() <= 0 {
 		return nil, errors.Errorf("Set is empty")

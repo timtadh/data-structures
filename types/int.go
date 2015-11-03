@@ -93,7 +93,7 @@ func (self UInt8) Hash() int {
 
 func (self *Int16) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 2)
-	binary.LittleEndian.PutUint16(bytes, uint16(*self))
+	binary.BigEndian.PutUint16(bytes, uint16(*self))
 	return bytes, nil
 }
 
@@ -101,7 +101,7 @@ func (self *Int16) UnmarshalBinary(data []byte) error {
 	if len(data) != 2 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = Int16(binary.LittleEndian.Uint16(data))
+	*self = Int16(binary.BigEndian.Uint16(data))
 	return nil
 }
 
@@ -128,7 +128,7 @@ func (self Int16) Hash() int {
 
 func (self *UInt16) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 2)
-	binary.LittleEndian.PutUint16(bytes, uint16(*self))
+	binary.BigEndian.PutUint16(bytes, uint16(*self))
 	return bytes, nil
 }
 
@@ -136,7 +136,7 @@ func (self *UInt16) UnmarshalBinary(data []byte) error {
 	if len(data) != 2 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = UInt16(binary.LittleEndian.Uint16(data))
+	*self = UInt16(binary.BigEndian.Uint16(data))
 	return nil
 }
 
@@ -163,7 +163,7 @@ func (self UInt16) Hash() int {
 
 func (self *Int32) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bytes, uint32(*self))
+	binary.BigEndian.PutUint32(bytes, uint32(*self))
 	return bytes, nil
 }
 
@@ -171,7 +171,7 @@ func (self *Int32) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = Int32(binary.LittleEndian.Uint32(data))
+	*self = Int32(binary.BigEndian.Uint32(data))
 	return nil
 }
 
@@ -194,7 +194,7 @@ func (self Int32) Less(other Sortable) bool {
 
 func (self *UInt32) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bytes, uint32(*self))
+	binary.BigEndian.PutUint32(bytes, uint32(*self))
 	return bytes, nil
 }
 
@@ -202,7 +202,7 @@ func (self *UInt32) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = UInt32(binary.LittleEndian.Uint32(data))
+	*self = UInt32(binary.BigEndian.Uint32(data))
 	return nil
 }
 
@@ -233,7 +233,7 @@ func (self UInt32) Hash() int {
 
 func (self *Int64) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bytes, uint64(*self))
+	binary.BigEndian.PutUint64(bytes, uint64(*self))
 	return bytes, nil
 }
 
@@ -241,7 +241,7 @@ func (self *Int64) UnmarshalBinary(data []byte) error {
 	if len(data) != 8 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = Int64(binary.LittleEndian.Uint64(data))
+	*self = Int64(binary.BigEndian.Uint64(data))
 	return nil
 }
 
@@ -268,7 +268,7 @@ func (self Int64) Hash() int {
 
 func (self *UInt64) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bytes, uint64(*self))
+	binary.BigEndian.PutUint64(bytes, uint64(*self))
 	return bytes, nil
 }
 
@@ -276,7 +276,7 @@ func (self *UInt64) UnmarshalBinary(data []byte) error {
 	if len(data) != 8 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = UInt64(binary.LittleEndian.Uint64(data))
+	*self = UInt64(binary.BigEndian.Uint64(data))
 	return nil
 }
 
@@ -303,7 +303,7 @@ func (self UInt64) Hash() int {
 
 func (self *Int) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bytes, uint32(*self))
+	binary.BigEndian.PutUint32(bytes, uint32(*self))
 	return bytes, nil
 }
 
@@ -311,7 +311,7 @@ func (self *Int) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = Int(binary.LittleEndian.Uint32(data))
+	*self = Int(binary.BigEndian.Uint32(data))
 	return nil
 }
 
@@ -335,10 +335,9 @@ func (self Int) Hash() int {
 	return int(self)
 }
 
-
 func (self *UInt) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bytes, uint32(*self))
+	binary.BigEndian.PutUint32(bytes, uint32(*self))
 	return bytes, nil
 }
 
@@ -346,7 +345,7 @@ func (self *UInt) UnmarshalBinary(data []byte) error {
 	if len(data) != 4 {
 		return errors.Errorf("data wrong size")
 	}
-	*self = UInt(binary.LittleEndian.Uint32(data))
+	*self = UInt(binary.BigEndian.Uint32(data))
 	return nil
 }
 
