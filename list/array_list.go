@@ -350,7 +350,7 @@ func (l *List) expand() error {
 		return errors.Errorf("Fixed size list is full!")
 	}
 	list := l.list
-	if cap(list) < 100 {
+	if cap(list) < 100 && cap(list) != 0 {
 		l.list = make([]types.Hashable, len(list), cap(list)*2)
 	} else {
 		l.list = make([]types.Hashable, len(list), cap(list)+100)
