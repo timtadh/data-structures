@@ -8,6 +8,12 @@ import (
 )
 
 
+var SkipLogging map[string]bool
+
+func init() {
+	SkipLogging = make(map[string]bool, 10)
+}
+
 type Error struct {
 	Errs  []error
 	Stack []byte
@@ -25,6 +31,9 @@ func Errorf(format string, args ...interface{}) error {
 }
 
 func Logf(level, format string, args ...interface{}) {
+	if SkipLogging[level] {
+		return
+	}
 	pc, _, line, ok := runtime.Caller(1)
 	if !ok {
 		log.Printf(format, args)
