@@ -1,6 +1,10 @@
 package set
 
 import (
+	"fmt"
+)
+
+import (
 	"github.com/timtadh/data-structures/errors"
 	"github.com/timtadh/data-structures/types"
 )
@@ -160,5 +164,9 @@ func (m *MapSet) ProperSubset(b types.Set) bool {
 
 func (m *MapSet) ProperSuperset(b types.Set) bool {
 	return ProperSuperset(m, b)
+}
+
+func (m *MapSet) String() string {
+	return fmt.Sprintf("%v", m.Set)
 }
 
