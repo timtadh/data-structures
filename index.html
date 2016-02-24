@@ -56,6 +56,180 @@ technique <a href="http://hackthology.com/functional-iteration-in-go.html">detai
 
 <p>I hope you find my library useful. If you are using it drop me a line I would
 love to hear about it.</p>
+
+<h1>
+<a id="current-collection" class="anchor" href="#current-collection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Current Collection</h1>
+
+<p><a href="https://godoc.org/github.com/timtadh/data-structures">godoc</a></p>
+
+<h2>
+<a id="lists" class="anchor" href="#lists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lists</h2>
+
+<h3>
+<a id="array-list-listlist" class="anchor" href="#array-list-listlist" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Array List <code>list.List</code>
+</h3>
+
+<p>Similar to a Java ArrayList or a Python or Ruby "list". There is a version
+(called Sortable) which integrates with the <code>"sort"</code> package from the standard
+library.</p>
+
+<h3>
+<a id="sorted-array-list-listsorted" class="anchor" href="#sorted-array-list-listsorted" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Array List <code>list.Sorted</code>
+</h3>
+
+<p>Keeps the ArrayList in sorted order for you.</p>
+
+<h3>
+<a id="sorted-set-setsortedset" class="anchor" href="#sorted-set-setsortedset" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Set <code>set.SortedSet</code>
+</h3>
+
+<p>Built on top of <code>*list.Sorted</code>, it provides basic set operations. With
+<code>set.SortedSet</code> you don't have to write code re-implementing sets with the
+<code>map[type]</code> datatype. Supports: intersection, union, set difference and overlap
+tests.</p>
+
+<h3>
+<a id="fixed-size-lists" class="anchor" href="#fixed-size-lists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Size Lists</h3>
+
+<p>Both <code>list.List</code> and <code>list.Sorted</code> have alternative constructors which make them
+fixed size. This prevents them from growing beyond a certain size bound and is
+useful for implementing other data structures on top of them.</p>
+
+<h3>
+<a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Serialization</h3>
+
+<p><code>list.List</code>, <code>list.Sorted</code>, and <code>set.SortedSet</code> all can be serialized provided
+their contents can be serialized. They are therefore suitable for being sent
+over the wire. See this
+<a href="https://github.com/timtadh/data-structures/blob/master/set/example_serialize_test.go">example</a>
+for how to use the serialization.</p>
+
+<h2>
+<a id="trees" class="anchor" href="#trees" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Trees</h2>
+
+<h3>
+<a id="classic-avl-tree-treeavlavltree" class="anchor" href="#classic-avl-tree-treeavlavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classic AVL Tree <code>tree/avl.AvlTree</code>
+</h3>
+
+<p>An AVL tree is a height balanced binary search tree. It is commonly taught in
+algorithms courses.</p>
+
+<h3>
+<a id="immutable-avl-tree-treeavlimmutableavltree" class="anchor" href="#immutable-avl-tree-treeavlimmutableavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Immutable AVL Tree <code>tree/avl.ImmutableAvlTree</code>
+</h3>
+
+<p>This version of the classic is immutable and should be thread safe due to
+immutability. However, there is a performance hit:</p>
+
+<pre><code>BenchmarkAvlTree           10000            166657 ns/op
+BenchmarkImmutableAvlTree   5000            333709 ns/op
+</code></pre>
+
+<h3>
+<a id="ternary-search-trie-trietst" class="anchor" href="#ternary-search-trie-trietst" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ternary Search Trie <code>trie.TST</code>
+</h3>
+
+<p>A <a href="http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html">ternary search trie</a>
+is a symbol table specialized to byte strings.  Ternary Search Tries (TSTs)
+are a particularly fast version of the more common R-Way Trie. They utilize less
+memory allowing them to store more data while still retaining all of the
+flexibility of the R-Way Trie. TSTs can be used to build a suffix tree for full
+text string indexing by storing every suffix of each string in addition to the
+string. However, even without storing all of the suffixes it is still a great
+structure for flexible prefix searches. TSTs can be using to implement extremely
+fast autocomplete functionality.</p>
+
+<h3>
+<a id="btree-with-and-without-support-for-duplicate-keys-treebptreebptree" class="anchor" href="#btree-with-and-without-support-for-duplicate-keys-treebptreebptree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>B+Tree (with and without support for duplicate keys) <code>tree/bptree.BpTree</code>
+</h3>
+
+<p>A
+<a href="http://hackthology.com/lessons-learned-while-implementing-a-btree.html">B+Tree</a>
+is a general symbol table usually used for database indices. This implementation
+is not currently thread safe. However, unlike many B+Trees it fully supports
+duplicate keys making it suitable for use as a Multi-Map. There is also a
+variant which has unique keys, <code>bptree.BpMap</code>. B+Trees are storted and efficient
+to iterate over making them ideal choices for storing a large amount of data
+in sorted order. For storing a <strong>very</strong> large amount of data please utilize the
+fs2 version, <a href="https://github.com/timtadh/fs2#b-tree">fs2/bptree</a>. fs2 utilizes
+memory mapped files in order to allow you to store more data than your computer
+has RAM.</p>
+
+<h2>
+<a id="hash-tables" class="anchor" href="#hash-tables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hash Tables</h2>
+
+<h3>
+<a id="classic-separate-chaining-hash-table-hashtablehash" class="anchor" href="#classic-separate-chaining-hash-table-hashtablehash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classic Separate Chaining Hash Table <code>hashtable.Hash</code>
+</h3>
+
+<p>See <code>hashtable/hashtable.go</code>. An implementation of the classic hash table with
+separate chaining to handle collisions.</p>
+
+<h3>
+<a id="linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" class="anchor" href="#linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linear Hash Table with AVL Tree Buckets <code>hashtable.LinearHash</code>
+</h3>
+
+<p>See <code>hashtables/linhash.go</code>. An implementation of <a href="http://hackthology.com/linear-hashing.html">Linear
+Hashing</a>, a technique usually used
+for secondary storage hash tables. Often employed by databases and file systems
+for hash indices. This version is mostly instructional see the
+<a href="http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html">accompanying blog post</a>.
+If you want the "real" disk backed version you want to check my
+<a href="https://github.com/timtadh/file-structures">file-structures</a> repository. See
+the <code>linhash</code> directory.</p>
+
+<h3>
+<a id="benchmarks" class="anchor" href="#benchmarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Benchmarks</h3>
+
+<p><strong>Note</strong>: these benchmarsk are fairly old and probably not easy to understand.
+Look at the relative difference not the absolute numbers as they are misleading.
+Each benchmark does many operations per "test" which makes it difficult to
+compare these numbers to numbers found elsewhere.</p>
+
+<p>Benchmarks Put + Remove</p>
+
+<pre><code>$ go test -v -bench '.*' \
+&gt;   github.com/timtadh/data-structures/hashtable
+&gt;   github.com/timtadh/data-structures/tree/...
+&gt;   github.com/timtadh/data-structures/trie
+
+BenchmarkGoMap             50000             30051 ns/op
+BenchmarkMLHash            20000             78840 ns/op
+BenchmarkHash              20000             81012 ns/op
+BenchmarkTST               10000            149985 ns/op
+BenchmarkBpTree            10000            185134 ns/op
+BenchmarkAvlTree           10000            193069 ns/op
+BenchmarkImmutableAvlTree   5000            367602 ns/op
+BenchmarkLHash              1000           2743693 ns/op
+</code></pre>
+
+<p>Benchmarks Put</p>
+
+<pre><code>BenchmarkGoMap            100000             22036 ns/op
+BenchmarkMLHash            50000             52104 ns/op
+BenchmarkHash              50000             53426 ns/op
+BenchmarkTST               50000             69852 ns/op
+BenchmarkBpTree            20000             76124 ns/op
+BenchmarkAvlTree           10000            142104 ns/op
+BenchmarkImmutableAvlTree  10000            302196 ns/op
+BenchmarkLHash              1000           1739710 ns/op
+</code></pre>
+
+<p>The performance of the in memory linear hash (MLHash) is slightly improved since
+the <a href="http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html">blog post</a> do
+to the usage of an AVL Tree <code>tree/avltree.go</code> instead of an unbalanced binary
+search tree.</p>
+
+<h1>
+<a id="related-projects" class="anchor" href="#related-projects" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Related Projects</h1>
+
+<ul>
+<li><p><a href="https://github.com/timtadh/fs2">fs2</a> Memory mapped datastructures. A B+Tree,
+a list, and a platform for implementing more.</p></li>
+<li><p><a href="https://github.com/timtadh/file-structures">file-structures</a> The previous
+version of fs2 of disk based file-structures. Also includes a linear virtual
+hashing implementation.</p></li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/timtadh">timtadh</a></p>
@@ -63,6 +237,16 @@ love to hear about it.</p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-20145944-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
