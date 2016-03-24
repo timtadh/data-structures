@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-
 var SkipLogging map[string]bool
 
 func init() {
@@ -104,4 +103,3 @@ var Errors map[string]ErrorFmter = map[string]ErrorFmter{
 	"negative-size":       NegativeSize,
 	"bptree-error":        BpTreeError,
 }
-

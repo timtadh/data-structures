@@ -6,8 +6,8 @@ import (
 )
 
 import (
-	"github.com/timtadh/data-structures/types"
 	"github.com/timtadh/data-structures/errors"
+	"github.com/timtadh/data-structures/types"
 )
 
 type MSorted struct {
@@ -17,7 +17,7 @@ type MSorted struct {
 
 func NewMSorted(s *Sorted, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MSorted {
 	return &MSorted{
-		MList: *NewMList(&s.list, marshal, unmarshal),
+		MList:     *NewMList(&s.list, marshal, unmarshal),
 		AllowDups: s.allowDups,
 	}
 }
@@ -40,7 +40,7 @@ func (m *MSorted) MarshalBinary() ([]byte, error) {
 	return bytes.Join([][]byte{[]byte{allowDups}, b}, []byte{}), nil
 }
 
-func (m *MSorted) UnmarshalBinary(bytes []byte) (error) {
+func (m *MSorted) UnmarshalBinary(bytes []byte) error {
 	allowDups := bytes[0]
 	if allowDups == 0 {
 		m.AllowDups = false
@@ -51,14 +51,14 @@ func (m *MSorted) UnmarshalBinary(bytes []byte) (error) {
 }
 
 type Sorted struct {
-	list List
+	list      List
 	allowDups bool
 }
 
 // Creates a sorted list.
 func NewSorted(initialSize int, allowDups bool) *Sorted {
 	return &Sorted{
-		list: *New(initialSize),
+		list:      *New(initialSize),
 		allowDups: allowDups,
 	}
 }
@@ -66,7 +66,7 @@ func NewSorted(initialSize int, allowDups bool) *Sorted {
 // Creates a fixed size sorted list.
 func NewFixedSorted(size int, allowDups bool) *Sorted {
 	return &Sorted{
-		list: *Fixed(size),
+		list:      *Fixed(size),
 		allowDups: allowDups,
 	}
 }
@@ -99,7 +99,7 @@ func (s *Sorted) Empty() bool {
 }
 
 func (s *Sorted) Copy() *Sorted {
-	return &Sorted{ *s.list.Copy(), s.allowDups, }
+	return &Sorted{*s.list.Copy(), s.allowDups}
 }
 
 func (s *Sorted) Has(item types.Hashable) (has bool) {
@@ -174,7 +174,7 @@ func (s *Sorted) Items() (it types.KIterator) {
 	return s.list.Items()
 }
 
-func (s *Sorted) String() (string) {
+func (s *Sorted) String() string {
 	return s.list.String()
 }
 
@@ -192,7 +192,7 @@ func (s *Sorted) Find(item types.Hashable) (int, bool, error) {
 			r = m - 1
 		} else if item.Equals(im) {
 			for j := m; j > 0; j-- {
-				ij_1, err := s.list.Get(j-1)
+				ij_1, err := s.list.Get(j - 1)
 				if err != nil {
 					return -1, false, err
 				}
@@ -207,4 +207,3 @@ func (s *Sorted) Find(item types.Hashable) (int, bool, error) {
 	}
 	return l, false, nil
 }
-

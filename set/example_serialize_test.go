@@ -6,8 +6,8 @@ import (
 
 import (
 	"github.com/timtadh/data-structures/list"
-	"github.com/timtadh/data-structures/types"
 	"github.com/timtadh/data-structures/set"
+	"github.com/timtadh/data-structures/types"
 )
 
 func makeSet() *set.SortedSet {

@@ -4,17 +4,19 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
-func newSetBestType(a types.Set, sizeHint int) (types.Set) {
+func newSetBestType(a types.Set, sizeHint int) types.Set {
 	switch a.(type) {
-	case *MapSet: return NewMapSet(NewSortedSet(sizeHint))
-	case *SortedSet: return NewSortedSet(sizeHint)
-	default: return NewSortedSet(sizeHint)
+	case *MapSet:
+		return NewMapSet(NewSortedSet(sizeHint))
+	case *SortedSet:
+		return NewSortedSet(sizeHint)
+	default:
+		return NewSortedSet(sizeHint)
 	}
 }
 
 func Union(a, b types.Set) (types.Set, error) {
-	c := newSetBestType(a, a.Size() + b.Size())
+	c := newSetBestType(a, a.Size()+b.Size())
 	err := c.Extend(a.Items())
 	if err != nil {
 		return nil, err
@@ -27,7 +29,7 @@ func Union(a, b types.Set) (types.Set, error) {
 }
 
 func Intersect(a, b types.Set) (types.Set, error) {
-	c := newSetBestType(a, a.Size() + b.Size())
+	c := newSetBestType(a, a.Size()+b.Size())
 	for item, next := a.Items()(); next != nil; item, next = next() {
 		if b.Has(item) {
 			err := c.Add(item)
@@ -41,7 +43,7 @@ func Intersect(a, b types.Set) (types.Set, error) {
 
 // Unions s with o and returns a new Sorted Set
 func Subtract(a, b types.Set) (types.Set, error) {
-	c := newSetBestType(a, a.Size() + b.Size())
+	c := newSetBestType(a, a.Size()+b.Size())
 	for item, next := a.Items()(); next != nil; item, next = next() {
 		if !b.Has(item) {
 			err := c.Add(item)
@@ -79,4 +81,3 @@ func Superset(a, b types.Set) bool {
 func ProperSuperset(a, b types.Set) bool {
 	return ProperSubset(b, a)
 }
-

@@ -2,15 +2,15 @@ package set
 
 import (
 	"encoding/binary"
-	"math/rand"
 	"log"
+	"math/rand"
 	"os"
 )
 
 import (
-	"github.com/timtadh/data-structures/types"
-	"github.com/timtadh/data-structures/list"
 	"github.com/timtadh/data-structures/errors"
+	"github.com/timtadh/data-structures/list"
+	"github.com/timtadh/data-structures/types"
 )
 
 func init() {
@@ -69,7 +69,7 @@ func FromSlice(items []types.Hashable) *SortedSet {
 }
 
 func (s *SortedSet) Copy() *SortedSet {
-	return &SortedSet{ *s.Sorted.Copy() }
+	return &SortedSet{*s.Sorted.Copy()}
 }
 
 func (s *SortedSet) Random() (item types.Hashable, err error) {
@@ -164,5 +164,3 @@ func (s *SortedSet) Superset(o types.Set) bool {
 func (s *SortedSet) ProperSuperset(o types.Set) bool {
 	return ProperSuperset(s, o)
 }
-
-

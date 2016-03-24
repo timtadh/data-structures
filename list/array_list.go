@@ -11,22 +11,20 @@ import (
 )
 
 import (
-	"github.com/timtadh/data-structures/types"
 	"github.com/timtadh/data-structures/errors"
+	"github.com/timtadh/data-structures/types"
 )
-
-
 
 type MList struct {
 	List
-	MarshalItem types.ItemMarshal
+	MarshalItem   types.ItemMarshal
 	UnmarshalItem types.ItemUnmarshal
 }
 
 func NewMList(list *List, marshal types.ItemMarshal, unmarshal types.ItemUnmarshal) *MList {
 	return &MList{
-		List: *list,
-		MarshalItem: marshal,
+		List:          *list,
+		MarshalItem:   marshal,
 		UnmarshalItem: unmarshal,
 	}
 }
@@ -57,7 +55,7 @@ func (m *MList) MarshalBinary() ([]byte, error) {
 	return bytes.Join(items, []byte{}), nil
 }
 
-func (m *MList) UnmarshalBinary(bytes []byte) (error) {
+func (m *MList) UnmarshalBinary(bytes []byte) error {
 	m.List.fixed = bytes[0] == 1
 	_cap := int(binary.LittleEndian.Uint32(bytes[1:5]))
 	size := int(binary.LittleEndian.Uint32(bytes[5:9]))
@@ -123,7 +121,7 @@ func (s *Sortable) Swap(i, j int) {
 }
 
 type List struct {
-	list []types.Hashable
+	list  []types.Hashable
 	fixed bool
 }
 
@@ -139,7 +137,7 @@ func Fixed(size int) *List {
 
 func newList(initialSize int, fixedSize bool) *List {
 	return &List{
-		list: make([]types.Hashable, 0, initialSize),
+		list:  make([]types.Hashable, 0, initialSize),
 		fixed: fixedSize,
 	}
 }
@@ -309,11 +307,11 @@ func (l *List) Extend(it types.KIterator) (err error) {
 }
 
 func (l *List) Pop() (item types.Hashable, err error) {
-	item, err = l.Get(len(l.list)-1)
+	item, err = l.Get(len(l.list) - 1)
 	if err != nil {
 		return nil, err
 	}
-	err = l.Remove(len(l.list)-1)
+	err = l.Remove(len(l.list) - 1)
 	if err != nil {
 		return nil, err
 	}
@@ -324,8 +322,8 @@ func (l *List) Remove(i int) error {
 	if i < 0 || i >= len(l.list) {
 		return errors.Errorf("Access out of bounds. len(*List) = %v, idx = %v", len(l.list), i)
 	}
-	dst := l.list[i:len(l.list)-1]
-	src := l.list[i+1:len(l.list)]
+	dst := l.list[i : len(l.list)-1]
+	src := l.list[i+1 : len(l.list)]
 	copy(dst, src)
 	l.list = l.list[:len(l.list)-1]
 	if err := l.shrink(); err != nil {

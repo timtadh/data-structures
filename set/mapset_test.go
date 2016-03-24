@@ -97,4 +97,3 @@ func TestMapSetIterators(x *testing.T) {
 	}
 	t.assert("uneven iteration", items == nil && keys == nil)
 }
-

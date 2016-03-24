@@ -4,9 +4,8 @@ import (
 	"fmt"
 )
 
-
 type MapEntry struct {
-	Key Hashable
+	Key   Hashable
 	Value interface{}
 }
 
@@ -33,4 +32,3 @@ func (m *MapEntry) Hash() int {
 func (m *MapEntry) String() string {
 	return fmt.Sprintf("<MapEntry %v: %v>", m.Key, m.Value)
 }
-

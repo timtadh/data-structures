@@ -9,11 +9,9 @@ import (
 )
 
 import (
-	"github.com/timtadh/data-structures/types"
 	"github.com/timtadh/data-structures/list"
+	"github.com/timtadh/data-structures/types"
 )
-
-
 
 type T testing.T
 
@@ -27,7 +25,7 @@ func (t *T) assert(msg string, oks ...bool) {
 	}
 }
 
-func (t *T) assert_set(set types.Set, err error) (types.Set) {
+func (t *T) assert_set(set types.Set, err error) types.Set {
 	t.assert_nil(err)
 	return set
 }
@@ -41,14 +39,13 @@ func (t *T) assert_nil(errors ...error) {
 	}
 }
 
-
 func TestAddMarshalUnmarshalHas(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	set := NewSortedSet(10)
 	items := make([]types.Int, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := types.Int(rand.Intn(10)+1)
+		item := types.Int(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(set.Add(item))
 	}
@@ -230,6 +227,3 @@ func TestSubsetSuperset(x *testing.T) {
 	t.assert("a superset c", a.ProperSuperset(c))
 	t.assert("b superset c", b.ProperSuperset(c))
 }
-
-
-

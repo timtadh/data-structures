@@ -11,14 +11,13 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 func TestSortedAddMarshalUnmarshalGet(x *testing.T) {
 	t := (*T)(x)
 	SIZE := 100
 	list := NewSorted(10, false)
 	items := make([]types.Int, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := types.Int(rand.Intn(10)+1)
+		item := types.Int(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(list.Add(item))
 	}
@@ -107,9 +106,9 @@ func TestSortedExtend(x *testing.T) {
 	b := NewSorted(10, false)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := t.randslice(rand.Intn(10)+1)
+		item := t.randslice(rand.Intn(10) + 1)
 		for all.Has(item) {
-			item = t.randslice(rand.Intn(10)+1)
+			item = t.randslice(rand.Intn(10) + 1)
 		}
 		items = append(items, item)
 		t.assert_nil(all.Add(item))
@@ -126,8 +125,6 @@ func TestSortedExtend(x *testing.T) {
 		t.assert(fmt.Sprintf("i %v, !a.Has(item)", i), !a.Has(items[i]))
 	}
 }
-
-
 
 func TestSortedLess(x *testing.T) {
 	t := (*T)(x)
@@ -167,4 +164,3 @@ func TestSortedEqualsHash(x *testing.T) {
 	t.assert("d.Hash() != b.Hash()", d.Hash() != b.Hash())
 	t.assert("d.Hash() != empty.Hash()", d.Hash() != empty.Hash())
 }
-

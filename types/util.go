@@ -322,5 +322,3 @@ func ByteSliceMarshals() (ItemMarshal, ItemUnmarshal) {
 	}
 	return marshal, unmarshal
 }
-
-

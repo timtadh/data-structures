@@ -5,10 +5,8 @@ import (
 	"hash/fnv"
 )
 
-
 type String string
 type ByteSlice []byte
-
 
 func (self *String) MarshalBinary() ([]byte, error) {
 	return []byte(*self), nil
@@ -40,7 +38,6 @@ func (self String) Hash() int {
 	h.Write([]byte(string(self)))
 	return int(h.Sum32())
 }
-
 
 func (self *ByteSlice) MarshalBinary() ([]byte, error) {
 	return []byte(*self), nil

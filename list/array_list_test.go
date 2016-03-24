@@ -14,7 +14,6 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 func init() {
 	if urandom, err := os.Open("/dev/urandom"); err != nil {
 		panic(err)
@@ -26,7 +25,6 @@ func init() {
 		urandom.Close()
 	}
 }
-
 
 type T testing.T
 
@@ -69,7 +67,7 @@ func TestAppendGet(x *testing.T) {
 	list := New(10)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := t.randslice(rand.Intn(10)+1)
+		item := t.randslice(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
@@ -86,7 +84,7 @@ func TestAppendGetCopy(x *testing.T) {
 	list := New(10)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := t.randslice(rand.Intn(10)+1)
+		item := t.randslice(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
@@ -109,7 +107,7 @@ func TestAppendMarshalUnmarshalGet(x *testing.T) {
 	list := New(10)
 	items := make([]types.Int, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := types.Int(rand.Intn(10)+1)
+		item := types.Int(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
@@ -206,7 +204,7 @@ func TestAppendPop(x *testing.T) {
 	list := New(10)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := t.randslice(rand.Intn(10)+1)
+		item := t.randslice(rand.Intn(10) + 1)
 		items = append(items, item)
 		t.assert_nil(list.Append(item))
 	}
@@ -224,7 +222,7 @@ func TestExtend(x *testing.T) {
 	b := New(10)
 	items := make([]types.ByteSlice, 0, SIZE)
 	for i := 0; i < SIZE; i++ {
-		item := t.randslice(rand.Intn(10)+1)
+		item := t.randslice(rand.Intn(10) + 1)
 		items = append(items, item)
 		if i < SIZE/2 {
 			t.assert_nil(a.Append(item))
@@ -278,4 +276,3 @@ func TestEqualsHash(x *testing.T) {
 	t.assert("d.Hash() != b.Hash()", d.Hash() != b.Hash())
 	t.assert("d.Hash() != empty.Hash()", d.Hash() != empty.Hash())
 }
-

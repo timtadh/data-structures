@@ -19,8 +19,6 @@ type UInt64 uint64
 type Int int
 type UInt uint
 
-
-
 func (self *Int8) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 0)
 	bytes[0] = uint8(*self)
@@ -54,7 +52,6 @@ func (self Int8) Less(other Sortable) bool {
 func (self Int8) Hash() int {
 	return int(self)
 }
-
 
 func (self *UInt8) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 0)
@@ -90,7 +87,6 @@ func (self UInt8) Hash() int {
 	return int(self)
 }
 
-
 func (self *Int16) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(bytes, uint16(*self))
@@ -124,7 +120,6 @@ func (self Int16) Less(other Sortable) bool {
 func (self Int16) Hash() int {
 	return int(self)
 }
-
 
 func (self *UInt16) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 2)
@@ -160,7 +155,6 @@ func (self UInt16) Hash() int {
 	return int(self)
 }
 
-
 func (self *Int32) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(bytes, uint32(*self))
@@ -190,7 +184,6 @@ func (self Int32) Less(other Sortable) bool {
 		return false
 	}
 }
-
 
 func (self *UInt32) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
@@ -230,7 +223,6 @@ func (self UInt32) Hash() int {
 	return int(self)
 }
 
-
 func (self *Int64) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 8)
 	binary.BigEndian.PutUint64(bytes, uint64(*self))
@@ -265,7 +257,6 @@ func (self Int64) Hash() int {
 	return int(self>>32) ^ int(self)
 }
 
-
 func (self *UInt64) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 8)
 	binary.BigEndian.PutUint64(bytes, uint64(*self))
@@ -299,7 +290,6 @@ func (self UInt64) Less(other Sortable) bool {
 func (self UInt64) Hash() int {
 	return int(self>>32) ^ int(self)
 }
-
 
 func (self *Int) MarshalBinary() ([]byte, error) {
 	bytes := make([]byte, 4)
@@ -368,4 +358,3 @@ func (self UInt) Less(other Sortable) bool {
 func (self UInt) Hash() int {
 	return int(self)
 }
-

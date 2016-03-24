@@ -9,7 +9,6 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 type MapSet struct {
 	Set types.Set
 }
@@ -169,4 +168,3 @@ func (m *MapSet) ProperSuperset(b types.Set) bool {
 func (m *MapSet) String() string {
 	return fmt.Sprintf("%v", m.Set)
 }
-

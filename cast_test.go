@@ -3,8 +3,8 @@ package data_structures
 import "testing"
 import (
 	"github.com/timtadh/data-structures/hashtable"
-	"github.com/timtadh/data-structures/set"
 	"github.com/timtadh/data-structures/list"
+	"github.com/timtadh/data-structures/set"
 	"github.com/timtadh/data-structures/tree/avl"
 	"github.com/timtadh/data-structures/tree/bptree"
 	"github.com/timtadh/data-structures/trie"
