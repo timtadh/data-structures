@@ -193,11 +193,14 @@ func (l *List) equals(o types.IterableContainer) bool {
 	if l.Size() != o.Size() {
 		return false
 	}
-	for v, next := l.Items()(); next != nil; v, next = next() {
-		item := v.(types.Hashable)
-		if !o.Has(item) {
+	cs, si := l.Items()()
+	co, oi := o.Items()()
+	for si != nil || oi != nil {
+		if !cs.Equals(co) {
 			return false
 		}
+		cs, si = si()
+		co, oi = oi()
 	}
 	return true
 }
