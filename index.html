@@ -45,13 +45,14 @@ attempts to fill the gap. I have implemented data-structure's as I have needed
 them. If there is a missing structure or even just a missing (or incorrect)
 method open an issue, send a pull request, or send an email patch.</p>
 
-<p>The library also provides generic types to allow the user to swap out various
-data structures transparently. The interfaces provide operation for adding,
-removing, retrieving objects from collections as well as iterating over the
-collection using functional iterators.</p>
+<p>The library also provides generic
+<a href="https://godoc.org/github.com/timtadh/data-structures/types">types</a> to allow the
+user to swap out various data structures transparently. The interfaces provide
+operation for adding, removing, retrieving objects from collections as well as
+iterating over the collection using functional iterators.</p>
 
-<p>Finally, the tree sub-package provides a variety of generic tree traversals. The
-tree traversals and other iterators in the package use a functional iteration
+<p>The tree sub-package provides a variety of generic tree traversals. The tree
+traversals and other iterators in the package use a functional iteration
 technique <a href="http://hackthology.com/functional-iteration-in-go.html">detailed on my blog</a>.</p>
 
 <p>I hope you find my library useful. If you are using it drop me a line I would
@@ -66,7 +67,17 @@ love to hear about it.</p>
 <a id="lists" class="anchor" href="#lists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lists</h2>
 
 <h3>
-<a id="array-list-listlist" class="anchor" href="#array-list-listlist" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Array List <code>list.List</code>
+<a id="doubly-linked-list-linkedlinkedlist" class="anchor" href="#doubly-linked-list-linkedlinkedlist" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Doubly Linked List <a href="https://godoc.org/github.com/timtadh/data-structures/linked#LinkedList"><code>linked.LinkedList</code></a>
+</h3>
+
+<p>A simple an extensible doubly linked list. It is
+<a href="https://godoc.org/github.com/timtadh/data-structures/types#Equatable">Equatable</a>
+<a href="https://godoc.org/github.com/timtadh/data-structures/types#Sortable">Sortable</a>,
+and <a href="https://godoc.org/github.com/timtadh/data-structures/types#Hashable">Hashable</a>
+as are the <a href="https://godoc.org/github.com/timtadh/data-structures/linked#Node">Node</a>s.</p>
+
+<h3>
+<a id="array-list-listlist" class="anchor" href="#array-list-listlist" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Array List <a href="https://godoc.org/github.com/timtadh/data-structures/list#List"><code>list.List</code></a>
 </h3>
 
 <p>Similar to a Java ArrayList or a Python or Ruby "list". There is a version
@@ -74,19 +85,41 @@ love to hear about it.</p>
 library.</p>
 
 <h3>
-<a id="sorted-array-list-listsorted" class="anchor" href="#sorted-array-list-listsorted" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Array List <code>list.Sorted</code>
+<a id="sorted-array-list-listsorted" class="anchor" href="#sorted-array-list-listsorted" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Array List <a href="https://godoc.org/github.com/timtadh/data-structures/list#Sorted"><code>list.Sorted</code></a>
 </h3>
 
 <p>Keeps the ArrayList in sorted order for you.</p>
 
 <h3>
-<a id="sorted-set-setsortedset" class="anchor" href="#sorted-set-setsortedset" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Set <code>set.SortedSet</code>
+<a id="sorted-set-setsortedset" class="anchor" href="#sorted-set-setsortedset" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sorted Set <a href="https://godoc.org/github.com/timtadh/data-structures/set#SortedSet"><code>set.SortedSet</code></a>
 </h3>
 
 <p>Built on top of <code>*list.Sorted</code>, it provides basic set operations. With
 <code>set.SortedSet</code> you don't have to write code re-implementing sets with the
 <code>map[type]</code> datatype. Supports: intersection, union, set difference and overlap
 tests.</p>
+
+<h3>
+<a id="map-set-setmapset" class="anchor" href="#map-set-setmapset" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Map Set <a href="https://godoc.org/github.com/timtadh/data-structures/set#MapSet"><code>set.MapSet</code></a>
+</h3>
+
+<p>Construct a
+<a href="https://godoc.org/github.com/timtadh/data-structures/types#Map"><code>types.Map</code></a>
+from any <a href="https://godoc.org/github.com/timtadh/data-structures/types#Set"><code>types.Set</code></a>.</p>
+
+<h3>
+<a id="set-map-setsetmap" class="anchor" href="#set-map-setsetmap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Set Map <a href="https://godoc.org/github.com/timtadh/data-structures/set#SetMap"><code>set.SetMap</code></a>
+</h3>
+
+<p>Construct a set from any
+<a href="https://godoc.org/github.com/timtadh/data-structures/types#Map"><code>types.Map</code></a>.</p>
+
+<h3>
+<a id="unique-deque-linkeduniquedeque" class="anchor" href="#unique-deque-linkeduniquedeque" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unique Deque <a href="https://godoc.org/github.com/timtadh/data-structures/linked#UniqueDeque"><code>linked.UniqueDeque</code></a>
+</h3>
+
+<p>A double ended queue that only allows unique items inside. Constructed from a
+doubly linked list and a linear hash table.</p>
 
 <h3>
 <a id="fixed-size-lists" class="anchor" href="#fixed-size-lists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fixed Size Lists</h3>
@@ -108,14 +141,15 @@ for how to use the serialization.</p>
 <a id="trees" class="anchor" href="#trees" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Trees</h2>
 
 <h3>
-<a id="classic-avl-tree-treeavlavltree" class="anchor" href="#classic-avl-tree-treeavlavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classic AVL Tree <code>tree/avl.AvlTree</code>
+<a id="avl-tree-treeavlavltree" class="anchor" href="#avl-tree-treeavlavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AVL Tree <a href="https://godoc.org/github.com/timtadh/data-structures/tree/avl#AvlTree"><code>tree/avl.AvlTree</code></a>
 </h3>
 
-<p>An AVL tree is a height balanced binary search tree. It is commonly taught in
-algorithms courses.</p>
+<p>An <a href="https://en.wikipedia.org/wiki/AVL_tree">AVL Tree</a> is a height balanced
+binary search tree. Insertion and retrieval are both O(log(n)) where n is the
+number items in the tree.</p>
 
 <h3>
-<a id="immutable-avl-tree-treeavlimmutableavltree" class="anchor" href="#immutable-avl-tree-treeavlimmutableavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Immutable AVL Tree <code>tree/avl.ImmutableAvlTree</code>
+<a id="immutable-avl-tree-treeavlimmutableavltree" class="anchor" href="#immutable-avl-tree-treeavlimmutableavltree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Immutable AVL Tree <a href="https://godoc.org/github.com/timtadh/data-structures/tree/avl#ImmutableAvlTree"><code>tree/avl.ImmutableAvlTree</code></a>
 </h3>
 
 <p>This version of the classic is immutable and should be thread safe due to
@@ -126,7 +160,7 @@ BenchmarkImmutableAvlTree   5000            333709 ns/op
 </code></pre>
 
 <h3>
-<a id="ternary-search-trie-trietst" class="anchor" href="#ternary-search-trie-trietst" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ternary Search Trie <code>trie.TST</code>
+<a id="ternary-search-trie-trietst" class="anchor" href="#ternary-search-trie-trietst" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ternary Search Trie <a href="https://godoc.org/github.com/timtadh/data-structures/trie#TST"><code>trie.TST</code></a>
 </h3>
 
 <p>A <a href="http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html">ternary search trie</a>
@@ -136,11 +170,11 @@ memory allowing them to store more data while still retaining all of the
 flexibility of the R-Way Trie. TSTs can be used to build a suffix tree for full
 text string indexing by storing every suffix of each string in addition to the
 string. However, even without storing all of the suffixes it is still a great
-structure for flexible prefix searches. TSTs can be using to implement extremely
-fast autocomplete functionality.</p>
+structure for flexible prefix searches. For instance, TSTs can be used to
+implement extremely fast auto-complete functionality.</p>
 
 <h3>
-<a id="btree-with-and-without-support-for-duplicate-keys-treebptreebptree" class="anchor" href="#btree-with-and-without-support-for-duplicate-keys-treebptreebptree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>B+Tree (with and without support for duplicate keys) <code>tree/bptree.BpTree</code>
+<a id="btree-treebptreebptree" class="anchor" href="#btree-treebptreebptree" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>B+Tree <a href="https://godoc.org/github.com/timtadh/data-structures/tree/bptree"><code>tree/bptree.BpTree</code></a>
 </h3>
 
 <p>A
@@ -159,22 +193,22 @@ has RAM.</p>
 <a id="hash-tables" class="anchor" href="#hash-tables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hash Tables</h2>
 
 <h3>
-<a id="classic-separate-chaining-hash-table-hashtablehash" class="anchor" href="#classic-separate-chaining-hash-table-hashtablehash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classic Separate Chaining Hash Table <code>hashtable.Hash</code>
+<a id="separate-chaining-hash-table-hashtablehash" class="anchor" href="#separate-chaining-hash-table-hashtablehash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Separate Chaining Hash Table <a href="https://godoc.org/github.com/timtadh/data-structures/hashtable#Hash"><code>hashtable.Hash</code></a>
 </h3>
 
 <p>See <code>hashtable/hashtable.go</code>. An implementation of the classic hash table with
 separate chaining to handle collisions.</p>
 
 <h3>
-<a id="linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" class="anchor" href="#linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linear Hash Table with AVL Tree Buckets <code>hashtable.LinearHash</code>
+<a id="linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" class="anchor" href="#linear-hash-table-with-avl-tree-buckets-hashtablelinearhash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linear Hash Table with AVL Tree Buckets <a href="https://godoc.org/github.com/timtadh/data-structures/hashtable#LinearHash"><code>hashtable.LinearHash</code></a>
 </h3>
 
 <p>See <code>hashtables/linhash.go</code>. An implementation of <a href="http://hackthology.com/linear-hashing.html">Linear
 Hashing</a>, a technique usually used
 for secondary storage hash tables. Often employed by databases and file systems
-for hash indices. This version is mostly instructional see the
-<a href="http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html">accompanying blog post</a>.
-If you want the "real" disk backed version you want to check my
+for hash indices. This version is mostly instructional see the <a href="http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html">accompanying
+blog post</a>.
+If you want a disk backed version check out my
 <a href="https://github.com/timtadh/file-structures">file-structures</a> repository. See
 the <code>linhash</code> directory.</p>
 
