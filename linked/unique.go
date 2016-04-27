@@ -12,14 +12,14 @@ type UniqueDeque struct {
 	set   types.Set
 }
 
+// A double ended queue that only allows unique items inside. Constructed from a
+// doubly linked list and a linear hash table.
 func NewUniqueDeque() *UniqueDeque {
 	return &UniqueDeque{
 		queue: New(),
 		set: set.NewSetMap(hashtable.NewLinearHash()),
 	}
 }
-
-
 
 func (l *UniqueDeque) Size() int {
 	return l.queue.Size()
