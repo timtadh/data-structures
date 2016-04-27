@@ -11,26 +11,29 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 // A doubly linked list node.
 type Node struct {
-	Data types.Hashable
+	Data       types.Hashable
 	Next, Prev *Node
 }
 
 // Compares the Data of the node to the passed element.
 func (n *Node) Equals(b types.Equatable) bool {
 	switch x := b.(type) {
-	case *Node: return n.Data.Equals(x.Data)
-	default: return n.Data.Equals(b)
+	case *Node:
+		return n.Data.Equals(x.Data)
+	default:
+		return n.Data.Equals(b)
 	}
 }
 
 // Compares the Data of the node to the passed element.
 func (n *Node) Less(b types.Sortable) bool {
 	switch x := b.(type) {
-	case *Node: return n.Data.Less(x.Data)
-	default: return n.Data.Less(b)
+	case *Node:
+		return n.Data.Less(x.Data)
+	default:
+		return n.Data.Less(b)
 	}
 }
 
@@ -39,20 +42,19 @@ func (n *Node) Hash() int {
 	return n.Data.Hash()
 }
 
-
 // A doubly linked list. There is no synchronization.
 // The fields are publically accessible to allow for easy customization.
 type LinkedList struct {
 	Length int
-	Head *Node
-	Tail *Node
+	Head   *Node
+	Tail   *Node
 }
 
 func New() *LinkedList {
 	return &LinkedList{
 		Length: 0,
-		Head: nil,
-		Tail: nil,
+		Head:   nil,
+		Tail:   nil,
 	}
 }
 
@@ -203,4 +205,3 @@ func (l *LinkedList) String() string {
 	}
 	return "{" + strings.Join(items, ", ") + "}"
 }
-

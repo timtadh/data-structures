@@ -12,7 +12,6 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 func TestNewSetMap(t *testing.T) {
 	s := types.Set(NewSetMap(hashtable.NewLinearHash()))
 	t.Log(s.Size())
@@ -41,4 +40,3 @@ func TestSetMapAddHasDelete(x *testing.T) {
 		t.assert(fmt.Sprintf("i %v, !set.Has(item)", i), !set.Has(item))
 	}
 }
-

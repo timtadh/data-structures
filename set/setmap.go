@@ -80,4 +80,3 @@ func (s *SetMap) Superset(o types.Set) bool {
 func (s *SetMap) ProperSuperset(o types.Set) bool {
 	return ProperSuperset(s, o)
 }
-

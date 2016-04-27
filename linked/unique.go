@@ -17,7 +17,7 @@ type UniqueDeque struct {
 func NewUniqueDeque() *UniqueDeque {
 	return &UniqueDeque{
 		queue: New(),
-		set: set.NewSetMap(hashtable.NewLinearHash()),
+		set:   set.NewSetMap(hashtable.NewLinearHash()),
 	}
 }
 
@@ -99,7 +99,6 @@ func (l *UniqueDeque) Last() (item types.Hashable) {
 	return l.queue.Last()
 }
 
-
 // Can be compared to any types.IterableContainer
 func (l *UniqueDeque) Equals(b types.Equatable) bool {
 	return l.queue.Equals(b)
@@ -117,4 +116,3 @@ func (l *UniqueDeque) Hash() int {
 func (l *UniqueDeque) String() string {
 	return l.queue.String()
 }
-
