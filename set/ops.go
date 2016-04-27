@@ -1,6 +1,7 @@
 package set
 
 import (
+	"github.com/timtadh/data-structures/hashtable"
 	"github.com/timtadh/data-structures/types"
 )
 
@@ -10,6 +11,8 @@ func newSetBestType(a types.Set, sizeHint int) types.Set {
 		return NewMapSet(NewSortedSet(sizeHint))
 	case *SortedSet:
 		return NewSortedSet(sizeHint)
+	case *SetMap:
+		return NewSetMap(hashtable.NewLinearHash())
 	default:
 		return NewSortedSet(sizeHint)
 	}
