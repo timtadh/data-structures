@@ -183,52 +183,52 @@ func (l *List) Has(item types.Hashable) (has bool) {
 
 func (l *List) Equals(b types.Equatable) bool {
 	if o, ok := b.(types.IterableContainer); ok {
-		return l.equals(o)
+		return Equals(l, o)
 	} else {
 		return false
 	}
 }
 
-func (l *List) equals(o types.IterableContainer) bool {
-	if l.Size() != o.Size() {
+func Equals(a, b types.IterableContainer) bool {
+	if a.Size() != b.Size() {
 		return false
 	}
-	cs, si := l.Items()()
-	co, oi := o.Items()()
-	for si != nil || oi != nil {
-		if !cs.Equals(co) {
+	ca, ai := a.Items()()
+	cb, bi := b.Items()()
+	for ai != nil || bi != nil {
+		if !ca.Equals(cb) {
 			return false
 		}
-		cs, si = si()
-		co, oi = oi()
+		ca, ai = ai()
+		cb, bi = bi()
 	}
 	return true
 }
 
 func (l *List) Less(b types.Sortable) bool {
 	if o, ok := b.(types.IterableContainer); ok {
-		return l.less(o)
+		return Less(l, o)
 	} else {
 		return false
 	}
 }
 
-func (l *List) less(o types.IterableContainer) bool {
-	if l.Size() < o.Size() {
+func Less(a, b types.IterableContainer) bool {
+	if a.Size() < b.Size() {
 		return true
-	} else if l.Size() > o.Size() {
+	} else if a.Size() > b.Size() {
 		return false
 	}
-	cs, si := l.Items()()
-	co, oi := o.Items()()
-	for si != nil || oi != nil {
-		if cs.Less(co) {
+	ca, ai := a.Items()()
+	cb, bi := b.Items()()
+	for ai != nil || bi != nil {
+		if ca.Less(cb) {
 			return true
-		} else if !cs.Equals(co) {
+		} else if !ca.Equals(cb) {
 			return false
 		}
-		cs, si = si()
-		co, oi = oi()
+		ca, ai = ai()
+		cb, bi = bi()
 	}
 	return false
 }
@@ -240,6 +240,16 @@ func (l *List) Hash() int {
 	}
 	bs := make([]byte, 4)
 	for _, item := range l.list {
+		binary.LittleEndian.PutUint32(bs, uint32(item.Hash()))
+		h.Write(bs)
+	}
+	return int(h.Sum32())
+}
+
+func Hash(a types.ListIterable) int {
+	h := fnv.New32a()
+	bs := make([]byte, 4)
+	for item, next := a.Items()(); next != nil; item, next = next() {
 		binary.LittleEndian.PutUint32(bs, uint32(item.Hash()))
 		h.Write(bs)
 	}
@@ -271,6 +281,10 @@ func (l *List) Set(i int, item types.Hashable) (err error) {
 	}
 	l.list[i] = item
 	return nil
+}
+
+func (l *List) Push(item types.Hashable) error {
+	return l.Append(item)
 }
 
 func (l *List) Append(item types.Hashable) error {

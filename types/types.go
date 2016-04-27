@@ -88,9 +88,13 @@ type MultiMap interface {
 	MultiMapOperable
 }
 
+type ContainerOperable interface {
+	Has(item Hashable) bool
+}
+
 type ItemsOperable interface {
 	Sized
-	Has(item Hashable) bool
+	ContainerOperable
 	Item(item Hashable) (Hashable, error)
 	Add(item Hashable) (err error)
 	Delete(item Hashable) (err error)
@@ -112,14 +116,34 @@ type IterableContainer interface {
 	Has(item Hashable) bool
 }
 
+type StackOperable interface {
+	Push(item Hashable) (err error)
+	Pop() (item Hashable, err error)
+}
+
+type DequeOperable interface {
+	EnqueFront(item Hashable) (err error)
+	EnqueBack(item Hashable) (err error)
+	DequeFront() (item Hashable, err error)
+	DequeBack() (item Hashable, err error)
+	First() (item Hashable)
+	Last() (item Hashable)
+}
+
+type LinkedOperable interface {
+	Sized
+	ContainerOperable
+	StackOperable
+	DequeOperable
+}
+
 type ListOperable interface {
 	Sized
-	Has(item Hashable) bool
+	ContainerOperable
+	Append(item Hashable) (err error)
 	Get(i int) (item Hashable, err error)
 	Set(i int, item Hashable) (err error)
 	Insert(i int, item Hashable) (err error)
-	Append(item Hashable) (err error)
-	Pop() (item Hashable, err error)
 	Remove(i int) (err error)
 }
 
@@ -149,6 +173,23 @@ type List interface {
 type HList interface {
 	Hashable
 	List
+}
+
+type Stack interface {
+	Sized
+	ContainerOperable
+	StackOperable
+}
+
+type Deque interface {
+	Sized
+	ContainerOperable
+	DequeOperable
+}
+
+type Linked interface {
+	LinkedOperable
+	ListIterable
 }
 
 type Tree interface {
