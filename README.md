@@ -64,6 +64,16 @@ Construct a
 [`types.Map`](https://godoc.org/github.com/timtadh/data-structures/types#Map)
 from any [`types.Set`](https://godoc.org/github.com/timtadh/data-structures/types#Set).
 
+### Set Map [`set.SetMap`](https://godoc.org/github.com/timtadh/data-structures/set#SetMap)
+
+Construct a set from any
+[`types.Map`](https://godoc.org/github.com/timtadh/data-structures/types#Map).
+
+### Unique Deque [`linked.UniqueDeque`](https://godoc.org/github.com/timtadh/data-structures/linked#UniqueDeque)
+
+A double ended queue that only allows unique items inside. Constructed from a
+doubly linked list and a linear hash table.
+
 ### Fixed Size Lists
 
 Both `list.List` and `list.Sorted` have alternative constructors which make them
