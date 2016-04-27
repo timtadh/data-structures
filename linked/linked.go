@@ -40,7 +40,6 @@ func (n *Node) Hash() int {
 }
 
 
-
 // A doubly linked list. There is no synchronization.
 // The fields are publically accessible to allow for easy customization.
 type LinkedList struct {
