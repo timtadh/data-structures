@@ -100,7 +100,7 @@ func TestIteratorPrefixFindDotty(t *testing.T) {
 		types.ByteSlice("baskin"),
 		types.ByteSlice("balm"),
 	}
-	table := new(TST)
+	table := New()
 	for _, key := range items {
 		if err := table.Put(key, nil); err != nil {
 			t.Error(table, err)

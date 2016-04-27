@@ -13,13 +13,14 @@ attempts to fill the gap. I have implemented data-structure's as I have needed
 them. If there is a missing structure or even just a missing (or incorrect)
 method open an issue, send a pull request, or send an email patch.
 
-The library also provides generic types to allow the user to swap out various
-data structures transparently. The interfaces provide operation for adding,
-removing, retrieving objects from collections as well as iterating over the
-collection using functional iterators.
+The library also provides generic
+[types](https://godoc.org/github.com/timtadh/data-structures/types) to allow the
+user to swap out various data structures transparently. The interfaces provide
+operation for adding, removing, retrieving objects from collections as well as
+iterating over the collection using functional iterators.
 
-Finally, the tree sub-package provides a variety of generic tree traversals. The
-tree traversals and other iterators in the package use a functional iteration
+The tree sub-package provides a variety of generic tree traversals. The tree
+traversals and other iterators in the package use a functional iteration
 technique [detailed on my blog](
 http://hackthology.com/functional-iteration-in-go.html).
 
@@ -32,22 +33,36 @@ love to hear about it.
 
 ## Lists
 
-### Array List `list.List`
+### Doubly Linked List [`linked.LinkedList`](https://godoc.org/github.com/timtadh/data-structures/linked#LinkedList)
+
+A simple an extensible doubly linked list. It is
+[Equatable](https://godoc.org/github.com/timtadh/data-structures/types#Equatable)
+[Sortable](https://godoc.org/github.com/timtadh/data-structures/types#Sortable),
+and [Hashable](https://godoc.org/github.com/timtadh/data-structures/types#Hashable)
+as are the [Node](https://godoc.org/github.com/timtadh/data-structures/linked#Node)s.
+
+### Array List [`list.List`](https://godoc.org/github.com/timtadh/data-structures/list#List)
 
 Similar to a Java ArrayList or a Python or Ruby "list". There is a version
 (called Sortable) which integrates with the `"sort"` package from the standard
 library.
 
-### Sorted Array List `list.Sorted`
+### Sorted Array List [`list.Sorted`](https://godoc.org/github.com/timtadh/data-structures/list#Sorted)
 
 Keeps the ArrayList in sorted order for you.
 
-### Sorted Set `set.SortedSet`
+### Sorted Set [`set.SortedSet`](https://godoc.org/github.com/timtadh/data-structures/set#SortedSet)
 
 Built on top of `*list.Sorted`, it provides basic set operations. With
 `set.SortedSet` you don't have to write code re-implementing sets with the
 `map[type]` datatype. Supports: intersection, union, set difference and overlap
 tests.
+
+### Map Set [`set.MapSet`](https://godoc.org/github.com/timtadh/data-structures/set#MapSet)
+
+Construct a
+[`types.Map`](https://godoc.org/github.com/timtadh/data-structures/types#Map)
+from any [`types.Set`](https://godoc.org/github.com/timtadh/data-structures/types#Set).
 
 ### Fixed Size Lists
 
@@ -65,12 +80,13 @@ for how to use the serialization.
 
 ## Trees
 
-### Classic AVL Tree `tree/avl.AvlTree`
+### AVL Tree [`tree/avl.AvlTree`](https://godoc.org/github.com/timtadh/data-structures/tree/avl#AvlTree)
 
-An AVL tree is a height balanced binary search tree. It is commonly taught in
-algorithms courses.
+An [AVL Tree](https://en.wikipedia.org/wiki/AVL_tree) is a height balanced
+binary search tree. Insertion and retrieval are both O(log(n)) where n is the
+number items in the tree.
 
-### Immutable AVL Tree `tree/avl.ImmutableAvlTree`
+### Immutable AVL Tree [`tree/avl.ImmutableAvlTree`](https://godoc.org/github.com/timtadh/data-structures/tree/avl#ImmutableAvlTree)
 
 This version of the classic is immutable and should be thread safe due to
 immutability. However, there is a performance hit:
@@ -78,7 +94,7 @@ immutability. However, there is a performance hit:
     BenchmarkAvlTree           10000            166657 ns/op
     BenchmarkImmutableAvlTree   5000            333709 ns/op
 
-### Ternary Search Trie `trie.TST`
+### Ternary Search Trie [`trie.TST`](https://godoc.org/github.com/timtadh/data-structures/trie#TST)
 
 A [ternary search trie](
 http://hackthology.com/ternary-search-tries-for-fast-flexible-string-search-part-1.html)
@@ -88,10 +104,10 @@ memory allowing them to store more data while still retaining all of the
 flexibility of the R-Way Trie. TSTs can be used to build a suffix tree for full
 text string indexing by storing every suffix of each string in addition to the
 string. However, even without storing all of the suffixes it is still a great
-structure for flexible prefix searches. TSTs can be using to implement extremely
-fast autocomplete functionality.
+structure for flexible prefix searches. For instance, TSTs can be used to
+implement extremely fast auto-complete functionality.
 
-### B+Tree (with and without support for duplicate keys) `tree/bptree.BpTree`
+### B+Tree [`tree/bptree.BpTree`](https://godoc.org/github.com/timtadh/data-structures/tree/bptree)
 
 A
 [B+Tree](http://hackthology.com/lessons-learned-while-implementing-a-btree.html)
@@ -107,20 +123,20 @@ has RAM.
 
 ## Hash Tables
 
-### Classic Separate Chaining Hash Table `hashtable.Hash`
+### Separate Chaining Hash Table [`hashtable.Hash`](https://godoc.org/github.com/timtadh/data-structures/hashtable#Hash)
 
 See `hashtable/hashtable.go`. An implementation of the classic hash table with
 separate chaining to handle collisions.
 
-### Linear Hash Table with AVL Tree Buckets `hashtable.LinearHash`
+### Linear Hash Table with AVL Tree Buckets [`hashtable.LinearHash`](https://godoc.org/github.com/timtadh/data-structures/hashtable#LinearHash)
 
 See `hashtables/linhash.go`. An implementation of [Linear
 Hashing](http://hackthology.com/linear-hashing.html), a technique usually used
 for secondary storage hash tables. Often employed by databases and file systems
-for hash indices. This version is mostly instructional see the
-[accompanying blog post](
+for hash indices. This version is mostly instructional see the [accompanying
+blog post](
 http://hackthology.com/an-in-memory-go-implementation-of-linear-hashing.html).
-If you want the "real" disk backed version you want to check my
+If you want a disk backed version check out my
 [file-structures](https://github.com/timtadh/file-structures) repository. See
 the `linhash` directory.
 

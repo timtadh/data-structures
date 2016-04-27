@@ -15,6 +15,10 @@ type TST struct {
 	heads [256]*TSTNode
 }
 
+func New() *TST {
+	return &TST{}
+}
+
 func (self *TST) ValidateKey(key []byte) error {
 	if key == nil {
 		return errors.InvalidKey(key, "key is nil")
