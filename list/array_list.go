@@ -382,7 +382,7 @@ func (l *List) shrink() error {
 		return nil
 	}
 	list := l.list
-	l.list = make([]types.Hashable, len(list), cap(list)/2)
+	l.list = make([]types.Hashable, len(list), cap(list)/2 + 1)
 	copy(l.list, list)
 	return nil
 }
