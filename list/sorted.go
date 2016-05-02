@@ -155,7 +155,6 @@ func (s *Sorted) Delete(item types.Hashable) (err error) {
 		return errors.Errorf("item %v not in the table", item)
 	}
 	return s.list.Remove(i)
-	return nil
 }
 
 func (s *Sorted) Equals(b types.Equatable) bool {
@@ -179,30 +178,33 @@ func (s *Sorted) String() string {
 }
 
 func (s *Sorted) Find(item types.Hashable) (int, bool, error) {
+	return Find(&s.list, item)
+}
+func Find(lst *List, item types.Hashable) (int, bool, error) {
 	var l int = 0
-	var r int = s.Size() - 1
+	var r int = lst.Size() - 1
 	var m int
 	for l <= r {
 		m = ((r - l) >> 1) + l
-		im, err := s.list.Get(m)
+		im, err := lst.Get(m)
 		if err != nil {
 			return -1, false, err
 		}
-		if item.Less(im) {
-			r = m - 1
-		} else if item.Equals(im) {
+		if im.Less(item) {
+			l = m + 1
+		} else if im.Equals(item) {
 			for j := m; j > 0; j-- {
-				ij_1, err := s.list.Get(j - 1)
+				ij_1, err := lst.Get(j - 1)
 				if err != nil {
 					return -1, false, err
 				}
-				if !item.Equals(ij_1) {
+				if !ij_1.Equals(item) {
 					return j, true, nil
 				}
 			}
 			return 0, true, nil
 		} else {
-			l = m + 1
+			r = m - 1
 		}
 	}
 	return l, false, nil

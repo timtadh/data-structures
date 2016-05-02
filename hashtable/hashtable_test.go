@@ -4,6 +4,7 @@ import "testing"
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"math/rand"
 	"os"
 )
@@ -39,6 +40,20 @@ func randstr(length int) String {
 	panic("unreachable")
 }
 
+func randhex(length int) String {
+	if urandom, err := os.Open("/dev/urandom"); err != nil {
+		panic(err)
+	} else {
+		slice := make([]byte, length/2)
+		if _, err := urandom.Read(slice); err != nil {
+			panic(err)
+		}
+		urandom.Close()
+		return String(hex.EncodeToString(slice))
+	}
+	panic("unreachable")
+}
+
 func TestMake(t *testing.T) {
 	NewHashTable(12)
 }
@@ -70,8 +85,8 @@ func TestPutHasGetRemove(t *testing.T) {
 
 	ranrec := func() *record {
 		return &record{
-			String(randstr(20)),
-			String(randstr(20)),
+			String(randhex(12)),
+			String(randhex(12)),
 		}
 	}
 
@@ -80,54 +95,57 @@ func TestPutHasGetRemove(t *testing.T) {
 		for i := range records {
 			r := ranrec()
 			records[i] = r
+			if table.Has(r.key) {
+				t.Fatal("Table has extra key", table, r.key)
+			}
 			err := table.Put(r.key, String(""))
 			if err != nil {
-				t.Error(err)
+				t.Fatal(err)
 			}
 			err = table.Put(r.key, r.value)
 			if err != nil {
-				t.Error(err)
+				t.Fatal(err)
 			}
 			if table.Size() != (i + 1) {
-				t.Error("size was wrong", table.Size(), i+1)
+				t.Fatal("size was wrong", table.Size(), i+1)
 			}
 		}
 
 		for _, r := range records {
 			if has := table.Has(r.key); !has {
-				t.Error(table, "Missing key")
+				t.Fatal(table, "Missing key", r, r.key.Hash())
 			}
-			if has := table.Has(randstr(12)); has {
-				t.Error("Table has extra key")
+			if has := table.Has(randhex(12)); has {
+				t.Fatal("Table has extra key")
 			}
 			if val, err := table.Get(r.key); err != nil {
-				t.Error(err)
+				t.Fatal(err)
 			} else if !(val.(String)).Equals(r.value) {
-				t.Error("wrong value")
+				t.Fatal("wrong value")
 			}
 		}
 
 		for i, x := range records {
 			if val, err := table.Remove(x.key); err != nil {
-				t.Error(err)
+				t.Fatal(err)
 			} else if !(val.(String)).Equals(x.value) {
-				t.Error("wrong value")
+				t.Fatal("wrong value")
 			}
 			for _, r := range records[i+1:] {
 				if has := table.Has(r.key); !has {
-					t.Error("Missing key")
+					t.Fatal("Missing key")
 				}
-				if has := table.Has(randstr(12)); has {
-					t.Error("Table has extra key")
+				if has := table.Has(randhex(12)); has {
+					t.Fatal("Table has extra key")
 				}
 				if val, err := table.Get(r.key); err != nil {
-					t.Error(err)
+					t.Fatal(err)
 				} else if !(val.(String)).Equals(r.value) {
-					t.Error("wrong value")
+					t.Fatal("wrong value")
 				}
 			}
 			if table.Size() != (len(records) - (i + 1)) {
-				t.Error("size was wrong", table.Size(), (len(records) - (i + 1)))
+				t.Fatal("size was wrong", table.Size(), (len(records) - (i + 1)))
 			}
 		}
 	}

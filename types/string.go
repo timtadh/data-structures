@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"fmt"
 	"hash/fnv"
 )
 
@@ -37,6 +38,10 @@ func (self String) Hash() int {
 	h := fnv.New32a()
 	h.Write([]byte(string(self)))
 	return int(h.Sum32())
+}
+
+func (self String) String() string {
+	return fmt.Sprintf(`"%v"`, string(self))
 }
 
 func (self *ByteSlice) MarshalBinary() ([]byte, error) {

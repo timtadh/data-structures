@@ -30,5 +30,5 @@ func (m *MapEntry) Hash() int {
 }
 
 func (m *MapEntry) String() string {
-	return fmt.Sprintf("<MapEntry %v: %v>", m.Key, m.Value)
+	return fmt.Sprintf("%v: %v", m.Key, m.Value)
 }
