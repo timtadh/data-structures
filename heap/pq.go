@@ -2,6 +2,7 @@ package heap
 
 import (
 	"github.com/timtadh/data-structures/errors"
+	"github.com/timtadh/data-structures/types"
 )
 
 
@@ -11,6 +12,7 @@ type entry struct {
 }
 
 type PriorityQueue interface {
+	types.Sized
 	Push(priority int, item interface{})
 	Peek() interface{}
 	Pop() interface{}
@@ -36,6 +38,20 @@ type Heap struct {
 func NewHeap(size int, min bool) *Heap {
 	return &Heap{
 		min: min,
+		list: make([]entry, 0, size),
+	}
+}
+
+func NewMinHeap(size int) *Heap {
+	return &Heap{
+		min: true,
+		list: make([]entry, 0, size),
+	}
+}
+
+func NewMaxHeap(size int) *Heap {
+	return &Heap{
+		min: false,
 		list: make([]entry, 0, size),
 	}
 }

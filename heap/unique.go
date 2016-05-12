@@ -21,6 +21,11 @@ func NewUnique(pq PriorityQueue) *UniquePQ {
 	}
 }
 
+// How many items in the queue?
+func (u *UniquePQ) Size() int {
+	return u.pq.Size()
+}
+
 // Add an item to the priority queue. It must be hashable.
 func (u *UniquePQ) Add(priority int, item types.Hashable) {
 	if !u.set.Has(item) {
