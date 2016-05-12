@@ -10,6 +10,11 @@ type entry struct {
 	priority int
 }
 
+type PriorityQueue interface {
+	Push(priority int, item interface{})
+	Peek() interface{}
+	Pop() interface{}
+}
 
 // Notes:
 // Parent of i : (i+1)/2 - 1

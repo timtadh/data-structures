@@ -97,6 +97,10 @@ This is a binary heap for usage as a priority queue. The priorities are given to
 items in the queue on insertion and cannot be changed after insertion. It can be
 used as both a min heap and a max heap.
 
+### Unique Priority Queue [`heap/UniquePQ`](https://godoc.org/github.com/timtadh/data-structures/heap#UniquePQ)
+
+A priority queue which only allows unique entries.
+
 ## Trees
 
 ### AVL Tree [`tree/avl.AvlTree`](https://godoc.org/github.com/timtadh/data-structures/tree/avl#AvlTree)
