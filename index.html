@@ -61,7 +61,7 @@ love to hear about it.</p>
 <h1>
 <a id="current-collection" class="anchor" href="#current-collection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Current Collection</h1>
 
-<p><a href="https://godoc.org/github.com/timtadh/data-structures">godoc</a></p>
+<p><a href="https://godoc.org/github.com/timtadh/data-structures"><img src="https://godoc.org/github.com/timtadh/data-structures?status.svg" alt="GoDoc"></a></p>
 
 <h2>
 <a id="lists" class="anchor" href="#lists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lists</h2>
@@ -136,6 +136,23 @@ their contents can be serialized. They are therefore suitable for being sent
 over the wire. See this
 <a href="https://github.com/timtadh/data-structures/blob/master/set/example_serialize_test.go">example</a>
 for how to use the serialization.</p>
+
+<h2>
+<a id="heaps-and-priority-queues" class="anchor" href="#heaps-and-priority-queues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Heaps and Priority Queues</h2>
+
+<h3>
+<a id="binary-heap-heapheap" class="anchor" href="#binary-heap-heapheap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Binary Heap <a href="https://godoc.org/github.com/timtadh/data-structures/heap#Heap"><code>heap/Heap</code></a>
+</h3>
+
+<p>This is a binary heap for usage as a priority queue. The priorities are given to
+items in the queue on insertion and cannot be changed after insertion. It can be
+used as both a min heap and a max heap.</p>
+
+<h3>
+<a id="unique-priority-queue-heapuniquepq" class="anchor" href="#unique-priority-queue-heapuniquepq" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unique Priority Queue <a href="https://godoc.org/github.com/timtadh/data-structures/heap#UniquePQ"><code>heap/UniquePQ</code></a>
+</h3>
+
+<p>A priority queue which only allows unique entries.</p>
 
 <h2>
 <a id="trees" class="anchor" href="#trees" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Trees</h2>
