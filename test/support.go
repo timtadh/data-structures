@@ -4,7 +4,7 @@ import "testing"
 
 import (
 	"encoding/binary"
-	"fmt"
+	"encoding/hex"
 	"math/rand"
 	"os"
 	"runtime/debug"
@@ -25,17 +25,10 @@ func init() {
 
 type T testing.T
 
-func (t *T) Assert(msg string, oks ...bool) {
-	any := false
-	for _, ok := range oks {
-		if !ok {
-			any = true
-			t.Log("\n" + string(debug.Stack()))
-			t.Error(msg)
-		}
-	}
-	if any {
-		t.Fatal("assert failed")
+func (t *T) Assert(ok bool, msg string, vars ...interface{}) {
+	if !ok {
+		t.Log("\n" + string(debug.Stack()))
+		t.Errorf(msg, vars...)
 	}
 }
 
@@ -59,7 +52,7 @@ func RandSlice(length int) []byte {
 	} else {
 		slice := make([]byte, length)
 		if _, err := urandom.Read(slice); err != nil {
-			t.Fatal(err)
+			panic(err)
 		}
 		urandom.Close()
 		return slice
