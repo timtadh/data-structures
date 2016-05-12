@@ -22,13 +22,12 @@ func init() {
 	}
 }
 
-
 type T testing.T
 
 func (t *T) Assert(ok bool, msg string, vars ...interface{}) {
 	if !ok {
 		t.Log("\n" + string(debug.Stack()))
-		t.Errorf(msg, vars...)
+		t.Fatalf(msg, vars...)
 	}
 }
 
