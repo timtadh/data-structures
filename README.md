@@ -29,7 +29,7 @@ love to hear about it.
 
 # Current Collection
 
-[godoc](https://godoc.org/github.com/timtadh/data-structures)
+[![GoDoc](https://godoc.org/github.com/timtadh/data-structures?status.svg)](https://godoc.org/github.com/timtadh/data-structures)
 
 ## Lists
 
@@ -87,6 +87,15 @@ their contents can be serialized. They are therefore suitable for being sent
 over the wire. See this
 [example](https://github.com/timtadh/data-structures/blob/master/set/example_serialize_test.go)
 for how to use the serialization.
+
+
+## Heaps and Priority Queues
+
+### Binary Heap [`heap/Heap`](https://godoc.org/github.com/timtadh/data-structures/heap#Heap)
+
+This is a binary heap for usage as a priority queue. The priorities are given to
+items in the queue on insertion and cannot be changed after insertion. It can be
+used as both a min heap and a max heap.
 
 ## Trees
 
