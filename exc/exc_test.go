@@ -66,6 +66,18 @@ func TestTryCatchMyExceptionSuccess(x *testing.T) {
 	t.Assert(err == nil, "should have caught %v", err)
 }
 
+func TestTryCatchMyExceptionWithException(x *testing.T) {
+	t := (*test.T)(x)
+	err := Try(func() {
+		Throw(&myException{*Errorf("this is a test of my Exception").Exception()})
+	}).Catch(&Exception{}, func(e Throwable) {
+		t.Log("Caught", e)
+	}).Error()
+	t.Assert(err == nil, "should have caught %v", err)
+}
+
+
+
 func TestTryCatchReraise(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
