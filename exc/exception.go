@@ -7,9 +7,7 @@ import (
 	"strings"
 )
 
-import (
-	"github.com/timtadh/data-structures/errors"
-)
+import ()
 
 type Error struct {
 	Err   error
@@ -187,7 +185,6 @@ func (b *Block) run() (Throwable) {
 	}
 	t := reflect.TypeOf(err)
 	for _, c := range b.catches {
-		errors.Logf("DEBUG", "try catch %v with %v", t, c.exception)
 		if t.AssignableTo(c.exception) {
 			err = Try(func(){c.catch(err)}).exec()
 			break
