@@ -229,8 +229,47 @@ If you want a disk backed version check out my
 <a href="https://github.com/timtadh/file-structures">file-structures</a> repository. See
 the <code>linhash</code> directory.</p>
 
+<h2>
+<a id="exceptions-errors-and-testing" class="anchor" href="#exceptions-errors-and-testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Exceptions, Errors, and Testing</h2>
+
 <h3>
-<a id="benchmarks" class="anchor" href="#benchmarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Benchmarks</h3>
+<a id="errors-errors" class="anchor" href="#errors-errors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Errors <a href="https://godoc.org/github.com/timtadh/data-structures/errors"><code>errors</code></a>
+</h3>
+
+<p>By default, most errors in Go programs to not track where they were created.
+Many programmers quickly discover they need to have stack traces associated with
+their errors. This is a light weight package which adds stack traces to errors.
+It also provides a very very simple logging function that reports where in your
+code your printed out the log. This is not a full featured logging solution but
+rather a replacement for using fmt.Printf when debugging.</p>
+
+<h3>
+<a id="test-support-test" class="anchor" href="#test-support-test" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test Support <a href="https://godoc.org/github.com/timtadh/data-structures/test"><code>test</code></a>
+</h3>
+
+<p>The test package provides two minimal assertions and a way to get random strings
+and data. It also seeds the math/rand number generator. I consider this to the
+bare minimum of what is often needed when testing go code particularly
+data-structures. Since this package seeks to be entirely self contained with no
+dependencies no external testing package is used. This package is slowly being
+improved to encompass more common functionality between the different tests.</p>
+
+<h3>
+<a id="exceptions-as-a-library-exc" class="anchor" href="#exceptions-as-a-library-exc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Exceptions as a Library <a href="https://github.com/timtadh/data-structures/tree/master/exc"><code>exc</code></a>
+</h3>
+
+<p><a href="https://godoc.org/github.com/timtadh/data-structures/exc"><img src="https://godoc.org/github.com/timtadh/data-structures/exc?status.svg" alt="GoDoc"></a></p>
+
+<p>The <a href="https://github.com/timtadh/data-structures/tree/master/exc"><code>exc</code></a> package
+provides support for exceptions. They work very similarly to the way unchecked
+exceptions work in Java. They are built on top of the built-in <code>panic</code> and
+<code>recover</code> functions. See the README in the package for more information or
+checkout the documentation. They should play nice with the usual way of handling
+errors in Go and provide an easy way to create public APIs which return errors
+rather than throwing these non-standard exceptions.</p>
+
+<h2>
+<a id="benchmarks" class="anchor" href="#benchmarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Benchmarks</h2>
 
 <p><strong>Note</strong>: these benchmarsk are fairly old and probably not easy to understand.
 Look at the relative difference not the absolute numbers as they are misleading.
