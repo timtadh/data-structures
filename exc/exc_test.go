@@ -17,11 +17,14 @@ func TestTry(x *testing.T) {
 }
 
 func TestTryPropogate(x *testing.T) {
-	t := (*test.T)(x)
-	err := Try(func() {
+	badfunc := func() {
 		Try(func() {
 			Throwf("test", "this is a test")
 		}).Unwind()
+	}
+	t := (*test.T)(x)
+	err := Try(func() {
+		badfunc()
 	}).Error()
 	t.Assert(err != nil, "wanted a non nil error got %v", err)
 }
