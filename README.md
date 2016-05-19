@@ -183,17 +183,17 @@ data-structures. Since this package seeks to be entirely self contained with no
 dependencies no external testing package is used. This package is slowly being
 improved to encompass more common functionality between the different tests.
 
-### Exceptions as a Library [`exc`](https://github.com/timtadh/data-structures/exc)
+### Exceptions as a Library [`exc`](https://github.com/timtadh/data-structures/tree/master/exc)
 
 [![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
 
-The [`exc`](https://github.com/timtadh/data-structures/exc) package provides
-support for exceptions. They work very similarly to the way unchecked exceptions
-work in Java. They are built on top of the built-in `panic` and `recover`
-functions. See the README in the package for more information or checkout the
-documentation. They should play nice with the usual way of handling errors in Go
-and provide an easy way to create public APIs which return errors rather than
-throwing these non-standard exceptions.
+The [`exc`](https://github.com/timtadh/data-structures/tree/master/exc) package
+provides support for exceptions. They work very similarly to the way unchecked
+exceptions work in Java. They are built on top of the built-in `panic` and
+`recover` functions. See the README in the package for more information or
+checkout the documentation. They should play nice with the usual way of handling
+errors in Go and provide an easy way to create public APIs which return errors
+rather than throwing these non-standard exceptions.
 
 
 ## Benchmarks
