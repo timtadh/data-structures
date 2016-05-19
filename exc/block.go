@@ -68,7 +68,7 @@ func Close(makeCloser func() io.Closer, try func(io.Closer)) *Block {
 //
 // Then you can catch *MyException with *Exception. eg:
 //
-//     Try(func() {
+//     exc.Try(func() {
 //     	Throw(&MyException{*Errorf("My Exception").Exception()})
 //     }).Catch(&Exception{}, func(t Throwable) {
 //     	log.Log("caught!")
