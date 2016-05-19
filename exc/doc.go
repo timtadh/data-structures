@@ -38,13 +38,13 @@
 // application code. Libraries and external APIs should continue to conform to
 // the Go standard of returning error values.
 //
-// Here is an example of the DoStuff function where foo, bar and baz all throw
+// Here is an example of the `DoStuff` function where foo, bar and baz all throw
 // exceptions instead of returning errors. (We will look at the case where they
 // return errors that you want to turn into exceptions next). We want DoStuff to
 // be an public API function and return an error:
 //
 //     func DoStuff(a, b, c interface{}) error {
-//     	return Try(func() {
+//     	return exc.Try(func() {
 //     		x := foo(a)
 //     		y := bar(b, x)
 //     		baz(x, y, bax(c, x, y)
@@ -65,6 +65,41 @@
 //     	}).Error()
 //     }
 //
-// To be continued...
+// Rethrow will chain the Throwable `t` with the new `*Error` created such that
+// if/when the exception reaches the top level you know exactly how it was
+// created and where it was rethrown.
+//
+// Ok, what about interacting with regular Go APIs which return errors? How can
+// we turn those errors into exceptions? The easy was is to use the
+// `ThrowOnError` function which is a sugar for:
+//
+//     if err != nil {
+//     	ThrowErr(ErrorFrom(err)
+//     }
+//
+// So converting out original `DoStuff` function we get
+//
+//     func DoStuff(a, b, c interface{}) { // Throws
+//     	x, err := foo(a)
+//     	exc.ThrowOnError(err)
+//     	y, err := bar(b, x)
+//     	exc.ThrowOnError(err)
+//     	z, err := bax(c, x, y)
+//     	exc.ThrowOnError(err)
+//     	exc.ThrowOnError(baz(x, y, z))
+//     }
+//
+// This package also supports: catching user defined exceptions, catching
+// multiple exception types, `Close` which works like the "try with resources"
+// construct in Java 7+, (multiple) finally blocks, and a choice between
+// propogating exceptions with `Unwind` or retrieving the error/exception with
+// `Error` and `Exception` functions.
+//
+// One Gotcha! The `Try()` function creates a `*Block` struct. To execute the
+// block you must either call: `Unwind`, `Error`, or `Exception`. `Unwind`
+// executes the block, if there is an exception coming out of the block it
+// continues to cause the program stack unwind. `Error` and `Exception` excute
+// the block, but return the exception as a value to deal with in the usual Go
+// way.
 //
 package exc
