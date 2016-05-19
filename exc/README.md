@@ -7,7 +7,8 @@ directly if you require another licensing option. I am willing to work with you.
 
 ## Documentation
 
-[![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
+- [![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
+- [Blog Post](http://hackthology.com/exceptions-for-go-as-a-library.html)
 
 ## Explanation
 
