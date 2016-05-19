@@ -1,8 +1,11 @@
 package exc
 
 import (
+	"io"
 	"reflect"
 )
+
+import ()
 
 type catch struct {
 	exception reflect.Type
@@ -12,11 +15,25 @@ type catch struct {
 type Block struct{
 	try func()
 	catches []catch
-	finally func()
+	finallies []func()
 }
 
 func Try(try func()) *Block {
 	return &Block{try: try}
+}
+
+func Close(makeCloser func() io.Closer, try func(io.Closer)) *Block {
+	var c io.Closer = nil
+	return Try(func(){
+		Try(func() {
+			c = makeCloser()
+			try(c)
+		}).Finally(func() {
+			if c != nil {
+				ThrowOnError(c.Close())
+			}
+		}).Unwind()
+	})
 }
 
 func (b *Block) Catch(exc Throwable, do func(Throwable)) *Block {
@@ -25,7 +42,7 @@ func (b *Block) Catch(exc Throwable, do func(Throwable)) *Block {
 }
 
 func (b *Block) Finally(finally func()) *Block {
-	b.finally = finally
+	b.finallies = append(b.finallies, finally)
 	return b
 }
 
@@ -56,18 +73,17 @@ func (b *Block) Exception() Throwable {
 
 func (b *Block) run() (Throwable) {
 	err := b.exec()
-	if err == nil {
-		return nil
-	}
-	t := reflect.TypeOf(err)
-	for _, c := range b.catches {
-		if t.AssignableTo(c.exception) {
-			err = Try(func(){c.catch(err)}).exec()
-			break
+	if err != nil {
+		t := reflect.TypeOf(err)
+		for _, c := range b.catches {
+			if t.AssignableTo(c.exception) {
+				err = Try(func(){c.catch(err)}).exec()
+				break
+			}
 		}
 	}
-	if b.finally != nil {
-		b.finally()
+	for _, finally := range b.finallies {
+		finally()
 	}
 	return err
 }

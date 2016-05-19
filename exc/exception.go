@@ -123,6 +123,12 @@ func ThrowErr(e *Error) {
 	throw(e.Exception())
 }
 
+func ThrowOnError(err error) {
+	if err != nil {
+		ThrowErr(FromError(err))
+	}
+}
+
 func Throw(e Throwable) {
 	throw(e)
 }

@@ -4,6 +4,11 @@ import "testing"
 
 import "github.com/timtadh/data-structures/test"
 
+import (
+	"io"
+	"os"
+)
+
 type myException struct {
 	Exception
 }
@@ -116,5 +121,41 @@ func TestTryFinally(x *testing.T) {
 	}).Error()
 	t.Assert(err != nil, "err != nil,  %v", err)
 	t.Assert(finally, "finally not run")
+}
+
+func TestCloser(x *testing.T) {
+	t := (*test.T)(x)
+	var f *os.File = nil
+	Close(func() io.Closer {
+		var err error
+		f, err = os.Create("/tmp/wizard")
+		ThrowOnError(err)
+		return f
+	}, func(c io.Closer) {
+		x := c.(*os.File)
+		t.Log(x)
+	}).Unwind()
+	n, err := f.WriteString("hello\n")
+	t.Log(n, err)
+	t.Assert(err != nil, "expected err got nil")
+}
+
+func TestCloserError(x *testing.T) {
+	t := (*test.T)(x)
+	var f *os.File = nil
+	e := Close(func() io.Closer {
+		var err error
+		f, err = os.Create("/tmp/wizard")
+		ThrowOnError(err)
+		return f
+	}, func(c io.Closer) {
+		x := c.(*os.File)
+		ThrowOnError(Errorf("asdf"))
+		t.Log(x)
+	}).Error()
+	t.Assert(e != nil, "expected err got nil")
+	n, err := f.WriteString("hello\n")
+	t.Log(n, err)
+	t.Assert(err != nil, "expected err got nil")
 }
 
