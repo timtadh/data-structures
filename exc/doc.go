@@ -1,5 +1,7 @@
 // Exceptions for Go as a Library
 //
+// Explanation: http://hackthology.com/exceptions-for-go-as-a-library.html
+//
 // Go (golang) lacks support for exceptions found in many other languages. There
 // are good reasons for Go to not include exceptions. For instance, by making
 // error handling explicit the programmer is forced to think concretely about

@@ -185,7 +185,9 @@ improved to encompass more common functionality between the different tests.
 
 ### Exceptions as a Library [`exc`](https://github.com/timtadh/data-structures/tree/master/exc)
 
-[![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
+- [![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
+- [Explanation of Implementation](http://hackthology.com/exceptions-for-go-as-a-library.html)
+- [Explanation of Inheritance](http://hackthology.com/object-oriented-inheritance-in-go.html)
 
 The [`exc`](https://github.com/timtadh/data-structures/tree/master/exc) package
 provides support for exceptions. They work very similarly to the way unchecked
