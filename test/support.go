@@ -60,10 +60,9 @@ func RandSlice(length int) []byte {
 }
 
 func RandHex(length int) string {
-	return hex.EncodeToString(RandSlice(length/2))
+	return hex.EncodeToString(RandSlice(length / 2))
 }
 
 func RandStr(length int) string {
 	return string(RandSlice(length))
 }
-

@@ -8,7 +8,6 @@ import (
 
 import ()
 
-
 // The *Error struct wraps up a regular error (could be any error) and a stack
 // trace. The idea is that it track where the error was created.
 type Error struct {
@@ -24,7 +23,7 @@ func Errorf(format string, args ...interface{}) *Error {
 	trace := make([]byte, n)
 	copy(trace, buf)
 	return &Error{
-		Err:  fmt.Errorf(format, args...),
+		Err:   fmt.Errorf(format, args...),
 		Stack: trace,
 	}
 }
@@ -37,7 +36,7 @@ func FromError(err error) *Error {
 	trace := make([]byte, n)
 	copy(trace, buf)
 	return &Error{
-		Err: err,
+		Err:   err,
 		Stack: trace,
 	}
 }
@@ -66,9 +65,9 @@ func (e *Error) Exception() *Exception {
 // error interface and allow chaining on of extra errors so that they can be
 // Rethrown.
 type Throwable interface {
-	Exc()              *Exception
-	Error()            string
-	Chain(e *Error)    Throwable
+	Exc() *Exception
+	Error() string
+	Chain(e *Error) Throwable
 }
 
 // An implementation of Throwable you can base your custom Exception types off
@@ -113,7 +112,7 @@ func (e *Exception) Chain(err *Error) Throwable {
 
 // Join this exception with another exception.
 func (e *Exception) Join(exc *Exception) *Exception {
-	errs := make([]*Error, 0, len(e.Errors) + len(exc.Errors))
+	errs := make([]*Error, 0, len(e.Errors)+len(exc.Errors))
 	errs = append(errs, e.Errors...)
 	errs = append(errs, exc.Errors...)
 	return &Exception{

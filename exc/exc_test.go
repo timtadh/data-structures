@@ -76,8 +76,6 @@ func TestTryCatchMyExceptionWithException(x *testing.T) {
 	t.Assert(err == nil, "should have caught %v", err)
 }
 
-
-
 func TestTryCatchReraise(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
@@ -170,4 +168,3 @@ func TestCloserError(x *testing.T) {
 	t.Log(n, err)
 	t.Assert(err != nil, "expected err got nil")
 }
-

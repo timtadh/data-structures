@@ -9,7 +9,7 @@ import ()
 
 type catch struct {
 	exception reflect.Type
-	catch func(Throwable)
+	catch     func(Throwable)
 }
 
 // Represents a Try/Catch/Finally block. Created by a Try or Close function.
@@ -19,9 +19,9 @@ type catch struct {
 // syntatic support for Exceptions. I recommend you put your Catch expressions
 // before your finally Expressions. Finally and Catch expressions are evaluated
 // in the order they are declared.
-type Block struct{
-	try func()
-	catches []catch
+type Block struct {
+	try       func()
+	catches   []catch
 	finallies []func()
 }
 
@@ -47,7 +47,7 @@ func Try(try func()) *Block {
 // Try/Finally.
 func Close(makeCloser func() io.Closer, try func(io.Closer)) *Block {
 	var c io.Closer = nil
-	return Try(func(){
+	return Try(func() {
 		Try(func() {
 			c = makeCloser()
 			try(c)
@@ -131,14 +131,14 @@ func (b *Block) Exception() Throwable {
 	}
 }
 
-func (b *Block) run() (Throwable) {
+func (b *Block) run() Throwable {
 	err := b.exec()
 	if err != nil {
 		t := reflect.TypeOf(err)
 		for _, c := range b.catches {
 			// errors.Logf("DEBUG", "trying to catch %v with %v %v %v", t, c.exception, t.ConvertibleTo(c.exception), t.AssignableTo(c.exception))
 			if isa(t, c.exception) {
-				err = Try(func(){c.catch(err)}).exec()
+				err = Try(func() { c.catch(err) }).exec()
 				break
 			}
 		}
@@ -189,4 +189,3 @@ func is(a, b reflect.Type) bool {
 	}
 	return false
 }
-

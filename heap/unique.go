@@ -1,22 +1,22 @@
 package heap
 
 import (
-	"github.com/timtadh/data-structures/types"
-	"github.com/timtadh/data-structures/set"
 	"github.com/timtadh/data-structures/hashtable"
+	"github.com/timtadh/data-structures/set"
+	"github.com/timtadh/data-structures/types"
 )
 
 // This priority queue only allows unique entries. Internally this is
 // implemented using a Hash set. All items added must be types.Hashable
 type UniquePQ struct {
-	pq PriorityQueue
+	pq  PriorityQueue
 	set *set.SetMap
 }
 
 // Construct a new unique priority queue using the provided priority queue.
 func NewUnique(pq PriorityQueue) *UniquePQ {
 	return &UniquePQ{
-		pq: pq,
+		pq:  pq,
 		set: set.NewSetMap(hashtable.NewLinearHash()),
 	}
 }
@@ -52,4 +52,3 @@ func (u *UniquePQ) Pop() interface{} {
 	u.set.Delete(item)
 	return item
 }
-

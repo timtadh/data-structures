@@ -7,7 +7,6 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 func TestUniquePushMax(x *testing.T) {
 	t := (*test.T)(x)
 	h := NewUnique(NewHeap(12, false))
@@ -30,4 +29,3 @@ func TestUniquePushMax(x *testing.T) {
 	t.Assert(h.pq.(*Heap).list[3].item.(types.String) == "g", "heap[3] != {g 18} %v", h.pq.(*Heap).list[3])
 	t.Assert(h.pq.(*Heap).list[3].priority == 18, "heap[3] != {g 18} %v", h.pq.(*Heap).list[3])
 }
-

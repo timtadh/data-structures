@@ -5,7 +5,6 @@ import (
 	"github.com/timtadh/data-structures/types"
 )
 
-
 type entry struct {
 	item     interface{}
 	priority int
@@ -37,21 +36,21 @@ type Heap struct {
 // min : false == max heap, true == min heap
 func NewHeap(size int, min bool) *Heap {
 	return &Heap{
-		min: min,
+		min:  min,
 		list: make([]entry, 0, size),
 	}
 }
 
 func NewMinHeap(size int) *Heap {
 	return &Heap{
-		min: true,
+		min:  true,
 		list: make([]entry, 0, size),
 	}
 }
 
 func NewMaxHeap(size int) *Heap {
 	return &Heap{
-		min: false,
+		min:  false,
 		list: make([]entry, 0, size),
 	}
 }
@@ -74,11 +73,11 @@ func (h *Heap) MaxHeap() bool {
 // Push an item with a priority
 func (h *Heap) Push(priority int, item interface{}) {
 	h.list = append(h.list, entry{item, priority})
-	h.fixUp(len(h.list)-1)
+	h.fixUp(len(h.list) - 1)
 }
 
 // Pop the highest (or lowest) priority item
-func (h *Heap) Pop() (interface{}) {
+func (h *Heap) Pop() interface{} {
 	if len(h.list) == 0 {
 		return nil
 	}
@@ -90,7 +89,7 @@ func (h *Heap) Pop() (interface{}) {
 }
 
 // Peek at the highest (or lowest) priority item
-func (h *Heap) Peek() (interface{}) {
+func (h *Heap) Peek() interface{} {
 	if len(h.list) == 0 {
 		return nil
 	}
@@ -112,7 +111,7 @@ func (h *Heap) fixUp(k int) {
 func (h *Heap) fixDown(k int) {
 	kid := (k+1)*2 - 1
 	for kid < len(h.list) {
-		if kid + 1 < len(h.list) && h.lt(kid, kid+1) {
+		if kid+1 < len(h.list) && h.lt(kid, kid+1) {
 			kid++
 		}
 		if h.gte(k, kid) {
@@ -150,4 +149,3 @@ func (h *Heap) Verify() error {
 	}
 	return nil
 }
-

@@ -62,7 +62,6 @@ func TestMinFixUp(x *testing.T) {
 	t.Assert(h.list[0].item.(string) == "a", "heap did not start with {a 1} %v", h)
 }
 
-
 func TestMaxFixDown(x *testing.T) {
 	t := (*test.T)(x)
 	h := heap1(false)
@@ -122,4 +121,3 @@ func TestPushMin(x *testing.T) {
 	t.Log(h)
 	t.AssertNil(h.Verify())
 }
-
