@@ -29,7 +29,7 @@ love to hear about it.
 
 # Current Collection
 
-[godoc](https://godoc.org/github.com/timtadh/data-structures)
+[![GoDoc](https://godoc.org/github.com/timtadh/data-structures?status.svg)](https://godoc.org/github.com/timtadh/data-structures)
 
 ## Lists
 
@@ -87,6 +87,19 @@ their contents can be serialized. They are therefore suitable for being sent
 over the wire. See this
 [example](https://github.com/timtadh/data-structures/blob/master/set/example_serialize_test.go)
 for how to use the serialization.
+
+
+## Heaps and Priority Queues
+
+### Binary Heap [`heap/Heap`](https://godoc.org/github.com/timtadh/data-structures/heap#Heap)
+
+This is a binary heap for usage as a priority queue. The priorities are given to
+items in the queue on insertion and cannot be changed after insertion. It can be
+used as both a min heap and a max heap.
+
+### Unique Priority Queue [`heap/UniquePQ`](https://godoc.org/github.com/timtadh/data-structures/heap#UniquePQ)
+
+A priority queue which only allows unique entries.
 
 ## Trees
 
@@ -150,7 +163,42 @@ If you want a disk backed version check out my
 [file-structures](https://github.com/timtadh/file-structures) repository. See
 the `linhash` directory.
 
-### Benchmarks
+## Exceptions, Errors, and Testing
+
+### Errors [`errors`](https://godoc.org/github.com/timtadh/data-structures/errors)
+
+By default, most errors in Go programs to not track where they were created.
+Many programmers quickly discover they need to have stack traces associated with
+their errors. This is a light weight package which adds stack traces to errors.
+It also provides a very very simple logging function that reports where in your
+code your printed out the log. This is not a full featured logging solution but
+rather a replacement for using fmt.Printf when debugging.
+
+### Test Support [`test`](https://godoc.org/github.com/timtadh/data-structures/test)
+
+The test package provides two minimal assertions and a way to get random strings
+and data. It also seeds the math/rand number generator. I consider this to the
+bare minimum of what is often needed when testing go code particularly
+data-structures. Since this package seeks to be entirely self contained with no
+dependencies no external testing package is used. This package is slowly being
+improved to encompass more common functionality between the different tests.
+
+### Exceptions as a Library [`exc`](https://github.com/timtadh/data-structures/tree/master/exc)
+
+- [![GoDoc](https://godoc.org/github.com/timtadh/data-structures/exc?status.svg)](https://godoc.org/github.com/timtadh/data-structures/exc)
+- [Explanation of Implementation](http://hackthology.com/exceptions-for-go-as-a-library.html)
+- [Explanation of Inheritance](http://hackthology.com/object-oriented-inheritance-in-go.html)
+
+The [`exc`](https://github.com/timtadh/data-structures/tree/master/exc) package
+provides support for exceptions. They work very similarly to the way unchecked
+exceptions work in Java. They are built on top of the built-in `panic` and
+`recover` functions. See the README in the package for more information or
+checkout the documentation. They should play nice with the usual way of handling
+errors in Go and provide an easy way to create public APIs which return errors
+rather than throwing these non-standard exceptions.
+
+
+## Benchmarks
 
 **Note**: these benchmarsk are fairly old and probably not easy to understand.
 Look at the relative difference not the absolute numbers as they are misleading.
