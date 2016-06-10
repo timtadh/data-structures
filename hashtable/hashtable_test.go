@@ -275,3 +275,36 @@ func BenchmarkMLHash(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkMLHashBetter(b *testing.B) {
+	b.StopTimer()
+
+	type record struct {
+		key   String
+		value String
+	}
+
+	records := make([]*record, 100)
+
+	ranrec := func() *record {
+		return &record{randstr(20), randstr(20)}
+	}
+
+	for i := range records {
+		records[i] = ranrec()
+	}
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		t := NewLinearHash()
+		for _, r := range records {
+			t.Put(r.key, r.value)
+		}
+		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
+		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
+		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
+		for _, r := range records {
+			t.Remove(r.key)
+		}
+	}
+}
