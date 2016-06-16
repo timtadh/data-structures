@@ -301,8 +301,10 @@ func BenchmarkMLHashBetter(b *testing.B) {
 			t.Put(r.key, r.value)
 		}
 		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
-		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
-		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
+		for _, next := t.Keys()(); next != nil; _, next = next() {}
+		for _, next := t.Values()(); next != nil; _, next = next() {}
+		for _, next := t.Values()(); next != nil; _, next = next() {}
+		for _, next := t.Values()(); next != nil; _, next = next() {}
 		for _, r := range records {
 			t.Remove(r.key)
 		}
