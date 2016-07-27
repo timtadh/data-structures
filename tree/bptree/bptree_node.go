@@ -172,7 +172,7 @@ func (self *BpNode) leaf_get_start(key types.Hashable) (i int, leaf *BpNode) {
 	if i >= len(self.keys) && i > 0 {
 		i = len(self.keys) - 1
 	}
-	if !has && self.keys[i].Less(key) && self.next != nil {
+	if !has && (len(self.keys) == 0 || self.keys[i].Less(key)) && self.next != nil {
 		return self.next.leaf_get_start(key)
 	}
 	return i, self
