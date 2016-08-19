@@ -12,19 +12,22 @@ import (
 type Pool struct {
 	workers []*worker
 	wg      sync.WaitGroup
-	workin  sync.WaitGroup
+	workin  int
+	workCond *sync.Cond
 	mu      sync.RWMutex
 }
 
 func New(n int) *Pool {
 	pool := &Pool{
 		workers: make([]*worker, 0, n),
+		workCond: sync.NewCond(&sync.Mutex{}),
 	}
 	for i := 0; i < n; i++ {
 		w := &worker{
-			in: make(chan func()),
+			in: make(chan func(), 100),
 			wg: &pool.wg,
 			workin: &pool.workin,
+			workCond: pool.workCond,
 		}
 		go w.work()
 		pool.workers = append(pool.workers, w)
@@ -32,12 +35,24 @@ func New(n int) *Pool {
 	return pool
 }
 
+func (p *Pool) WaitCount() int {
+	p.workCond.L.Lock()
+	p.workCond.Wait()
+	n := p.workin
+	p.workCond.L.Unlock()
+	return n
+}
+
 func (p *Pool) WaitLock() {
 	p.mu.Lock()
-	p.workin.Wait()
+	p.workCond.L.Lock()
+	for p.workin > 0 {
+		p.workCond.Wait()
+	}
 }
 
 func (p *Pool) Unlock() {
+	p.workCond.L.Unlock()
 	p.mu.Unlock()
 }
 
@@ -59,7 +74,9 @@ func (p *Pool) Do(f func()) error {
 	if len(p.workers) <= 0 {
 		return errors.Errorf("The pool was stopped")
 	}
-	p.workin.Add(1)
+	p.workCond.L.Lock()
+	p.workin += 1
+	p.workCond.L.Unlock()
 	offset := rand.Intn(len(p.workers))
 	for i := 0; i < len(p.workers); i++ {
 		j := (offset + i) % len(p.workers)
@@ -77,14 +94,18 @@ func (p *Pool) Do(f func()) error {
 type worker struct {
 	in chan func()
 	wg *sync.WaitGroup
-	workin *sync.WaitGroup
+	workin *int
+	workCond *sync.Cond
 }
 
 func (w *worker) work() {
 	w.wg.Add(1)
 	for f := range w.in {
 		f()
-		w.workin.Done()
+		w.workCond.L.Lock()
+		*w.workin -= 1
+		w.workCond.L.Unlock()
+		w.workCond.Broadcast()
 	}
 	w.wg.Done()
 }
