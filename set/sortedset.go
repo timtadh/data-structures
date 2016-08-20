@@ -68,6 +68,17 @@ func FromSlice(items []types.Hashable) *SortedSet {
 	return s
 }
 
+func SortedFromSet(s types.Set) *SortedSet {
+	if s == nil || s.Size() == 0 {
+		return NewSortedSet(0)
+	}
+	n := NewSortedSet(s.Size())
+	for i, next := s.Items()(); next != nil; i, next = next() {
+		n.Add(i)
+	}
+	return n
+}
+
 func (s *SortedSet) Copy() *SortedSet {
 	return &SortedSet{*s.Sorted.Copy()}
 }
