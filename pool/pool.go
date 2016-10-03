@@ -37,6 +37,11 @@ func New(n int) *Pool {
 
 func (p *Pool) WaitCount() int {
 	p.workCond.L.Lock()
+	if p.workin <= 0 {
+		n := p.workin
+		p.workCond.L.Unlock()
+		return n
+	}
 	p.workCond.Wait()
 	n := p.workin
 	p.workCond.L.Unlock()
