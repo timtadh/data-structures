@@ -268,6 +268,18 @@ func (l *List) Items() (it types.KIterator) {
 	}
 }
 
+func (l *List) ItemsInReverse() (it types.KIterator) {
+	i := len(l.list) - 1
+	return func() (item types.Hashable, next types.KIterator) {
+		if i >= 0 {
+			item = l.list[i]
+			i--
+			return item, it
+		}
+		return nil, nil
+	}
+}
+
 func (l *List) Get(i int) (item types.Hashable, err error) {
 	if i < 0 || i >= len(l.list) {
 		return nil, errors.Errorf("Access out of bounds. len(*List) = %v, idx = %v", len(l.list), i)

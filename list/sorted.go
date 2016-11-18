@@ -174,6 +174,10 @@ func (s *Sorted) Items() (it types.KIterator) {
 	return s.list.Items()
 }
 
+func (s *Sorted) ItemsInReverse() (it types.KIterator) {
+	return s.list.ItemsInReverse()
+}
+
 func (s *Sorted) String() string {
 	return s.list.String()
 }
