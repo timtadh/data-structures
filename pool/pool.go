@@ -63,6 +63,10 @@ func (p *Pool) Unlock() {
 
 func (p *Pool) Stop() {
 	p.mu.Lock()
+	if len(p.workers) == 0 {
+		p.mu.Unlock()
+		return
+	}
 	workers := p.workers
 	p.workers = nil
 	p.mu.Unlock()
