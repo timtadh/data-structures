@@ -18,8 +18,8 @@ name = "github.com/timtadh/data-structures"
 
 ## Recommended: the version constraint to enforce for the project.
 ## Only one of "branch", "version" or "revision" can be specified.
-# version = "1.0.0"
-branch = "master"
+version = "0.5.0"
+# branch = "master"
 # revision = "abc123"
 
 ## Optional: an alternate location (URL or import path) for the project's source.
