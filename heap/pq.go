@@ -96,6 +96,19 @@ func (h *Heap) Peek() interface{} {
 	return h.list[0].item
 }
 
+func (h *Heap) Items() (it types.Iterator) {
+	i := 0
+	return func() (item interface{}, next types.Iterator) {
+		var e entry
+		if i < len(h.list) {
+			e = h.list[i]
+			i++
+			return e.item, it
+		}
+		return nil, nil
+	}
+}
+
 func (h *Heap) fixUp(k int) {
 	parent := (k+1)/2 - 1
 	for k > 0 {
