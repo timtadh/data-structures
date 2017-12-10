@@ -4,7 +4,6 @@ import "testing"
 
 import (
 	"fmt"
-	"math/rand"
 )
 
 import (

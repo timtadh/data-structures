@@ -1,24 +1,25 @@
 package test
 
-import "testing"
-
 import (
+	"runtime/debug"
+	"testing"
+
+	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
-	"math/rand"
-	"os"
-	"runtime/debug"
+	mrand "math/rand"
+
+	trand "github.com/timtadh/data-structures/rand"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
@@ -46,17 +47,11 @@ func (t *T) AssertNil(errors ...error) {
 }
 
 func RandSlice(length int) []byte {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
+	slice := make([]byte, length)
+	if _, err := crand.Read(slice); err != nil {
 		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return slice
 	}
-	panic("unreachable")
+	return slice
 }
 
 func RandHex(length int) string {

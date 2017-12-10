@@ -1,45 +1,30 @@
 package avl
 
-import "testing"
-
 import (
-	"bytes"
+	"testing"
+
+	crand "crypto/rand"
 	"encoding/binary"
-	"math/rand"
-	"os"
-)
+	mrand "math/rand"
 
-import (
+	trand "github.com/timtadh/data-structures/rand"
+	"github.com/timtadh/data-structures/test"
 	"github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		return
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		buf := make([]byte, 8)
-		if _, err := urandom.Read(buf); err == nil {
-			buf_reader := bytes.NewReader(buf)
-			if seed, err := binary.ReadVarint(buf_reader); err == nil {
-				rand.Seed(seed)
-			}
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
 func randstr(length int) types.String {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return types.String(slice)
-	}
-	panic("unreachable")
+	return types.String(test.RandStr(length))
 }
 
 func TestAvlPutHasGetRemove(t *testing.T) {

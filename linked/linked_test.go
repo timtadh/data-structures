@@ -1,57 +1,43 @@
 package linked
 
-import "testing"
-
 import (
+	"testing"
+
+	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
-	"math/rand"
-	"os"
-)
+	mrand "math/rand"
 
-import (
 	"github.com/timtadh/data-structures/list"
+	trand "github.com/timtadh/data-structures/rand"
 	"github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
 func randstr(length int) types.String {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
+	slice := make([]byte, length)
+	if _, err := crand.Read(slice); err != nil {
 		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return types.String(slice)
 	}
-	panic("unreachable")
+	return types.String(slice)
 }
 
 func randhex(length int) types.String {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
+	slice := make([]byte, length/2)
+	if _, err := crand.Read(slice); err != nil {
 		panic(err)
-	} else {
-		slice := make([]byte, length/2)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return types.String(hex.EncodeToString(slice))
 	}
-	panic("unreachable")
+	return types.String(hex.EncodeToString(slice))
 }
 
 func TestEquals(t *testing.T) {

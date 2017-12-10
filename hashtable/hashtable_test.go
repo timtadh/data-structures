@@ -1,42 +1,31 @@
 package hashtable
 
-import "testing"
-
 import (
+	"testing"
+
+	crand "crypto/rand"
 	"encoding/binary"
-	"math/rand"
-	"os"
-)
+	mrand "math/rand"
 
-import (
+	trand "github.com/timtadh/data-structures/rand"
+	"github.com/timtadh/data-structures/test"
 	"github.com/timtadh/data-structures/tree/avl"
 	. "github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
 func randstr(length int) String {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		return String(slice)
-	}
-	panic("unreachable")
+	return String(test.RandStr(length))
 }
 
 func TestMake(t *testing.T) {
@@ -300,11 +289,16 @@ func BenchmarkMLHashBetter(b *testing.B) {
 		for _, r := range records {
 			t.Put(r.key, r.value)
 		}
-		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {}
-		for _, next := t.Keys()(); next != nil; _, next = next() {}
-		for _, next := t.Values()(); next != nil; _, next = next() {}
-		for _, next := t.Values()(); next != nil; _, next = next() {}
-		for _, next := t.Values()(); next != nil; _, next = next() {}
+		for _, _, next := t.Iterate()(); next != nil; _, _, next = next() {
+		}
+		for _, next := t.Keys()(); next != nil; _, next = next() {
+		}
+		for _, next := t.Values()(); next != nil; _, next = next() {
+		}
+		for _, next := t.Values()(); next != nil; _, next = next() {
+		}
+		for _, next := t.Values()(); next != nil; _, next = next() {
+		}
 		for _, r := range records {
 			t.Remove(r.key)
 		}
