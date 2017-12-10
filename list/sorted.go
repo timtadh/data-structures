@@ -135,6 +135,10 @@ func (s *Sorted) Get(i int) (item types.Hashable, err error) {
 	return s.list.Get(i)
 }
 
+func (s *Sorted) Remove(i int) (err error) {
+	return s.list.Remove(i)
+}
+
 func (s *Sorted) Add(item types.Hashable) (err error) {
 	i, has, err := s.Find(item)
 	if err != nil {
