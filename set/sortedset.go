@@ -1,27 +1,27 @@
 package set
 
 import (
+	crand "crypto/rand"
 	"encoding/binary"
 	"log"
-	"math/rand"
-	"os"
+	mrand "math/rand"
 )
 
 import (
 	"github.com/timtadh/data-structures/errors"
 	"github.com/timtadh/data-structures/list"
+	trand "github.com/timtadh/data-structures/rand"
 	"github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
