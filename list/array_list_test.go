@@ -3,26 +3,26 @@ package list
 import "testing"
 
 import (
+	crand "crypto/rand"
 	"encoding/binary"
 	"fmt"
-	"math/rand"
-	"os"
+	mrand "math/rand"
 	"runtime/debug"
 )
 
 import (
+	trand "github.com/timtadh/data-structures/rand"
 	"github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
@@ -48,17 +48,11 @@ func (t *T) assert_nil(errors ...error) {
 }
 
 func (t *T) randslice(length int) types.ByteSlice {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			t.Fatal(err)
-		}
-		urandom.Close()
-		return types.ByteSlice(slice)
+	slice := make([]byte, length)
+	if _, err := crand.Read(slice); err != nil {
+		t.Fatal(err)
 	}
-	panic("unreachable")
+	return types.ByteSlice(slice)
 }
 
 func TestAppendGet(x *testing.T) {

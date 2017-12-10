@@ -1,47 +1,35 @@
 package bptree
 
-import "testing"
-
 import (
-	"encoding/binary"
-	"math/rand"
-	"os"
 	"sort"
-)
+	"testing"
 
-import (
+	crand "crypto/rand"
+	"encoding/binary"
+	mrand "math/rand"
+
+	trand "github.com/timtadh/data-structures/rand"
+	"github.com/timtadh/data-structures/test"
 	"github.com/timtadh/data-structures/types"
 )
 
+var rand *mrand.Rand
+
 func init() {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
+	seed := make([]byte, 8)
+	if _, err := crand.Read(seed); err == nil {
+		rand = trand.ThreadSafeRand(int64(binary.BigEndian.Uint64(seed)))
 	} else {
-		seed := make([]byte, 8)
-		if _, err := urandom.Read(seed); err == nil {
-			rand.Seed(int64(binary.BigEndian.Uint64(seed)))
-		}
-		urandom.Close()
+		panic(err)
 	}
 }
 
 func randslice(length int) []byte {
-	if urandom, err := os.Open("/dev/urandom"); err != nil {
-		panic(err)
-	} else {
-		slice := make([]byte, length)
-		if _, err := urandom.Read(slice); err != nil {
-			panic(err)
-		}
-		urandom.Close()
-		// return append([]byte("b"), slice...)
-		return slice
-	}
-	panic("unreachable")
+	return test.RandSlice(length)
 }
 
 func randstr(length int) types.String {
-	return types.String(randslice(length))
+	return types.String(test.RandStr(length))
 }
 
 type Strings []types.String
