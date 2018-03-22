@@ -1,6 +1,9 @@
 package set
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/timtadh/data-structures/errors"
 	"github.com/timtadh/data-structures/types"
 )
@@ -11,6 +14,17 @@ type SetMap struct {
 
 func NewSetMap(m types.Map) *SetMap {
 	return &SetMap{m}
+}
+
+func (s *SetMap) String() string {
+	if s.Size() <= 0 {
+		return "{}"
+	}
+	items := make([]string, 0, s.Size())
+	for item, next := s.Items()(); next != nil; item, next = next() {
+		items = append(items, fmt.Sprintf("%v", item))
+	}
+	return "{" + strings.Join(items, ", ") + "}"
 }
 
 func (s *SetMap) Items() types.KIterator {

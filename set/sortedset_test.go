@@ -49,7 +49,7 @@ func TestAddMarshalUnmarshalHas(x *testing.T) {
 		t.assert_nil(set.Add(item))
 	}
 	for i, item := range items {
-		t.assert(fmt.Sprintf("!set.Has(item)", i), set.Has(item))
+		t.assert(fmt.Sprintf("!set.Has(%v) ", i), set.Has(item))
 	}
 	marshal, unmarshal := types.IntMarshals()
 	mset1 := NewMSortedSet(set, marshal, unmarshal)
@@ -59,7 +59,7 @@ func TestAddMarshalUnmarshalHas(x *testing.T) {
 	t.assert_nil(mset2.UnmarshalBinary(bytes))
 	set2 := mset2.SortedSet()
 	for i, item := range items {
-		t.assert(fmt.Sprintf("!set.Has(item)", i), set2.Has(item))
+		t.assert(fmt.Sprintf("!set.Has(%v)", i), set2.Has(item))
 	}
 }
 
@@ -82,7 +82,7 @@ func TestAddHasDeleteRandom(x *testing.T) {
 	for i := 0; i < 10; i++ {
 		item, err := set.Random()
 		t.assert_nil(err)
-		t.assert(fmt.Sprintf("!set.Has(item)", i), set.Has(item))
+		t.assert(fmt.Sprintf("!set.Has(%v)", i), set.Has(item))
 	}
 	for _, item := range items {
 		t.assert_nil(set.Delete(item))
