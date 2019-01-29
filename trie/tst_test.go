@@ -70,6 +70,14 @@ func (self ByteSlices) Swap(i, j int) {
 	self[i], self[j] = self[j], self[i]
 }
 
+func TestEmptyIter(t *testing.T) {
+	table := New()
+	for _, _, next := table.Iterate()(); next != nil; _, _, next = next() {
+		t.Errorf("should have been empty")
+	}
+
+}
+
 func TestIteratorPrefixFindDotty(t *testing.T) {
 	items := ByteSlices{
 		types.ByteSlice("0:java.io.File;"),
