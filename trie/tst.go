@@ -212,6 +212,9 @@ func (self *TST) Iterate() KVIterator {
 	kv_iterator = func() (key Hashable, value interface{}, next KVIterator) {
 		var tn TreeNode
 		for {
+			if tni == nil {
+				return nil, nil, nil
+			}
 			tn, tni = tni()
 			if tni == nil {
 				return nil, nil, nil
