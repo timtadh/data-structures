@@ -41,12 +41,12 @@ func (u *UniquePQ) Push(priority int, item interface{}) {
 	u.Add(priority, item.(types.Hashable))
 }
 
-// Get the top element
+// Peek gets the top element
 func (u *UniquePQ) Peek() interface{} {
 	return u.pq.Peek()
 }
 
-// Get and remove the top element
+// Pop gets and remove the top element
 func (u *UniquePQ) Pop() interface{} {
 	item := u.pq.Pop().(types.Hashable)
 	u.set.Delete(item)

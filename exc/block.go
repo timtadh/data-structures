@@ -25,14 +25,14 @@ type Block struct {
 	finallies []func()
 }
 
-// Start a Try/Catch/Finally block. Any exception thrown in the Try block can
+// Try starts a Try/Catch/Finally block. Any exception thrown in the Try block can
 // be caught by a Catch block (if registered for the Exception type or a parent
 // exception type).
 func Try(try func()) *Block {
 	return &Block{try: try}
 }
 
-// Start a Try/Catch/Finally block. You supply to functions, the first one
+// Close starts a Try/Catch/Finally block. You supply to functions, the first one
 // creates a closable resource and returns it. This resources is supplied to the
 // the second function which acts as a normal try. Whether the try fails or
 // succeeds the Close() function is always called on the resource that was
@@ -59,7 +59,7 @@ func Close(makeCloser func() io.Closer, try func(io.Closer)) *Block {
 	})
 }
 
-// Add a catch function for a specific Throwable. If your Throwable struct
+// Catch adds a catch function for a specific Throwable. If your Throwable struct
 // "inherits" from another struct like so:
 //
 //     type MyException struct {
@@ -82,7 +82,7 @@ func (b *Block) Catch(exc Throwable, do func(Throwable)) *Block {
 	return b
 }
 
-// Add a finally block. These will be run whether or not an exception was
+// Finally adds a finally block. These will be run whether or not an exception was
 // thrown. However, if a regular panic occurs this function will not be run and
 // the panic will behave as normal.
 func (b *Block) Finally(finally func()) *Block {

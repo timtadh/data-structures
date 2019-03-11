@@ -17,7 +17,7 @@ type Node struct {
 	Next, Prev *Node
 }
 
-// Compares the Data of the node to the passed element.
+// Equals compares the Data of the node to the passed element.
 func (n *Node) Equals(b types.Equatable) bool {
 	switch x := b.(type) {
 	case *Node:
@@ -27,7 +27,7 @@ func (n *Node) Equals(b types.Equatable) bool {
 	}
 }
 
-// Compares the Data of the node to the passed element.
+// Less compares the Data of the node to the passed element.
 func (n *Node) Less(b types.Sortable) bool {
 	switch x := b.(type) {
 	case *Node:

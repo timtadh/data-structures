@@ -85,7 +85,7 @@ type Exception struct {
 	Errors []*Error
 }
 
-// Return itself.
+// Exc returns itself.
 func (e *Exception) Exc() *Exception {
 	return e
 }
@@ -104,7 +104,7 @@ func (e *Exception) String() string {
 	return e.Error()
 }
 
-// Add another *Error to the list of *Error
+// Chain adds another *Error to the list of *Error
 func (e *Exception) Chain(err *Error) Throwable {
 	e.Errors = append(e.Errors, err)
 	return e

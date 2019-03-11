@@ -75,22 +75,22 @@ func (s *SetMap) Subtract(other types.Set) (types.Set, error) {
 	return Subtract(s, other)
 }
 
-// Is s a subset of o?
+// Subset Is s a subset of o?
 func (s *SetMap) Subset(o types.Set) bool {
 	return Subset(s, o)
 }
 
-// Is s a proper subset of o?
+// ProperSubset Is s a proper subset of o?
 func (s *SetMap) ProperSubset(o types.Set) bool {
 	return ProperSubset(s, o)
 }
 
-// Is s a superset of o?
+// Superset Is s a superset of o?
 func (s *SetMap) Superset(o types.Set) bool {
 	return Superset(s, o)
 }
 
-// Is s a proper superset of o?
+// ProperSuperset Is s a proper superset of o?
 func (s *SetMap) ProperSuperset(o types.Set) bool {
 	return ProperSuperset(s, o)
 }

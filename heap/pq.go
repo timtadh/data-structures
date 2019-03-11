@@ -60,12 +60,12 @@ func (h *Heap) Size() int {
 	return len(h.list)
 }
 
-// Is this a min heap?
+// MinHeap Is this a min heap?
 func (h *Heap) MinHeap() bool {
 	return h.min
 }
 
-// Is this a max heap?
+// MaxHeap Is this a max heap?
 func (h *Heap) MaxHeap() bool {
 	return !h.min
 }

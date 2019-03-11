@@ -156,22 +156,22 @@ func (s *SortedSet) Overlap(o *SortedSet) bool {
 	return false
 }
 
-// Is s a subset of o?
+// Subset Is s a subset of o?
 func (s *SortedSet) Subset(o types.Set) bool {
 	return Subset(s, o)
 }
 
-// Is s a proper subset of o?
+// ProperSubset Is s a proper subset of o?
 func (s *SortedSet) ProperSubset(o types.Set) bool {
 	return ProperSubset(s, o)
 }
 
-// Is s a superset of o?
+// Superset Is s a superset of o?
 func (s *SortedSet) Superset(o types.Set) bool {
 	return Superset(s, o)
 }
 
-// Is s a proper superset of o?
+// ProperSuperset Is s a proper superset of o?
 func (s *SortedSet) ProperSuperset(o types.Set) bool {
 	return ProperSuperset(s, o)
 }
