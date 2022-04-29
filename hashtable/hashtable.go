@@ -14,6 +14,14 @@ type Hash struct {
 	size  int
 }
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	} else {
+		return x
+	}
+}
+
 func (self *entry) Put(key Hashable, value interface{}) (e *entry, appended bool) {
 	if self == nil {
 		return &entry{key, value, nil}, true
@@ -57,7 +65,7 @@ func NewHashTable(initial_size int) *Hash {
 }
 
 func (self *Hash) bucket(key Hashable) int {
-	return key.Hash() % len(self.table)
+	return abs(key.Hash()) % len(self.table)
 }
 
 func (self *Hash) Size() int { return self.size }
