@@ -16,7 +16,7 @@ type myException struct {
 func TestTry(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Error()
 	t.Assert(err != nil, "wanted a non nil error got %v", err)
 }
@@ -24,7 +24,7 @@ func TestTry(x *testing.T) {
 func TestTryPropogate(x *testing.T) {
 	badfunc := func() {
 		Try(func() {
-			Throwf("test", "this is a test")
+			Throwf("test: %s", "this is a test")
 		}).Unwind()
 	}
 	t := (*test.T)(x)
@@ -37,7 +37,7 @@ func TestTryPropogate(x *testing.T) {
 func TestTryCatch(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Catch(&Exception{}, func(e Throwable) {
 		t.Log("Caught", e)
 	}).Error()
@@ -49,7 +49,7 @@ func TestTryCatch(x *testing.T) {
 func TestTryCatchMyExceptionFail(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Catch(&myException{}, func(e Throwable) {
 		t.Log("Caught", e)
 	}).Error()
@@ -79,7 +79,7 @@ func TestTryCatchMyExceptionWithException(x *testing.T) {
 func TestTryCatchReraise(x *testing.T) {
 	t := (*test.T)(x)
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Catch(&Exception{}, func(e Throwable) {
 		t.Log("Caught", e)
 		Rethrow(e, Errorf("rethrow"))
@@ -93,7 +93,7 @@ func TestTryCatchFinally(x *testing.T) {
 	t := (*test.T)(x)
 	finally := false
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Catch(&Exception{}, func(e Throwable) {
 		t.Log("Caught", e)
 	}).Finally(func() {
@@ -108,7 +108,7 @@ func TestTryCatchReraiseFinally(x *testing.T) {
 	t := (*test.T)(x)
 	finally := false
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Catch(&Exception{}, func(e Throwable) {
 		t.Log("Caught", e)
 		Rethrow(e, Errorf("rethrow"))
@@ -124,7 +124,7 @@ func TestTryFinally(x *testing.T) {
 	t := (*test.T)(x)
 	finally := false
 	err := Try(func() {
-		Throwf("this is a test")
+		Throwf("%s", "this is a test")
 	}).Finally(func() {
 		t.Log("finally")
 		finally = true
