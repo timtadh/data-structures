@@ -35,7 +35,7 @@ func Logf(level, format string, args ...interface{}) {
 	}
 	pc, _, line, ok := runtime.Caller(1)
 	if !ok {
-		log.Printf(format, args)
+		log.Printf(format, args...)
 		return
 	}
 	fn := runtime.FuncForPC(pc)
