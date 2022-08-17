@@ -43,7 +43,7 @@ as are the [Node](https://godoc.org/github.com/timtadh/data-structures/linked#No
 
 ### Array List [`list.List`](https://godoc.org/github.com/timtadh/data-structures/list#List)
 
-Similar to a Java ArrayList or a Python or Ruby "list". There is a version
+Similar to a [Java ArrayList](https://www.scaler.com/topics/java/arraylist-in-java/) or a Python or Ruby "list". There is a version
 (called Sortable) which integrates with the `"sort"` package from the standard
 library.
 
