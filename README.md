@@ -7,7 +7,7 @@ directly if you require another licensing option. I am willing to work with you.
 
 ## Purpose
 
-To collect many important data structures for usage in go programs. Golang's
+To collect many important [data structures](https://www.interviewbit.com/data-structure-interview-questions/) for usage in go programs. Golang's
 standard library lacks many useful and important structures. This library
 attempts to fill the gap. I have implemented data-structure's as I have needed
 them. If there is a missing structure or even just a missing (or incorrect)
